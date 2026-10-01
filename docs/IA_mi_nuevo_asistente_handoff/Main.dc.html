@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Paleta — IA, mi nuevo asistente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100%;
+    padding: 48px;
+  }
+  .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+  }
+  .head h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+  .head p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .legend { display: flex; gap: 18px; }
+  .legend .sw { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .card {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .label {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    z-index: 5;
+  }
+
+  /* ---- slide 1: portada ---- */
+  .s-title { padding: 44px 46px; justify-content: center; position: relative; }
+  .s-title::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+    background: var(--c1);
+  }
+  .s-title .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--c1);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .s-title h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    line-height: 1.12;
+    font-weight: 600;
+    margin: 0 0 12px;
+    max-width: 85%;
+  }
+  .s-title .sub { color: var(--muted); font-size: 14px; max-width: 70%; }
+  .s-title .tag {
+    position: absolute; bottom: 30px; left: 46px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* ---- slide 2: divider ---- */
+  .s-divider { background: var(--c3); justify-content: center; padding: 44px 46px; position: relative; }
+  .s-divider .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: rgba(11,15,20,0.55);
+    margin-bottom: 10px;
+    letter-spacing: 0.1em;
+  }
+  .s-divider h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--bg);
+    margin: 0;
+    max-width: 85%;
+  }
+  .s-divider .line { width: 54px; height: 3px; background: var(--bg); margin-top: 18px; opacity: 0.7; }
+
+  /* ---- slide 3: concept ---- */
+  .s-concept { padding: 34px 40px; }
+  .s-concept .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c2);
+    margin-bottom: 10px;
+  }
+  .s-concept h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 21px; font-weight: 600; margin: 0 0 10px;
+  }
+  .s-concept p.body { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0 0 16px; max-width: 92%; }
+  .s-concept .analogy {
+    border: 1px solid var(--c2);
+    background: color-mix(in srgb, var(--c2) 12%, var(--panel));
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    position: relative;
+    padding-left: 18px;
+  }
+  .s-concept .analogy::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c2);
+  }
+  .s-concept .analogy b { color: var(--c2); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; display:block; margin-bottom:4px; text-transform: uppercase; }
+
+  /* ---- slide 4: quiz ---- */
+  .s-quiz { padding: 32px 40px; }
+  .s-quiz .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c4);
+    margin-bottom: 10px;
+  }
+  .s-quiz h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; max-width: 95%; }
+  .s-quiz .opts { display: flex; flex-direction: column; gap: 9px; }
+  .s-quiz .opt {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+  .s-quiz .opt .mark {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1px solid var(--muted);
+    flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted);
+  }
+  .s-quiz .opt.correct { border-color: var(--c4); background: color-mix(in srgb, var(--c4) 10%, var(--panel)); }
+  .s-quiz .opt.correct .mark { border-color: var(--c4); color: var(--c4); background: color-mix(in srgb, var(--c4) 18%, transparent); }
+
+  /* ---- slide 5: steps ---- */
+  .s-steps { padding: 32px 40px; }
+  .s-steps .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c1);
+    margin-bottom: 10px;
+  }
+  .s-steps h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 18px; }
+  .s-steps .row { display: flex; gap: 14px; margin-bottom: 13px; align-items: flex-start; }
+  .s-steps .n {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: var(--c1);
+    border: 1px solid var(--c1);
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex: none;
+  }
+  .s-steps .t strong { display: block; font-size: 13px; margin-bottom: 2px; }
+  .s-steps .t span { font-size: 12px; color: var(--muted); }
+
+  /* ---- slide 6: compare ---- */
+  .s-compare { padding: 32px 40px; }
+  .s-compare .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .s-compare h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+  .s-compare .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; }
+  .s-compare .col { border: 1px solid var(--line); padding: 12px 14px; display: flex; flex-direction: column; }
+  .s-compare .col.bad { border-color: var(--muted); }
+  .s-compare .col.good { border-color: var(--c4); background: color-mix(in srgb, var(--c4) 8%, var(--panel)); }
+  .s-compare .tag2 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .s-compare .col.bad .tag2 { color: var(--muted); }
+  .s-compare .col.good .tag2 { color: var(--c4); }
+  .s-compare .col p { font-size: 12.5px; margin: 0; line-height: 1.45; color: var(--text); }
+
+  footer.note {
+    margin-top: 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+</style>
+</helmet>
+
+<div class="wrap" style="--bg:{{bg}}; --panel:{{panel}}; --text:{{text}}; --muted:{{muted}}; --line:{{line}}; --c1:{{accent1}}; --c2:{{accent2}}; --c3:{{accent3}}; --c4:{{accent4}};">
+
+  <div class="head">
+    <div>
+      <h1>IA, mi nuevo asistente — paleta de ejemplo</h1>
+      <p>Maqueta estática. Ajustá los colores en el panel de la derecha (Tweaks) para iterar sin regenerar el pptx.</p>
+    </div>
+    <div class="legend">
+      <div class="sw"><span class="dot" style="background:{{accent1}}"></span>Clase 1</div>
+      <div class="sw"><span class="dot" style="background:{{accent2}}"></span>Clase 2</div>
+      <div class="sw"><span class="dot" style="background:{{accent3}}"></span>Clase 3</div>
+      <div class="sw"><span class="dot" style="background:{{accent4}}"></span>Clase 4</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card s-title">
+      <span class="label">Portada</span>
+      <div class="kicker">Clase 1 · Qué es esto y cómo le hablo</div>
+      <h2>IA, mi nuevo asistente</h2>
+      <div class="sub">Escuela de Emprendedores — Municipalidad de la Ciudad de Salta</div>
+      <div class="tag">01 / 38</div>
+    </div>
+
+    <div class="card s-divider">
+      <span class="label" style="color: rgba(11,15,20,0.5)">Divisor de bloque</span>
+      <div class="num">BLOQUE 02</div>
+      <h2>Tokens, contexto y proyectos</h2>
+      <div class="line"></div>
+    </div>
+
+    <div class="card s-concept">
+      <span class="label">Concepto</span>
+      <div class="kicker">Concepto clave</div>
+      <h3>¿Qué es un token?</h3>
+      <p class="body">Cada palabra o fragmento que escribís y que la IA te responde se mide en tokens. Cuanto más larga la conversación, más tokens se van consumiendo.</p>
+      <div class="analogy">
+        <b>Analogía</b>
+        Los tokens son como la moneda de intercambio que usás para "pagar" cada mensaje que le mandás a la IA.
+      </div>
+    </div>
+
+    <div class="card s-quiz">
+      <span class="label">Pregunta</span>
+      <div class="kicker">Verdadero o falso</div>
+      <h3>Si abro un chat nuevo, la IA recuerda todo lo que hablamos antes.</h3>
+      <div class="opts">
+        <div class="opt"><span class="mark">A</span> Verdadero</div>
+        <div class="opt correct"><span class="mark">✓</span> Falso — cada chat nuevo empieza sin memoria del anterior</div>
+      </div>
+    </div>
+
+    <div class="card s-steps">
+      <span class="label">Guía paso a paso</span>
+      <div class="kicker">Instalación</div>
+      <h3>Crear tu cuenta de Claude</h3>
+      <div class="row"><span class="n">1</span><div class="t"><strong>Entrá a claude.ai</strong><span>Desde el navegador o descargá la app</span></div></div>
+      <div class="row"><span class="n">2</span><div class="t"><strong>Creá tu cuenta</strong><span>Con tu correo o cuenta de Google</span></div></div>
+      <div class="row"><span class="n">3</span><div class="t"><strong>Listo para tu primer chat</strong><span>Ya podés empezar a preguntar</span></div></div>
+    </div>
+
+    <div class="card s-compare">
+      <span class="label">Comparación</span>
+      <div class="kicker">Cómo pedir las cosas</div>
+      <h3>Vago vs. claro</h3>
+      <div class="cols">
+        <div class="col bad">
+          <div class="tag2">Vago</div>
+          <p>"Ayudame con mi negocio"</p>
+        </div>
+        <div class="col good">
+          <div class="tag2">Claro</div>
+          <p>"Soy emprendedor de indumentaria en Salta, dame 3 ideas para vender más en octubre"</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">Tipografías: Space Grotesk (títulos) · IBM Plex Sans (cuerpo) · IBM Plex Mono (etiquetas) — estilo técnico, sin clichés de gradientes ni emojis.</footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{
+  "bg": {"editor":"color","default":"#0B0F14"},
+  "panel": {"editor":"color","default":"#121826"},
+  "line": {"editor":"color","default":"#232B3A"},
+  "text": {"editor":"color","default":"#EDF1F7"},
+  "muted": {"editor":"color","default":"#8A93A6"},
+  "accent1": {"editor":"color","default":"#22D3EE"},
+  "accent2": {"editor":"color","default":"#FF6A3D"},
+  "accent3": {"editor":"color","default":"#7C5CFF"},
+  "accent4": {"editor":"color","default":"#2EE6A8"}
+}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { ...this.props };
+  }
+}
+</script>
+</body>
+</html>
