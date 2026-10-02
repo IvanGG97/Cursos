@@ -1,6 +1,12 @@
 import type { Course } from "@/content/types";
 import { clase1Slides } from "./clase1";
 import { clase1Evaluacion } from "./clase1-evaluacion";
+import { clase2Slides } from "./clase2";
+import { clase2Evaluacion } from "./clase2-evaluacion";
+import { clase3Slides } from "./clase3";
+import { clase3Evaluacion } from "./clase3-evaluacion";
+import { clase4Slides } from "./clase4";
+import { clase4Evaluacion } from "./clase4-evaluacion";
 import { encuestaCurso } from "./encuesta";
 
 // Curso "IA, mi nuevo asistente". Tiempos tomados del resumen del curso (PDF).
@@ -43,7 +49,8 @@ export const iaMiNuevoAsistente: Course = {
         { name: "Práctica integradora", min: 20 },
         { name: "Cierre", min: 10 },
       ],
-      slides: [],
+      slides: clase2Slides,
+      evaluation: clase2Evaluacion,
     },
     {
       num: 3,
@@ -57,7 +64,8 @@ export const iaMiNuevoAsistente: Course = {
         { name: "Comparar opciones con criterios", min: 35 },
         { name: "Cierre", min: 15 },
       ],
-      slides: [],
+      slides: clase3Slides,
+      evaluation: clase3Evaluacion,
     },
     {
       num: 4,
@@ -72,7 +80,8 @@ export const iaMiNuevoAsistente: Course = {
         { name: "Repaso general del curso", min: 20 },
         { name: "Cierre del curso", min: 10 },
       ],
-      slides: [],
+      slides: clase4Slides,
+      evaluation: clase4Evaluacion,
     },
   ],
 };
