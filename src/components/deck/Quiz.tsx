@@ -15,9 +15,11 @@ type Props = {
   slide: QuizSlide;
   revealed: boolean;
   onReveal: () => void;
+  /** Clase en vivo: respuestas que llegan desde los celulares (por opción y cantidad de personas). */
+  liveCounts?: { opts: number[]; n: number };
 };
 
-export function Quiz({ slide, revealed, onReveal }: Props) {
+export function Quiz({ slide, revealed, onReveal, liveCounts }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
 
   const toggle = (i: number) => {
@@ -57,12 +59,26 @@ export function Quiz({ slide, revealed, onReveal }: Props) {
               {revealed && (o.correct || isSel) && (
                 <span className="verdict">{o.correct ? "Correcta" : "Incorrecta"}</span>
               )}
+              {liveCounts && (
+                <span className="live-bar" aria-label={`${liveCounts.opts[i] ?? 0} respuestas`}>
+                  <span
+                    className="live-bar-fill"
+                    style={{ width: `${liveCounts.n ? ((liveCounts.opts[i] ?? 0) / liveCounts.n) * 100 : 0}%` }}
+                  />
+                  <span className="live-bar-n">{liveCounts.opts[i] ?? 0}</span>
+                </span>
+              )}
             </button>
           );
         })}
       </div>
 
       <div className="quiz-foot">
+        {liveCounts && (
+          <span className="live-total">
+            {liveCounts.n} {liveCounts.n === 1 ? "respuesta" : "respuestas"} desde los celulares
+          </span>
+        )}
         {revealed ? (
           slide.explanation && <p className="explanation">{slide.explanation}</p>
         ) : (

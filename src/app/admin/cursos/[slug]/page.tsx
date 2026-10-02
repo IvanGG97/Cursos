@@ -18,6 +18,7 @@ import {
   setRelease,
 } from "../../actions";
 import { ActionForm, ConfirmSubmit, Submit } from "../../_ui";
+import { CourseTabs } from "./tabs";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ q?: string }> };
 
@@ -109,6 +110,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
           <Link href={`/cursos/${slug}`} className="btn btn-sm">Ver página del curso</Link>
         </div>
       </div>
+      <CourseTabs slug={slug} active="config" hasSurvey={Boolean(course.survey)} />
 
       {/* ---------------- Publicación y código ---------------- */}
       <div className="admin-cols">

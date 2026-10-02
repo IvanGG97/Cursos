@@ -576,3 +576,120 @@
 .deck.flow .controls .nav-btn { flex: 1; font-size: 22px; }
 .deck.flow .controls .pos { min-width: 0; padding: 0 4px; white-space: nowrap; }
 .deck.flow .controls .fs { display: none; }
+
+/* =====================================================================
+   CLASE EN VIVO (solo presentador)
+   ===================================================================== */
+.live-bar {
+  flex: none;
+  position: relative;
+  width: calc(var(--u) * 280);
+  height: calc(var(--u) * 44);
+  border: calc(var(--u) * 2) solid var(--line);
+  background: var(--bg);
+  overflow: hidden;
+}
+.live-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: width 0.4s ease;
+}
+.live-bar-n {
+  position: relative;
+  display: block;
+  text-align: right;
+  padding-right: calc(var(--u) * 12);
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: calc(var(--u) * 28);
+  line-height: calc(var(--u) * 40);
+}
+.opts-vf .live-bar { width: 70%; }
+.live-total {
+  display: inline-block;
+  margin-right: calc(var(--u) * 28);
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: calc(var(--u) * 26);
+  color: var(--accent-text);
+}
+.deck.flow .live-bar { width: 100%; height: 28px; }
+.deck.flow .live-bar-n { font-size: 14px; line-height: 24px; }
+.deck.flow .live-total { font-size: 14px; display: block; margin-bottom: 12px; }
+
+.controls .live-on { border-color: var(--bad); color: var(--bad-text); font-weight: 600; }
+.controls .live-on::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--bad);
+  vertical-align: middle;
+}
+
+.live-error {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 12;
+  padding: 10px 14px;
+  border: 1px solid var(--bad);
+  background: var(--panel);
+  color: var(--bad-text);
+  font-size: 14px;
+}
+
+/* Pantalla con código + QR para unirse */
+.join-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px;
+  background: var(--bg);
+}
+.join-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(24px, 5vw, 80px);
+  max-width: 1400px;
+}
+.join-text { max-width: 640px; }
+.join-kicker {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: clamp(14px, 1.6vw, 24px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 20px;
+}
+.join-step { font-size: clamp(18px, 2.2vw, 34px); line-height: 1.35; margin: 0 0 10px; }
+.join-code {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: clamp(72px, 12vw, 200px);
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin: 12px 0 20px;
+}
+.join-present { font-family: var(--f-mono); color: var(--muted); font-size: clamp(14px, 1.4vw, 22px); margin: 0; }
+.join-qr { width: clamp(220px, 28vw, 440px); background: #fff; padding: 12px; }
+.join-qr svg { display: block; width: 100%; height: auto; }
+.join-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 12px 20px;
+  font-family: var(--f-mono);
+  font-size: 14px;
+  min-height: 44px;
+}

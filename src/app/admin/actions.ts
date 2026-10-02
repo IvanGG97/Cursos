@@ -271,6 +271,23 @@ export const setGrant = action(async (ctx, f) => {
 });
 
 // ---------------------------------------------------------------------------
+// Clase en vivo
+// ---------------------------------------------------------------------------
+
+export const closeLiveSession = action(async (ctx, f) => {
+  const id = str(f, "session");
+  const { data, error } = await ctx.supabase
+    .from("live_sessions")
+    .update({ status: "closed", closed_at: new Date().toISOString() })
+    .eq("id", id)
+    .select("course_slug, class_num")
+    .single();
+  check(error);
+  await audit(ctx, "live.end", `${data!.course_slug}/clase-${data!.class_num}`, { session: id });
+  return "Clase en vivo terminada.";
+});
+
+// ---------------------------------------------------------------------------
 // Personas
 // ---------------------------------------------------------------------------
 

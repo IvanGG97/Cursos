@@ -22,11 +22,26 @@
 }
 .admin-nav a:hover { color: var(--text); }
 .admin-nav a.active { color: var(--accent-text); border-bottom-color: var(--accent); }
+.admin-nav.sub { margin-bottom: 24px; }
+.admin-nav.sub a { font-size: 12px; padding: 10px 14px; }
+
+/* Barras horizontales de resultados (seguimiento, encuesta, clase en vivo) */
+.hbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; margin: 8px 0; }
+.hbar-label { font-size: 14px; overflow-wrap: anywhere; }
+.hbar-n { font-family: var(--f-mono); font-size: 12px; color: var(--muted); text-align: right; }
+.hbar-track { grid-column: 1 / -1; height: 8px; background: var(--line); position: relative; overflow: hidden; }
+.hbar-track > span { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+.hbar-track.ok > span { background: var(--ok); }
+.hbar-track.bad > span { background: var(--bad); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--f-mono); font-size: 11px; padding: 3px 8px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.ok { color: var(--ok-text); border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }
+.chip.mid { color: var(--accent-text); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.quote-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.quote-list li { border-left: 0; border: 1px solid var(--line); padding: 12px 14px; font-size: 15px; line-height: 1.5; background: var(--bg); }
 
 .admin-page-head h1 { font-size: clamp(30px, 5vw, 52px); margin: 8px 0; }
 .admin-page-head .muted { margin-bottom: 12px; }
-.back { font-family: var(--f-mono); font-size: 13px; color: var(--muted); text-decoration: none; }
-.back:hover { color: var(--accent-text); }
 
 .stat-grid {
   display: grid;
@@ -95,7 +110,6 @@
 @media (max-width: 640px) {
   .mode-picker { grid-template-columns: 1fr; }
 }
-.btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
 .btn-danger { background: var(--bad); border-color: var(--bad); color: var(--on-accent); }
 .btn-danger:hover:not(:disabled) { color: var(--on-accent); filter: brightness(1.1); }
 .hint { color: var(--muted); font-size: 13px; margin: 8px 0; }

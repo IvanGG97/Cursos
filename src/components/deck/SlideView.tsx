@@ -12,12 +12,27 @@ type Props = {
   total: number;
   revealed: boolean;
   onReveal: () => void;
+  liveCounts?: { opts: number[]; n: number };
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Renderiza una diapositiva en el lienzo de 1920×1080. */
-export function SlideView({ course, clase, slide, index, total, revealed, onReveal }: Props) {
+export function SlideView({ course, clase, slide, index, total, revealed, onReveal, liveCounts }: Props) {
+  if (slide.type === "quiz") {
+    // El quiz necesita los conteos en vivo; el resto de los tipos se arma en renderBody.
+    return (
+      <div className="slide slide-quiz">
+        <Quiz slide={slide} revealed={revealed} onReveal={onReveal} liveCounts={liveCounts} />
+        <footer className="slide-foot">
+          <span>
+            Clase {clase.num} — {clase.title}
+          </span>
+          <span>{pad(index + 1)} / {pad(total)}</span>
+        </footer>
+      </div>
+    );
+  }
   const counter = `${pad(index + 1)} / ${pad(total)}`;
   // Portada y divisores no llevan pie: son pantallas "limpias".
   const bare = slide.type === "title" || slide.type === "divider";

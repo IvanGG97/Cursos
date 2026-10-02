@@ -6,6 +6,8 @@ import { SiteShell } from "@/components/SiteShell";
 import { classSlug, getCourse } from "@/content/registry";
 import { canManage, classStatus, getCourseState, getViewer, getVisibleCourseSlugs, type ClassStatus } from "@/lib/access";
 import { formatDateTime } from "@/lib/site";
+import { getMyCourseProgress } from "@/lib/progress";
+import { createClient } from "@/lib/supabase/server";
 import { JoinForm } from "./JoinForm";
 
 type Params = { params: Promise<{ curso: string }> };
@@ -27,6 +29,20 @@ export default async function CoursePage({ params }: Params) {
   const state = await getCourseState(course.slug);
   const admin = canManage(viewer);
   const totalMin = course.classes.reduce((acc, c) => acc + c.blocks.reduce((a, b) => a + b.min, 0), 0);
+  const mine = await getMyCourseProgress(course.slug);
+
+  // ¿Hay una clase en vivo ahora? (los alumnos ven el botón para sumarse)
+  let liveNow: { code: string; class_num: number }[] = [];
+  if (viewer.kind !== "local") {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("live_sessions")
+      .select("code, class_num")
+      .eq("course_slug", course.slug)
+      .eq("status", "open");
+    liveNow = data ?? [];
+  }
+  const canSeeSomething = course.classes.some((c) => classStatus(viewer, state, c).kind === "open");
 
   return (
     <SiteShell>
@@ -38,6 +54,16 @@ export default async function CoursePage({ params }: Params) {
         <p>{course.tagline}</p>
         <p className="org">{course.org}</p>
       </div>
+
+      {liveNow.map((l) => (
+        <div key={l.code} className="notice live-banner" style={{ marginBottom: 24 }}>
+          <div>
+            <strong>Clase {l.class_num} en vivo ahora.</strong> Sumate desde el celular para responder las preguntas
+            {viewer.kind === "user" ? " y registrar tu asistencia" : ""}.
+          </div>
+          <Link href={`/vivo?c=${l.code}`} className="btn btn-primary">Unirme a la clase</Link>
+        </div>
+      ))}
 
       {admin && viewer.kind !== "local" && !state.published && (
         <div className="notice warn" style={{ marginBottom: 24 }}>
@@ -81,6 +107,9 @@ export default async function CoursePage({ params }: Params) {
           const href = `/cursos/${course.slug}/${classSlug(clase)}`;
           const open = status.kind === "open";
           const minutes = clase.blocks.reduce((a, b) => a + b.min, 0);
+          const prog = mine.progress.get(clase.num);
+          const ev = mine.evals.get(clase.num);
+          const inProgress = prog && !prog.completed && prog.last > 1;
           return (
             <article
               key={clase.num}
@@ -93,13 +122,31 @@ export default async function CoursePage({ params }: Params) {
                 </div>
                 <h3>{clase.title}</h3>
                 <p>{clase.summary}</p>
+                {open && prog && (
+                  <div className="class-progress" aria-label="Tu avance">
+                    <span className="class-progress-bar">
+                      <span style={{ width: `${Math.round((prog.max / prog.total) * 100)}%` }} />
+                    </span>
+                    <span className="class-progress-text">
+                      {prog.completed ? "Vista" : `Vas por la ${prog.last} de ${prog.total}`}
+                      {ev && ` · Evaluación: ${ev.best}/${ev.total}${ev.passed ? " aprobada" : ""}`}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="actions">
                 {open ? (
                   <>
                     {status.preview && <span className="tag warn">Oculta para alumnos</span>}
                     <a href={`${href}/resumen`} className="btn">Resumen PDF</a>
-                    <Link href={href} className="btn btn-primary">Abrir clase →</Link>
+                    {clase.evaluation && (
+                      <Link href={`${href}/evaluacion`} className="btn">
+                        {ev?.passed ? "Evaluación ✓" : "Evaluación"}
+                      </Link>
+                    )}
+                    <Link href={inProgress ? `${href}#${prog.last}` : href} className="btn btn-primary">
+                      {inProgress ? "Seguir →" : "Abrir clase →"}
+                    </Link>
                   </>
                 ) : (
                   <span className="status">{statusLabel(status)}</span>
@@ -109,6 +156,23 @@ export default async function CoursePage({ params }: Params) {
           );
         })}
       </div>
+
+      {course.survey && viewer.kind !== "local" && (viewer.kind === "user" ? canSeeSomething : state.isPublic) && (
+        <section className="notice survey-cta">
+          {mine.surveyDone ? (
+            <p style={{ margin: 0 }}>
+              <strong>¡Gracias por responder la encuesta!</strong>
+            </p>
+          ) : (
+            <>
+              <p style={{ marginTop: 0 }}>
+                <strong>{course.survey.title}</strong> Contanos en un minuto qué te pareció el curso.
+              </p>
+              <Link href={`/cursos/${course.slug}/encuesta`} className="btn btn-primary">Responder la encuesta</Link>
+            </>
+          )}
+        </section>
+      )}
     </SiteShell>
   );
 }

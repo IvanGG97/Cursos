@@ -21,7 +21,7 @@ export default async function AdminPerson({ params }: Props) {
   if (!ctx) return null;
   const { supabase, viewer } = ctx;
 
-  const [profile, enrollments, grants, releases, history, publishedRows] = await Promise.all([
+  const [profile, enrollments, grants, releases, history, publishedRows, progRows, attRows, liveRows] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, email, role, status, created_at, last_sign_in_at")
@@ -37,8 +37,18 @@ export default async function AdminPerson({ params }: Props) {
       .order("created_at", { ascending: false })
       .limit(15),
     supabase.from("courses").select("slug").eq("published", true),
+    supabase.from("class_progress").select("course_slug, class_num, max_slide, total_slides, completed_at").eq("user_id", id),
+    supabase.from("evaluation_attempts").select("course_slug, class_num, score, total, passed").eq("user_id", id),
+    supabase.from("live_attendance").select("session_id", { count: "exact", head: true }).eq("user_id", id),
   ]);
   const publishedSet = new Set((publishedRows.data ?? []).map((c) => c.slug as string));
+  const progBy = new Map((progRows.data ?? []).map((p) => [`${p.course_slug}/${p.class_num}`, p]));
+  const bestBy = new Map<string, { score: number; total: number; passed: boolean; n: number }>();
+  for (const a of attRows.data ?? []) {
+    const k = `${a.course_slug}/${a.class_num}`;
+    const cur = bestBy.get(k) ?? { score: 0, total: a.total, passed: false, n: 0 };
+    bestBy.set(k, { score: Math.max(cur.score, a.score), total: a.total, passed: cur.passed || a.passed, n: cur.n + 1 });
+  }
 
   const u = profile.data;
   if (!u) notFound();
@@ -71,6 +81,7 @@ export default async function AdminPerson({ params }: Props) {
           <span className={`tag ${blocked ? "warn" : "ok"}`}>{blocked ? "Cuenta suspendida" : "Cuenta activa"}</span>
           <span className="tag">Registrada el {formatDateTime(u.created_at)}</span>
           <span className="tag">Último ingreso {u.last_sign_in_at ? formatDateTime(u.last_sign_in_at) : "—"}</span>
+          <span className="tag">{liveRows.count ?? 0} clase(s) en vivo presente</span>
         </div>
       </div>
 
@@ -188,6 +199,26 @@ export default async function AdminPerson({ params }: Props) {
                                   : "La ve (clase liberada)"
                                 : "No la ve"}
                         </span>
+                        {(() => {
+                          const pr = progBy.get(key);
+                          const b = bestBy.get(key);
+                          if (!pr && !b) return null;
+                          return (
+                            <span className="chips" style={{ marginTop: 6 }}>
+                              {pr && (
+                                <span className={`chip ${pr.completed_at ? "ok" : "mid"}`}>
+                                  {pr.completed_at ? "Vista completa" : `Vio ${pr.max_slide} de ${pr.total_slides}`}
+                                </span>
+                              )}
+                              {b && (
+                                <span className={`chip ${b.passed ? "ok" : ""}`}>
+                                  Evaluación {b.score}/{b.total}
+                                  {b.passed ? " aprobada" : ""} · {b.n} intento(s)
+                                </span>
+                              )}
+                            </span>
+                          );
+                        })()}
                       </div>
                       {k.slides.length > 0 && (
                         <ActionForm

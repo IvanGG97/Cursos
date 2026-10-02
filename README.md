@@ -56,6 +56,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
    - `20261001000000_init.sql` — esquema base.
    - `20261001020000_admin_panel.sql` — panel de admin (invitaciones, accesos individuales, suspensiones, registro de actividad).
    - `20261002000000_course_access.sql` — estado "Libre" de un curso (visible sin registrarse).
+   - `20261002010000_engagement.sql` — progreso, evaluaciones, clase en vivo (asistencia + quiz) y encuesta.
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).
@@ -87,6 +88,13 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
 | **Actividad** | Registro de todas las acciones de los admins. |
 
 Las acciones delicadas piden confirmación con un segundo toque. Nadie puede quitarse su propio rol de admin ni suspender su propia cuenta.
+
+## Participación de los alumnos
+
+- **Progreso**: se guarda solo mientras miran la clase. En la página del curso ven su avance y "Seguir →".
+- **Evaluación por clase**: `/cursos/<curso>/clase-N/evaluacion`. Se define en el contenido (`evaluation` de la clase, ver `src/content/ia-mi-nuevo-asistente/clase1-evaluacion.ts`). Necesita `SUPABASE_SECRET_KEY` en el servidor.
+- **Clase en vivo**: en la clase, botón **Iniciar en vivo** → tecla **C** muestra el código y el QR → los alumnos entran a `/vivo`. En cada quiz se ven las respuestas en tiempo real; **R** revela la correcta también en los celulares. **Terminar** cierra la sesión. La asistencia queda en **Admin → curso → Seguimiento** (con descarga CSV).
+- **Encuesta**: `/cursos/<curso>/encuesta`, definida en `Course.survey`. Resultados en **Admin → curso → Encuesta**.
 
 ## Flujo de un curso
 

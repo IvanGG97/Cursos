@@ -61,6 +61,8 @@ export const AUDIT_LABELS: Record<string, string> = {
   "course.mode.enrolled": "Publicó el curso (con inscripción)",
   "course.mode.public": "Liberó el curso (libre, sin registro)",
   "class.release_all": "Liberó todas las clases",
+  "live.start": "Inició una clase en vivo",
+  "live.end": "Terminó una clase en vivo",
   "course.code.set": "Cambió el código de inscripción",
   "course.code.remove": "Desactivó el código de inscripción",
   "class.release": "Cambió la liberación de una clase",

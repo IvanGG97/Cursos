@@ -5,6 +5,8 @@ import Link from "next/link";
 import type { Slide } from "@/content/types";
 import { SlideView } from "./SlideView";
 import { ThemeToggle } from "../ThemeToggle";
+import { JoinOverlay, useLivePresenter, type LiveConfig } from "./LivePresenter";
+import { saveProgress } from "@/app/cursos/[curso]/[clase]/actions";
 import "./deck.css";
 
 const W = 1920;
@@ -18,9 +20,13 @@ export type DeckProps = {
   /** Adónde vuelve el botón "Índice" (y la tecla I). */
   backHref: string;
   pdfHref?: string;
+  /** Si está, se guarda hasta dónde vio la clase la persona (alumnos con sesión). */
+  trackProgress?: { slug: string; num: number };
+  /** Solo admin: controles de la clase en vivo (código + QR, quiz desde el celular). */
+  live?: LiveConfig;
 };
 
-export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
+export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: DeckProps) {
   const total = clase.slides.length;
   const [index, setIndex] = useSlideHash(total);
   const current = clase.slides[index];
@@ -38,6 +44,19 @@ export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
     window.scrollTo(0, 0);
   }, [index]);
 
+  // Progreso: se guarda con un pequeño retraso para no escribir en cada toque de flecha.
+  useEffect(() => {
+    if (!trackProgress) return;
+    const t = setTimeout(() => {
+      saveProgress(trackProgress.slug, trackProgress.num, index + 1).catch(() => {});
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [index, trackProgress]);
+
+  // Clase en vivo (solo admin).
+  const liveState = useLivePresenter(live, index + 1, revealed);
+  const [showJoin, setShowJoin] = useState(false);
+
   const next = () => index < total - 1 && setIndex(index + 1);
   const prev = () => index > 0 && setIndex(index - 1);
 
@@ -54,6 +73,8 @@ export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
       else if (k === "f" || k === "F") toggleFullscreen();
       else if (k === "r" || k === "R") setRevealed(true);
       else if (k === "i" || k === "I") back.current?.click();
+      else if ((k === "c" || k === "C") && liveState.session) setShowJoin((v) => !v);
+      else if (k === "Escape" && showJoin) setShowJoin(false);
       else handled = false;
       if (handled) e.preventDefault();
     };
@@ -86,6 +107,7 @@ export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
       total={total}
       revealed={revealed}
       onReveal={() => setRevealed(true)}
+      liveCounts={liveState.session ? (liveState.counts[index + 1] ?? { opts: [], n: 0 }) : undefined}
     />
   );
 
@@ -119,9 +141,34 @@ export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
         </span>
         <button type="button" className="nav-btn" onClick={next} disabled={index === total - 1} title="Siguiente (→)" aria-label="Siguiente">→</button>
         {pdfHref && <a href={pdfHref} title="Descargar resumen en PDF">PDF</a>}
+        {liveState.enabled &&
+          (liveState.session ? (
+            <>
+              <button type="button" className="live-on" onClick={() => setShowJoin(true)} title="Mostrar código y QR (C)">
+                En vivo · {liveState.session.code} · {liveState.present}
+              </button>
+              <button type="button" onClick={liveState.end} disabled={liveState.busy} title="Terminar la clase en vivo">
+                Terminar
+              </button>
+            </>
+          ) : (
+            <button type="button" onClick={liveState.start} disabled={liveState.busy} title="Abrir la clase en vivo: asistencia y quiz desde el celular">
+              {liveState.busy ? "Abriendo…" : "Iniciar en vivo"}
+            </button>
+          ))}
         <ThemeToggle className="theme-toggle" />
         <button type="button" className="fs" onClick={toggleFullscreen} title="Pantalla completa (F)">Pantalla completa</button>
       </nav>
+
+      {liveState.error && <div className="live-error" role="alert">{liveState.error}</div>}
+      {showJoin && liveState.session && live && (
+        <JoinOverlay
+          code={liveState.session.code}
+          joinBase={live.joinBase}
+          present={liveState.present}
+          onClose={() => setShowJoin(false)}
+        />
+      )}
     </div>
   );
 }

@@ -54,6 +54,40 @@ export type ClassDef = {
   blocks: { name: string; min: number }[];
   /** Vacío = clase todavía no escrita ("En preparación"). */
   slides: Slide[];
+  /** Evaluación de la clase (opcional). Solo preguntas sobre lo que la clase explica. */
+  evaluation?: Evaluation;
+};
+
+export type EvaluationQuestion = {
+  /** Identificador estable: se guarda en los resultados. No cambiarlo una vez publicada. */
+  id: string;
+  kind: "vf" | "single" | "multi";
+  question: string;
+  options: QuizOption[];
+  /** Se muestra después de entregar: por qué es así. */
+  explanation: string;
+};
+
+export type Evaluation = {
+  /** Identificador estable (ej. "clase-1-v1"). Si se cambian las preguntas a fondo, usar uno nuevo. */
+  id: string;
+  title: string;
+  intro: string;
+  /** Porcentaje mínimo para aprobar (0-100). */
+  passPercent: number;
+  questions: EvaluationQuestion[];
+};
+
+export type SurveyQuestion =
+  | { id: string; kind: "scale"; label: string; min: number; max: number; minLabel: string; maxLabel: string; required: boolean }
+  | { id: string; kind: "choice"; label: string; options: string[]; required: boolean }
+  | { id: string; kind: "text"; label: string; placeholder?: string; required: boolean };
+
+export type Survey = {
+  id: string;
+  title: string;
+  intro: string;
+  questions: SurveyQuestion[];
 };
 
 export type Course = {
@@ -66,4 +100,6 @@ export type Course = {
   /** Color de acento del curso en el catálogo (hex). */
   accent: string;
   classes: ClassDef[];
+  /** Encuesta de satisfacción del curso (opcional). */
+  survey?: Survey;
 };

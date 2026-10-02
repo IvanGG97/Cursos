@@ -88,7 +88,8 @@ export function GoogleButton({ clientId, next, fallback }: Props) {
         });
         window.google.accounts.id.renderButton(box.current, {
           type: "standard",
-          theme: "outline",
+          // Versión oscura de Google en modo oscuro; la clara (con borde) en modo claro.
+          theme: document.documentElement.dataset.theme === "light" ? "outline" : "filled_black",
           size: "large",
           text: "continue_with",
           shape: "rectangular",

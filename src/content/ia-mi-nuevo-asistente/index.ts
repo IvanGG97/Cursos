@@ -1,5 +1,7 @@
 import type { Course } from "@/content/types";
 import { clase1Slides } from "./clase1";
+import { clase1Evaluacion } from "./clase1-evaluacion";
+import { encuestaCurso } from "./encuesta";
 
 // Curso "IA, mi nuevo asistente". Tiempos tomados del resumen del curso (PDF).
 // Una clase con `slides: []` aparece como "En preparación".
@@ -10,6 +12,7 @@ export const iaMiNuevoAsistente: Course = {
   tagline: "Perderle el miedo a la Inteligencia Artificial y usarla en la vida diaria",
   org: "Escuela de Emprendedores — Municipalidad de la Ciudad de Salta",
   accent: "#22D3EE",
+  survey: encuestaCurso,
   classes: [
     {
       num: 1,
@@ -25,6 +28,7 @@ export const iaMiNuevoAsistente: Course = {
         { name: "Cierre: reglas de oro", min: 10 },
       ],
       slides: clase1Slides,
+      evaluation: clase1Evaluacion,
     },
     {
       num: 2,
