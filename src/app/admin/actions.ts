@@ -274,6 +274,15 @@ export const setGrant = action(async (ctx, f) => {
 // Clase en vivo
 // ---------------------------------------------------------------------------
 
+export const renameLiveSession = action(async (ctx, f) => {
+  const id = str(f, "session");
+  const title = str(f, "title").slice(0, 80);
+  if (!title) throw new Error("Escribí un nombre.");
+  check((await ctx.supabase.from("live_sessions").update({ title }).eq("id", id)).error);
+  await audit(ctx, "live.rename", id, { title });
+  return "Nombre guardado.";
+});
+
 export const closeLiveSession = action(async (ctx, f) => {
   const id = str(f, "session");
   const { data, error } = await ctx.supabase

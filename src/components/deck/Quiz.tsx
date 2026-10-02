@@ -35,6 +35,8 @@ export function Quiz({ slide, revealed, onReveal, liveCounts }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
       const idx = Number(e.key) - 1;
       if (idx >= 0 && idx < slide.options.length) toggle(idx);
     };

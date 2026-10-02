@@ -3,11 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
 import { adminCtx, audit } from "@/lib/admin";
+import { formatDateTime } from "@/lib/site";
 
-export type LiveSession = { id: string; code: string };
+export type LiveSession = { id: string; code: string; title: string | null };
 
-/** Abre la clase en vivo (o devuelve la que ya está abierta para esa clase). Solo admin. */
-export async function startLive(slug: string, num: number): Promise<LiveSession | { error: string }> {
+/**
+ * Abre la clase en vivo (o devuelve la que ya está abierta para esa clase). Solo admin.
+ * `title`: nombre para identificar la partida después (ej. "Comisión martes 16 hs").
+ */
+export async function startLive(slug: string, num: number, title?: string): Promise<LiveSession | { error: string }> {
   try {
     const ctx = await adminCtx();
     const course = getCourse(slug);
@@ -15,23 +19,25 @@ export async function startLive(slug: string, num: number): Promise<LiveSession 
 
     const { data: open } = await ctx.supabase
       .from("live_sessions")
-      .select("id, code")
+      .select("id, code, title")
       .eq("course_slug", slug)
       .eq("class_num", num)
       .eq("status", "open")
       .maybeSingle();
     if (open) return open;
 
+    const name = (title ?? "").trim().slice(0, 80) || `Clase ${num} · ${formatDateTime(new Date().toISOString())}`;
+
     // Código de 4 números que no choque con otra sesión abierta.
     for (let i = 0; i < 8; i++) {
       const code = String(Math.floor(1000 + Math.random() * 9000));
       const { data, error } = await ctx.supabase
         .from("live_sessions")
-        .insert({ code, course_slug: slug, class_num: num, created_by: ctx.viewer.id })
-        .select("id, code")
+        .insert({ code, title: name, course_slug: slug, class_num: num, created_by: ctx.viewer.id })
+        .select("id, code, title")
         .single();
       if (!error && data) {
-        await audit(ctx, "live.start", `${slug}/clase-${num}`, { code });
+        await audit(ctx, "live.start", `${slug}/clase-${num}`, { code, title: name });
         revalidatePath(`/cursos/${slug}`);
         return data;
       }

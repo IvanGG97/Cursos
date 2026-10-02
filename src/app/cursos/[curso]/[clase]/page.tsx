@@ -37,7 +37,7 @@ export default async function ClassPage({ params }: Params) {
     const supabase = await createClient();
     const { data: open } = await supabase
       .from("live_sessions")
-      .select("id, code")
+      .select("id, code, title")
       .eq("course_slug", course.slug)
       .eq("class_num", clase.num)
       .eq("status", "open")

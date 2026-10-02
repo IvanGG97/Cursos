@@ -109,7 +109,7 @@ export const clase1Slides: Slide[] = [
     kicker: "Concepto 3",
     title: "Chat: una carpeta por tema",
     body: "Un chat es una conversación independiente. Lo que hablás en uno no se mezcla con otro (salvo que vos se lo cuentes).",
-    analogy: "Pensalo como una carpeta: una carpeta para \"presupuesto del casamiento\" y otra distinta para \"trabajo\" — no las vas a mezclar en una misma.",
+    analogy: "Pensalo como una carpeta: una carpeta para \"presupuesto para las proximas vacaciones\" y otra distinta para \"trabajo\" — no las vas a mezclar en una misma.",
   },
   {
     type: "concept",
@@ -125,7 +125,7 @@ export const clase1Slides: Slide[] = [
     rows: [
       { h: "Un chat por tema", d: "si cambiaste de asunto, abrí uno nuevo." },
       { h: "Error común", d: "meter todo en un solo chat eterno — la IA empieza a mezclar contextos viejos con lo nuevo." },
-      { h: "Recomendación", d: "si vas a volver sobre el mismo tema seguido (tu changa, tu casa), armate un proyecto." },
+      { h: "Recomendación", d: "si vas a volver sobre el mismo tema seguido (tu trabajo, tu casa), armate un proyecto." },
     ],
   },
   {
@@ -315,6 +315,6 @@ export const clase1Slides: Slide[] = [
     type: "divider",
     badge: "LA PRÓXIMA CLASE",
     title: "Clase 2: Crear, entender y comunicarte",
-    subtitle: "Ideas, textos y mensajes — también para tu changa",
+    subtitle: "Ideas, textos y mensajes — también para tu trabajo",
   },
 ];

@@ -21,7 +21,7 @@ export default async function LiveSessionPage({ params }: Props) {
   const supabase = await createClient();
   const { data: s } = await supabase
     .from("live_sessions")
-    .select("id, code, course_slug, class_num, status, current_slide, revealed")
+    .select("id, code, title, course_slug, class_num, status, current_slide, revealed")
     .eq("id", id)
     .maybeSingle();
 
@@ -54,11 +54,12 @@ export default async function LiveSessionPage({ params }: Props) {
     <SiteShell>
       <LiveStudent
         sessionId={s.id}
+        sessionTitle={s.title}
         initial={{ slide: s.current_slide, revealed: s.revealed, open: true }}
         total={clase.slides.length}
         quizzes={quizzes}
         userId={viewer.kind === "user" ? viewer.id : null}
-        courseTitle={course.title}
+        defaultName={viewer.kind === "user" ? (viewer.name ?? "") : ""}
         classTitle={`Clase ${clase.num}: ${clase.title}`}
         accent={clase.accent}
         courseHref={`/cursos/${course.slug}`}

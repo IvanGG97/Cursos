@@ -33,7 +33,7 @@ export default async function CourseTracking({ params }: Props) {
     supabase.from("evaluation_attempts").select("user_id, class_num, score, total, passed, answers").eq("course_slug", slug),
     supabase
       .from("live_sessions")
-      .select("id, code, class_num, status, created_at, closed_at, live_attendance(count)")
+      .select("id, code, title, class_num, status, created_at, closed_at, live_attendance(count), live_participants(count)")
       .eq("course_slug", slug)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -146,14 +146,13 @@ export default async function CourseTracking({ params }: Props) {
           <ul className="alist">
             {(sessions.data ?? []).map((s) => {
               const n = (s.live_attendance as { count: number }[] | null)?.[0]?.count ?? 0;
+              const players = (s.live_participants as { count: number }[] | null)?.[0]?.count ?? 0;
               return (
                 <li key={s.id}>
                   <Link href={`/admin/cursos/${slug}/vivo/${s.id}`} className="alist-main">
-                    <strong>
-                      Clase {s.class_num} · {formatDateTime(s.created_at)}
-                    </strong>
+                    <strong>{s.title ?? `Clase ${s.class_num}`}</strong>
                     <span className="muted">
-                      {n} presente(s) · código {s.code}
+                      Clase {s.class_num} · {formatDateTime(s.created_at)} · {players} jugador(es) · {n} presente(s) con cuenta
                     </span>
                   </Link>
                   <div className="alist-actions">

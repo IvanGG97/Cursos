@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import Link from "next/link";
 import type { Slide } from "@/content/types";
 import { SlideView } from "./SlideView";
 import { ThemeToggle } from "../ThemeToggle";
-import { JoinOverlay, useLivePresenter, type LiveConfig } from "./LivePresenter";
+import { JoinOverlay, RankingOverlay, StartDialog, useLivePresenter, type LiveConfig } from "./LivePresenter";
 import { saveProgress } from "@/app/cursos/[curso]/[clase]/actions";
 import "./deck.css";
 
@@ -53,9 +53,18 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
     return () => clearTimeout(t);
   }, [index, trackProgress]);
 
-  // Clase en vivo (solo admin).
-  const liveState = useLivePresenter(live, index + 1, revealed);
+  // Clase en vivo (solo admin): respuestas correctas de cada quiz, para el ranking.
+  const correctBySlide = useMemo(() => {
+    const m: Record<number, number[]> = {};
+    clase.slides.forEach((s, i) => {
+      if (s.type === "quiz") m[i + 1] = s.options.map((o, j) => (o.correct ? j : -1)).filter((j) => j >= 0);
+    });
+    return m;
+  }, [clase.slides]);
+  const liveState = useLivePresenter(live, index + 1, revealed, correctBySlide);
   const [showJoin, setShowJoin] = useState(false);
+  const [showStart, setShowStart] = useState(false);
+  const [showRank, setShowRank] = useState(false);
 
   const next = () => index < total - 1 && setIndex(index + 1);
   const prev = () => index > 0 && setIndex(index - 1);
@@ -64,6 +73,9 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Escribiendo en un campo (ej. el nombre de la partida): las teclas no mueven la clase.
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
       const k = e.key;
       let handled = true;
       if (k === "ArrowRight" || k === "PageDown" || k === " " || k === "Enter") next();
@@ -73,8 +85,17 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
       else if (k === "f" || k === "F") toggleFullscreen();
       else if (k === "r" || k === "R") setRevealed(true);
       else if (k === "i" || k === "I") back.current?.click();
-      else if ((k === "c" || k === "C") && liveState.session) setShowJoin((v) => !v);
-      else if (k === "Escape" && showJoin) setShowJoin(false);
+      else if ((k === "c" || k === "C") && liveState.session) {
+        setShowRank(false);
+        setShowJoin((v) => !v);
+      } else if ((k === "t" || k === "T") && liveState.session) {
+        setShowJoin(false);
+        setShowRank((v) => !v);
+      } else if (k === "Escape" && (showJoin || showRank || showStart)) {
+        setShowJoin(false);
+        setShowRank(false);
+        setShowStart(false);
+      }
       else handled = false;
       if (handled) e.preventDefault();
     };
@@ -107,7 +128,7 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
       total={total}
       revealed={revealed}
       onReveal={() => setRevealed(true)}
-      liveCounts={liveState.session ? (liveState.counts[index + 1] ?? { opts: [], n: 0 }) : undefined}
+      liveCounts={liveState.session ? liveState.counts(index + 1) : undefined}
     />
   );
 
@@ -145,15 +166,18 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
           (liveState.session ? (
             <>
               <button type="button" className="live-on" onClick={() => setShowJoin(true)} title="Mostrar código y QR (C)">
-                En vivo · {liveState.session.code} · {liveState.present}
+                En vivo · {liveState.session.code} · {liveState.players}
+              </button>
+              <button type="button" onClick={() => setShowRank(true)} title="Ranking (T)">
+                Ranking
               </button>
               <button type="button" onClick={liveState.end} disabled={liveState.busy} title="Terminar la clase en vivo">
                 Terminar
               </button>
             </>
           ) : (
-            <button type="button" onClick={liveState.start} disabled={liveState.busy} title="Abrir la clase en vivo: asistencia y quiz desde el celular">
-              {liveState.busy ? "Abriendo…" : "Iniciar en vivo"}
+            <button type="button" onClick={() => setShowStart(true)} disabled={liveState.busy} title="Abrir la clase en vivo: asistencia y quiz con ranking desde el celular">
+              Iniciar en vivo
             </button>
           ))}
         <ThemeToggle className="theme-toggle" />
@@ -161,13 +185,29 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
       </nav>
 
       {liveState.error && <div className="live-error" role="alert">{liveState.error}</div>}
+      {showStart && !liveState.session && (
+        <StartDialog
+          defaultTitle=""
+          busy={liveState.busy}
+          onCancel={() => setShowStart(false)}
+          onStart={async (t) => {
+            await liveState.start(t);
+            setShowStart(false);
+            setShowJoin(true);
+          }}
+        />
+      )}
       {showJoin && liveState.session && live && (
         <JoinOverlay
           code={liveState.session.code}
+          title={liveState.session.title}
           joinBase={live.joinBase}
-          present={liveState.present}
+          players={liveState.players}
           onClose={() => setShowJoin(false)}
         />
+      )}
+      {showRank && liveState.session && (
+        <RankingOverlay title={liveState.session.title} ranking={liveState.ranking} onClose={() => setShowRank(false)} />
       )}
     </div>
   );

@@ -62,3 +62,6 @@
 .live-msg.ok { color: var(--ok-text); }
 .live-msg.err { color: var(--bad-text); }
 .live-result .muted { font-size: 15px; line-height: 1.5; }
+.live-score-big { font-size: 20px; line-height: 1.4; margin: 12px 0; }
+.live-score-big strong { font-family: var(--f-mono); color: var(--accent-text); }
+.live-name-input { font-size: 22px !important; padding: 14px; }
