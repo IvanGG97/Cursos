@@ -205,6 +205,7 @@ h2.section {
 .card h2, .card h3 { font-family: var(--f-title); font-weight: 600; font-size: 26px; line-height: 1.15; margin: 0; }
 .card p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 1.5; }
 .card .actions { margin-top: auto; padding-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tag {
   font-family: var(--f-mono);
   font-size: 11px;

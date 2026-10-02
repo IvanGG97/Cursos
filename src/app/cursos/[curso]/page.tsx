@@ -46,7 +46,13 @@ export default async function CoursePage({ params }: Params) {
         </div>
       )}
 
-      {viewer.kind === "anon" && (
+      {state.isPublic && !admin && (
+        <div className="notice ok" style={{ marginBottom: 32 }}>
+          <strong>Curso libre.</strong> Podés ver las clases disponibles sin registrarte.
+        </div>
+      )}
+
+      {viewer.kind === "anon" && !state.isPublic && (
         <div className="notice" style={{ marginBottom: 32 }}>
           <p style={{ marginTop: 0 }}>
             <strong>Para ver las clases, ingresá con tu cuenta.</strong> Es un toque con Google, sin contraseñas nuevas.
@@ -55,7 +61,7 @@ export default async function CoursePage({ params }: Params) {
         </div>
       )}
 
-      {viewer.kind === "user" && viewer.blocked && (
+      {viewer.kind === "user" && viewer.blocked && !state.isPublic && (
         <div className="notice err" style={{ marginBottom: 32 }}>
           <strong>Tu cuenta está suspendida.</strong> Si creés que es un error, hablá con tu docente.
         </div>
@@ -65,7 +71,7 @@ export default async function CoursePage({ params }: Params) {
           <strong>Tu inscripción a este curso está suspendida.</strong> Hablá con tu docente para reactivarla.
         </div>
       )}
-      {viewer.kind === "user" && !viewer.blocked && !admin && state.enrollment === "none" && state.published && (
+      {viewer.kind === "user" && !viewer.blocked && !admin && state.enrollment === "none" && state.published && !state.isPublic && (
         <JoinForm />
       )}
 

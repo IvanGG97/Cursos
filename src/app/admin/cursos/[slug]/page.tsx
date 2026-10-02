@@ -12,8 +12,9 @@ import {
   removeEnrollment,
   setEnrollCode,
   setEnrollmentStatus,
+  releaseAllClasses,
+  setCourseMode,
   setGrant,
-  setPublished,
   setRelease,
 } from "../../actions";
 import { ActionForm, ConfirmSubmit, Submit } from "../../_ui";
@@ -26,6 +27,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const SOURCE: Record<string, string> = { code: "con código", admin: "por admin", invite: "por invitación" };
 
+const MODES = {
+  hidden: {
+    label: "Sin publicar",
+    short: "Solo admins e inscriptos",
+    tag: "Sin publicar",
+    help: "No aparece en el catálogo. Lo ven los admins y quienes ya estén inscriptos o tengan acceso individual.",
+  },
+  enrolled: {
+    label: "Publicado",
+    short: "Con cuenta e inscripción",
+    tag: "Publicado · con inscripción",
+    help: "Aparece en el catálogo. Para ver las clases hay que entrar con Google e inscribirse (código, invitación o admin).",
+  },
+  public: {
+    label: "Libre",
+    short: "Sin registrarse",
+    tag: "Libre · sin registro",
+    help: "Aparece en el catálogo y cualquiera ve las clases liberadas, sin cuenta ni código. Las clases ocultas siguen ocultas.",
+  },
+} as const;
+
 export default async function AdminCourse({ params, searchParams }: Props) {
   const { slug } = await params;
   const { q = "" } = await searchParams;
@@ -36,7 +58,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
   const { supabase } = ctx;
 
   const [row, codeRow, releases, enrollments, invites, grants] = await Promise.all([
-    supabase.from("courses").select("published").eq("slug", slug).maybeSingle(),
+    supabase.from("courses").select("*").eq("slug", slug).maybeSingle(),
     supabase.from("course_codes").select("code").eq("course_slug", slug).maybeSingle(),
     supabase.from("class_releases").select("class_num, visible, visible_from").eq("course_slug", slug),
     supabase
@@ -53,6 +75,11 @@ export default async function AdminCourse({ params, searchParams }: Props) {
   ]);
 
   const published = Boolean(row.data?.published);
+  const mode: "hidden" | "enrolled" | "public" = !published
+    ? "hidden"
+    : row.data?.access === "public"
+      ? "public"
+      : "enrolled";
   const code = codeRow.data?.code as string | undefined;
   const rel = new Map((releases.data ?? []).map((r) => [r.class_num as number, r]));
   const now = new Date();
@@ -77,7 +104,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
         <Link href="/admin/cursos" className="back">← Cursos</Link>
         <h1>{course.title}</h1>
         <div className="card-row">
-          <span className={`tag ${published ? "ok" : ""}`}>{published ? "Publicado" : "Sin publicar"}</span>
+          <span className={`tag ${published ? "ok" : ""}`}>{MODES[mode].tag}</span>
           <span className="tag">{activeCount} inscripciones activas</span>
           <Link href={`/cursos/${slug}`} className="btn btn-sm">Ver página del curso</Link>
         </div>
@@ -86,15 +113,23 @@ export default async function AdminCourse({ params, searchParams }: Props) {
       {/* ---------------- Publicación y código ---------------- */}
       <div className="admin-cols">
         <section className="panel">
-          <h2>Catálogo</h2>
-          <p className="muted">
-            {published
-              ? "El curso aparece en el catálogo y se pueden inscribir con el código."
-              : "El curso no aparece en el catálogo. Solo lo ven los admins y quienes tengan acceso individual o ya estén inscriptos."}
-          </p>
-          <ActionForm action={setPublished} fields={{ ...f, published: String(!published) }}>
-            <Submit variant={published ? "" : "primary"}>{published ? "Despublicar curso" : "Publicar curso"}</Submit>
-          </ActionForm>
+          <h2>Estado del curso</h2>
+          <p className="muted">{MODES[mode].help}</p>
+          <div className="mode-picker" role="group" aria-label="Estado del curso">
+            {(Object.keys(MODES) as (keyof typeof MODES)[]).map((m) => (
+              <ActionForm key={m} action={setCourseMode} fields={{ ...f, mode: m }} inline className="mode-option">
+                <button
+                  type="submit"
+                  className={`mode-btn${m === mode ? " active" : ""}`}
+                  disabled={m === mode}
+                  aria-pressed={m === mode}
+                >
+                  <strong>{MODES[m].label}</strong>
+                  <span>{MODES[m].short}</span>
+                </button>
+              </ActionForm>
+            ))}
+          </div>
         </section>
 
         <section className="panel">
@@ -135,7 +170,12 @@ export default async function AdminCourse({ params, searchParams }: Props) {
       </div>
 
       {/* ---------------- Clases ---------------- */}
-      <h2 className="section">Clases</h2>
+      <div className="section-head">
+        <h2 className="section">Clases</h2>
+        <ActionForm action={releaseAllClasses} fields={f} inline>
+          <ConfirmSubmit confirm="Sí, liberar todas">Liberar todas las clases</ConfirmSubmit>
+        </ActionForm>
+      </div>
       <div className="stack">
         {course.classes.map((clase) => {
           const r = rel.get(clase.num);

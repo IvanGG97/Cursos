@@ -12,7 +12,7 @@ export default async function AdminCourses() {
   const { supabase } = ctx;
 
   const [rows, codes, releases, enrollments, invites] = await Promise.all([
-    supabase.from("courses").select("slug, published"),
+    supabase.from("courses").select("*"),
     supabase.from("course_codes").select("course_slug, code"),
     supabase.from("class_releases").select("course_slug, class_num, visible, visible_from"),
     supabase.from("enrollments").select("course_slug, status"),
@@ -20,6 +20,7 @@ export default async function AdminCourses() {
   ]);
 
   const published = new Map((rows.data ?? []).map((r) => [r.slug as string, r.published as boolean]));
+  const isPublic = new Set((rows.data ?? []).filter((r) => r.access === "public").map((r) => r.slug as string));
   const code = new Map((codes.data ?? []).map((r) => [r.course_slug as string, r.code as string]));
   const now = new Date();
 
@@ -37,7 +38,9 @@ export default async function AdminCourses() {
         return (
           <article key={c.slug} className="card" style={{ "--accent": c.accent } as CSSProperties}>
             <div className="card-row">
-              <span className={`tag ${isPub ? "ok" : ""}`}>{isPub ? "Publicado" : "Sin publicar"}</span>
+              <span className={`tag ${isPub ? "ok" : ""}`}>
+                {!isPub ? "Sin publicar" : isPublic.has(c.slug) ? "Libre · sin registro" : "Publicado · con inscripción"}
+              </span>
               <span className="tag">{code.get(c.slug) ? `Código ${code.get(c.slug)}` : "Sin código"}</span>
             </div>
             <h2>{c.title}</h2>

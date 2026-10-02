@@ -2,10 +2,10 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { courses } from "@/content/registry";
-import { getVisibleCourseSlugs } from "@/lib/access";
+import { getPublicCourseSlugs, getVisibleCourseSlugs } from "@/lib/access";
 
 export default async function CatalogPage() {
-  const published = await getVisibleCourseSlugs();
+  const [published, open] = await Promise.all([getVisibleCourseSlugs(), getPublicCourseSlugs()]);
   const visible = courses.filter((c) => published === "all" || published.has(c.slug));
 
   return (
@@ -25,7 +25,10 @@ export default async function CatalogPage() {
             const adminView = published === "all";
             return (
               <article key={c.slug} className="card" style={{ "--accent": c.accent } as CSSProperties}>
-                <div className="kicker-sm">{c.classes.length} clases</div>
+                <div className="card-top">
+                  <span className="kicker-sm">{c.classes.length} clases</span>
+                  {open.has(c.slug) && <span className="tag ok">Libre · sin registro</span>}
+                </div>
                 <h2>{c.title}</h2>
                 <p>{c.tagline}</p>
                 <p className="muted" style={{ fontSize: 13 }}>{c.org}</p>

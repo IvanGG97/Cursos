@@ -57,6 +57,10 @@ export function randomCode(length = 8) {
 export const AUDIT_LABELS: Record<string, string> = {
   "course.publish": "Publicó el curso",
   "course.unpublish": "Despublicó el curso",
+  "course.mode.hidden": "Despublicó el curso",
+  "course.mode.enrolled": "Publicó el curso (con inscripción)",
+  "course.mode.public": "Liberó el curso (libre, sin registro)",
+  "class.release_all": "Liberó todas las clases",
   "course.code.set": "Cambió el código de inscripción",
   "course.code.remove": "Desactivó el código de inscripción",
   "class.release": "Cambió la liberación de una clase",

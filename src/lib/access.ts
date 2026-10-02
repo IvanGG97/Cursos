@@ -46,6 +46,8 @@ export type Release = { visible: boolean; visibleFrom: string | null };
 
 export type CourseState = {
   published: boolean;
+  /** Curso "Libre": las clases liberadas las ve cualquiera, sin cuenta ni inscripción. */
+  isPublic: boolean;
   enrollment: "none" | "active" | "suspended";
   /** Clases a las que este visitante tiene acceso individual (aunque estén ocultas). */
   grants: Set<number>;
@@ -55,13 +57,14 @@ export type CourseState = {
 export const getCourseState = cache(async (slug: string): Promise<CourseState> => {
   const viewer = await getViewer();
   if (viewer.kind === "local") {
-    return { published: true, enrollment: "active", grants: new Set(), releases: new Map() };
+    return { published: true, isPublic: false, enrollment: "active", grants: new Set(), releases: new Map() };
   }
 
   const supabase = await createClient();
   const isUser = viewer.kind === "user";
   const [course, releases, enrollment, grants] = await Promise.all([
-    supabase.from("courses").select("published").eq("slug", slug).maybeSingle(),
+    // "*" y no columnas explícitas: si la migración de `access` todavía no corrió, no rompe (queda "con inscripción").
+    supabase.from("courses").select("*").eq("slug", slug).maybeSingle(),
     supabase.from("class_releases").select("class_num, visible, visible_from").eq("course_slug", slug),
     isUser
       ? supabase.from("enrollments").select("status").eq("course_slug", slug).eq("user_id", viewer.id).maybeSingle()
@@ -71,8 +74,10 @@ export const getCourseState = cache(async (slug: string): Promise<CourseState> =
       : Promise.resolve({ data: [] as { class_num: number }[] }),
   ]);
 
+  const published = Boolean(course.data?.published);
   return {
-    published: Boolean(course.data?.published),
+    published,
+    isPublic: published && course.data?.access === "public",
     enrollment: enrollment.data ? (enrollment.data.status === "suspended" ? "suspended" : "active") : "none",
     grants: new Set((grants.data ?? []).map((g) => g.class_num as number)),
     releases: new Map(
@@ -102,6 +107,15 @@ export const getVisibleCourseSlugs = cache(async (): Promise<Set<string> | "all"
   return slugs;
 });
 
+/** Cursos en modo "Libre" (publicados y abiertos sin registro), para marcarlos en el catálogo. */
+export const getPublicCourseSlugs = cache(async (): Promise<Set<string>> => {
+  const viewer = await getViewer();
+  if (viewer.kind === "local") return new Set();
+  const supabase = await createClient();
+  const { data } = await supabase.from("courses").select("*").eq("published", true);
+  return new Set((data ?? []).filter((c) => c.access === "public").map((c) => c.slug as string));
+});
+
 export type ClassStatus =
   | { kind: "open"; preview: boolean } // preview = el admin la ve aunque los alumnos todavía no
   | { kind: "empty" } // todavía sin contenido
@@ -123,6 +137,17 @@ export function classStatus(viewer: Viewer, state: CourseState, clase: ClassDef)
 
   const released = isReleased(state, clase.num);
   if (canManage(viewer)) return { kind: "open", preview: !released };
+
+  // Curso libre: las clases liberadas las ve cualquiera, con o sin cuenta (incluso una cuenta
+  // suspendida: sin sesión la vería igual). Las ocultas siguen ocultas, salvo acceso individual.
+  if (state.isPublic) {
+    if (released) return { kind: "open", preview: false };
+    if (viewer.kind === "user" && !viewer.blocked && state.grants.has(clase.num)) return { kind: "open", preview: false };
+    const r = state.releases.get(clase.num);
+    if (r?.visible && r.visibleFrom) return { kind: "scheduled", from: r.visibleFrom };
+    return { kind: "hidden" };
+  }
+
   if (viewer.kind === "anon") return { kind: "login" };
   if (viewer.blocked) return { kind: "blocked" };
 

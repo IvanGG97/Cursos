@@ -55,13 +55,42 @@ async function ensureCourseRow(ctx: AdminCtx, slug: string) {
 // Cursos
 // ---------------------------------------------------------------------------
 
-export const setPublished = action(async (ctx, f) => {
+/** Modo del curso: hidden (sin publicar) · enrolled (publicado, con inscripción) · public (libre, sin registro). */
+export const setCourseMode = action(async (ctx, f) => {
   const course = courseFrom(f);
-  const published = str(f, "published") === "true";
+  const mode = str(f, "mode");
+  if (!["hidden", "enrolled", "public"].includes(mode)) throw new Error("Modo inválido.");
   await ensureCourseRow(ctx, course.slug);
-  check((await ctx.supabase.from("courses").update({ published }).eq("slug", course.slug)).error);
-  await audit(ctx, published ? "course.publish" : "course.unpublish", course.slug);
-  return published ? "Curso publicado: ya aparece en el catálogo." : "Curso despublicado.";
+  const patch =
+    mode === "hidden" ? { published: false } : { published: true, access: mode === "public" ? "public" : "enrolled" };
+  check((await ctx.supabase.from("courses").update(patch).eq("slug", course.slug)).error, {
+    PGRST204: "Falta correr la migración 20261002000000_course_access.sql en Supabase.",
+    "42703": "Falta correr la migración 20261002000000_course_access.sql en Supabase.",
+  });
+  await audit(ctx, `course.mode.${mode}`, course.slug);
+  return {
+    hidden: "Curso sin publicar: ya no aparece en el catálogo.",
+    enrolled: "Curso publicado: se ve en el catálogo y hace falta inscribirse.",
+    public: "Curso libre: cualquiera ve las clases liberadas, sin registrarse.",
+  }[mode]!;
+});
+
+/** Libera de una vez todas las clases que tienen contenido. */
+export const releaseAllClasses = action(async (ctx, f) => {
+  const course = courseFrom(f);
+  const ready = course.classes.filter((c) => c.slides.length > 0);
+  if (ready.length === 0) throw new Error("Este curso todavía no tiene clases con contenido.");
+  await ensureCourseRow(ctx, course.slug);
+  const now = new Date().toISOString();
+  check(
+    (
+      await ctx.supabase.from("class_releases").upsert(
+        ready.map((c) => ({ course_slug: course.slug, class_num: c.num, visible: true, visible_from: null, updated_at: now })),
+      )
+    ).error,
+  );
+  await audit(ctx, "class.release_all", course.slug, { classes: ready.map((c) => c.num) });
+  return `${ready.length} clase(s) liberada(s).`;
 });
 
 export const setEnrollCode = action(async (ctx, f) => {

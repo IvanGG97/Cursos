@@ -55,6 +55,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
 2. Correr las migraciones de `supabase/migrations/` **en orden**, cada una una sola vez: pegarla en **SQL Editor** y ejecutar (o `supabase db push` con la CLI).
    - `20261001000000_init.sql` — esquema base.
    - `20261001020000_admin_panel.sql` — panel de admin (invitaciones, accesos individuales, suspensiones, registro de actividad).
+   - `20261002000000_course_access.sql` — estado "Libre" de un curso (visible sin registrarse).
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).
@@ -81,7 +82,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
 | Sección | Qué se hace |
 |---|---|
 | **Resumen** | Números generales, últimos registros y actividad reciente. |
-| **Cursos** → curso | Publicar/despublicar · código de inscripción (escribirlo, generarlo al azar o desactivarlo) · por clase: **Liberar ahora**, **Ocultar** o **Programar** fecha y hora · inscriptos (buscar, suspender, reactivar, quitar) · **agregar personas pegando mails** (las que ya tienen cuenta quedan inscriptas; las otras quedan invitadas) · invitaciones pendientes · accesos individuales. |
+| **Cursos** → curso | Estado: **Sin publicar / Publicado (con inscripción) / Libre (sin registrarse)** · **Liberar todas las clases** · código de inscripción (escribirlo, generarlo al azar o desactivarlo) · por clase: **Liberar ahora**, **Ocultar** o **Programar** fecha y hora · inscriptos (buscar, suspender, reactivar, quitar) · **agregar personas pegando mails** (las que ya tienen cuenta quedan inscriptas; las otras quedan invitadas) · invitaciones pendientes · accesos individuales. |
 | **Personas** → ficha | Buscar y filtrar por rol/estado · en la ficha: **hacer/quitar admin**, **suspender/reactivar cuenta**, inscribir/suspender/quitar en cada curso y **dar acceso individual a una clase**, más el historial de acciones sobre esa persona. |
 | **Actividad** | Registro de todas las acciones de los admins. |
 
