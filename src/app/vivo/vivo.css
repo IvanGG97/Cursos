@@ -65,3 +65,8 @@
 .live-score-big { font-size: 20px; line-height: 1.4; margin: 12px 0; }
 .live-score-big strong { font-family: var(--f-mono); color: var(--accent-text); }
 .live-name-input { font-size: 22px !important; padding: 14px; }
+
+/* Diapositiva que se está proyectando (espejo). En pantallas anchas se ve más grande. */
+.live-wrap.wide { max-width: 1280px; }
+.live-mirror-wrap { display: flex; flex-direction: column; gap: 10px; }
+.live-mirror-note { margin: 0; }

@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import type { QuizOption } from "@/content/types";
+import type { QuizOption, Slide } from "@/content/types";
+import { SlideMirror } from "@/components/deck/SlideMirror";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { liveTopic, type LiveBroadcastState } from "@/lib/live-score";
 
 // Clase en vivo, lado alumno (estilo Kahoot). Sigue la diapositiva que proyecta el docente:
 // mensajes directos (instantáneos) + consulta a la base cada pocos segundos como respaldo.
+// En las preguntas, responde desde acá; en el resto, ve la misma diapositiva que el proyector.
 
 export type LiveQuiz = { kind: "vf" | "single" | "multi"; question: string; options: QuizOption[]; explanation?: string };
 
@@ -23,6 +25,11 @@ type Props = {
   classTitle: string;
   accent: string;
   courseHref: string;
+  /** Diapositivas de la clase: se muestra la que está proyectando el docente. */
+  slides: Slide[];
+  course: { title: string; org: string };
+  classNum: number;
+  classShortTitle: string;
 };
 
 const LETTERS = "ABCDEFGH";
@@ -141,12 +148,17 @@ export function LiveStudent(p: Props) {
     }
   }, [pid, name, join]);
 
+  // Nueva diapositiva: se limpia la selección y se vuelve arriba para verla desde el principio.
+  const firstSlide = useRef(true);
   useEffect(() => {
     setSelected([]);
     setError(undefined);
+    if (firstSlide.current) firstSlide.current = false;
+    else window.scrollTo({ top: 0 });
   }, [slide]);
 
   const quiz = p.quizzes[slide];
+  const current = p.slides[slide - 1];
   const mine = answered[slide];
   const me = board?.me[pid];
   const style = { "--accent": p.accent } as CSSProperties;
@@ -193,7 +205,7 @@ export function LiveStudent(p: Props) {
   if (!name) return <NameForm defaultName={p.defaultName} title={p.sessionTitle} classTitle={p.classTitle} style={style} onJoin={join} />;
 
   return (
-    <div className="live-wrap" style={style}>
+    <div className={`live-wrap${current && !quiz ? " wide" : ""}`} style={style}>
       <div className="live-head">
         <span className="kicker-sm">En vivo · {p.sessionTitle ?? p.classTitle}</span>
         <span className="live-pos">
@@ -202,13 +214,25 @@ export function LiveStudent(p: Props) {
       </div>
 
       {!quiz ? (
-        <div className="live-wait">
-          <p className="live-wait-big">Seguí la clase en la pantalla.</p>
-          <p className="muted">Cuando haya una pregunta, aparece acá. Cuanto más rápido respondas bien, más puntos sumás.</p>
-          <p className="live-pos">
-            Diapositiva {slide} de {p.total}
-          </p>
-        </div>
+        current ? (
+          <div className="live-mirror-wrap">
+            <SlideMirror
+              course={p.course}
+              clase={{ num: p.classNum, title: p.classShortTitle, accent: p.accent }}
+              slide={current}
+              index={slide - 1}
+              total={p.total}
+            />
+            <p className="live-pos live-mirror-note">
+              Diapositiva {slide} de {p.total} · se mueve sola con la clase. Cuando haya una pregunta, aparece acá para responder.
+            </p>
+          </div>
+        ) : (
+          <div className="live-wait">
+            <p className="live-wait-big">Seguí la clase en la pantalla.</p>
+            <p className="muted">Cuando haya una pregunta, aparece acá. Cuanto más rápido respondas bien, más puntos sumás.</p>
+          </div>
+        )
       ) : (
         <div className="live-quiz">
           <div className="kicker-sm">

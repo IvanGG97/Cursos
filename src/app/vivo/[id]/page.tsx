@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { getCourse } from "@/content/registry";
 import { getViewer } from "@/lib/access";
+import { getCourseMedia, withMedia } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
 import { LiveStudent, type LiveQuiz } from "./LiveStudent";
 import "../vivo.css";
@@ -42,9 +43,11 @@ export default async function LiveSessionPage({ params }: Props) {
   // Si entró directo al link con la sesión iniciada, igual queda registrada la asistencia.
   if (viewer.kind === "user") await supabase.rpc("join_live", { p_code: s.code });
 
-  // Solo las preguntas de la clase viajan al celular (indexadas por número de diapositiva).
+  // Las preguntas van aparte (se responden desde el celular, indexadas por número de diapositiva).
+  // El resto de las diapositivas viaja para mostrar en el celular la que se está proyectando.
+  const slides = withMedia(clase.slides, await getCourseMedia(course.slug));
   const quizzes: Record<number, LiveQuiz> = {};
-  clase.slides.forEach((sl, i) => {
+  slides.forEach((sl, i) => {
     if (sl.type === "quiz") {
       quizzes[i + 1] = { kind: sl.kind, question: sl.question, options: sl.options, explanation: sl.explanation };
     }
@@ -56,8 +59,12 @@ export default async function LiveSessionPage({ params }: Props) {
         sessionId={s.id}
         sessionTitle={s.title}
         initial={{ slide: s.current_slide, revealed: s.revealed, open: true }}
-        total={clase.slides.length}
+        total={slides.length}
         quizzes={quizzes}
+        slides={slides}
+        course={{ title: course.title, org: course.org }}
+        classNum={clase.num}
+        classShortTitle={clase.title}
         userId={viewer.kind === "user" ? viewer.id : null}
         defaultName={viewer.kind === "user" ? (viewer.name ?? "") : ""}
         classTitle={`Clase ${clase.num}: ${clase.title}`}

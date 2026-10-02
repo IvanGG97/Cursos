@@ -898,3 +898,15 @@
   font-size: 14px;
   min-height: 44px;
 }
+
+/* ---------- Espejo de la diapositiva en vivo (celular del alumno) ---------- */
+.mirror-box { width: 100%; }
+.deck.live-mirror { position: relative; inset: auto; border: 1px solid var(--line); }
+.deck.live-mirror.canvas { aspect-ratio: 16 / 9; overflow: hidden; }
+.deck.flow.live-mirror { min-height: 0; overflow: hidden; }
+.deck.flow.live-mirror .slide { min-height: 0; }
+.deck.flow.live-mirror .s { padding: 24px 16px 20px; }
+.deck.flow.live-mirror .slide-foot { margin: 0 16px; padding-bottom: 14px; }
+.deck.flow.live-mirror .slide-title .s,
+.deck.flow.live-mirror .slide-divider .s { padding-bottom: 28px; }
+.deck.flow.live-mirror .s-title { padding-left: 28px; }
