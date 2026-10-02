@@ -33,7 +33,7 @@ export const iaMiNuevoAsistente: Course = {
     {
       num: 2,
       title: "Crear, entender y comunicarte",
-      summary: "Ideas, textos y mensajes — también para tu changa",
+      summary: "Ideas, textos y mensajes — también para tu trabajo",
       accent: "#FF6A3D",
       blocks: [
         { name: "Apertura: repaso y presentación del día", min: 15 },

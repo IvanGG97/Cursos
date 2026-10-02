@@ -109,7 +109,7 @@ export const clase1Slides: Slide[] = [
     kicker: "Concepto 3",
     title: "Chat: una carpeta por tema",
     body: "Un chat es una conversación independiente. Lo que hablás en uno no se mezcla con otro (salvo que vos se lo cuentes).",
-    analogy: "Pensalo como una carpeta: una carpeta para \"presupuesto para las proximas vacaciones\" y otra distinta para \"trabajo\" — no las vas a mezclar en una misma.",
+    analogy: "Pensalo como una carpeta: una carpeta para \"presupuesto para las próximas vacaciones\" y otra distinta para \"trabajo\" — no las vas a mezclar en una misma.",
   },
   {
     type: "concept",
