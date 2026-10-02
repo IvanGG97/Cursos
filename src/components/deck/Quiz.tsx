@@ -37,6 +37,7 @@ export function Quiz({ slide, revealed, onReveal, liveCounts }: Props) {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (document.body.dataset.lightbox) return;
       const idx = Number(e.key) - 1;
       if (idx >= 0 && idx < slide.options.length) toggle(idx);
     };

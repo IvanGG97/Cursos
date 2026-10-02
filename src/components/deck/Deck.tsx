@@ -76,6 +76,8 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
       // Escribiendo en un campo (ej. el nombre de la partida): las teclas no mueven la clase.
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // Galería abierta: las teclas son de la galería.
+      if (document.body.dataset.lightbox) return;
       const k = e.key;
       let handled = true;
       if (k === "ArrowRight" || k === "PageDown" || k === " " || k === "Enter") next();

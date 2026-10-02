@@ -14,6 +14,11 @@ export type Media = {
   src?: string;
   /** Tipo de archivo (lo completa el panel; "video/mp4" se muestra como video en bucle, sin sonido). */
   mime?: string;
+  /**
+   * Galería (la completa el panel cuando hay más de una imagen en el lugar). La primera es la
+   * portada (= `src`). En la diapositiva se ve como un abanico y se abre en pantalla completa.
+   */
+  gallery?: { src: string; mime?: string }[];
 };
 
 export type Row = { h: string; d: string };

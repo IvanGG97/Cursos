@@ -4,37 +4,60 @@ import type { Course, Media, Slide } from "@/content/types";
 import { SUPABASE_URL, isLocalMode } from "./supabase/config";
 import { createClient } from "./supabase/server";
 
-// Archivos subidos desde el panel para los lugares de imagen de las diapositivas.
-// Lo subido tiene prioridad sobre el archivo por defecto del repo (Media.src).
+// Imágenes, GIFs y videos cargados desde el panel para los lugares de imagen de las diapositivas.
+// Cada lugar puede tener varias (galería), en orden; la primera es la portada.
+// Lo cargado tiene prioridad sobre el archivo por defecto del repo (Media.src).
 
 export const MEDIA_BUCKET = "media";
+export const MAX_GALLERY = 12;
 
 /** `path` es una ruta dentro del bucket, o un enlace externo (https://...) cargado desde el panel. */
 export const isExternal = (path: string) => /^https:\/\//i.test(path);
 export const publicMediaUrl = (path: string) =>
   isExternal(path) ? path : `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
 
-export type Uploaded = { url: string; mime: string; path: string; updatedAt: string; external: boolean };
+export type Uploaded = { id: string; url: string; mime: string; path: string; position: number; external: boolean };
 
-export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Uploaded>> => {
+/** Por lugar (media_id): sus imágenes en orden. */
+export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Uploaded[]>> => {
   if (isLocalMode()) return new Map();
   const supabase = await createClient();
-  const { data } = await supabase.from("slide_media").select("media_id, path, mime, updated_at").eq("course_slug", slug);
-  return new Map(
-    (data ?? []).map((r) => [
-      r.media_id as string,
-      { url: publicMediaUrl(r.path), mime: r.mime, path: r.path, updatedAt: r.updated_at, external: isExternal(r.path) },
-    ]),
-  );
+  // "*": si la migración de galerías todavía no corrió (sin id/position), sigue funcionando.
+  const { data } = await supabase.from("slide_media").select("*").eq("course_slug", slug);
+  const map = new Map<string, Uploaded[]>();
+  for (const r of data ?? []) {
+    const list = map.get(r.media_id) ?? [];
+    list.push({
+      id: (r.id as string | undefined) ?? r.path,
+      url: publicMediaUrl(r.path),
+      mime: r.mime,
+      path: r.path,
+      position: (r.position as number | undefined) ?? 0,
+      external: isExternal(r.path),
+    });
+    map.set(r.media_id, list);
+  }
+  for (const list of map.values()) list.sort((a, b) => a.position - b.position);
+  return map;
 });
 
-/** Reemplaza el `src` de cada lugar por el archivo subido (si hay). */
-export function withMedia(slides: Slide[], uploaded: Map<string, Uploaded>): Slide[] {
+/** Aplica lo cargado: portada en `src` y, si hay más de una, la galería completa. */
+export function withMedia(slides: Slide[], uploaded: Map<string, Uploaded[]>): Slide[] {
   if (uploaded.size === 0) return slides;
   return slides.map((s) => {
     if (!("media" in s) || !s.media) return s;
-    const u = uploaded.get(s.media.id);
-    return u ? { ...s, media: { ...s.media, src: u.url, mime: u.mime } } : s;
+    const items = uploaded.get(s.media.id);
+    if (!items?.length) return s;
+    const [first] = items;
+    return {
+      ...s,
+      media: {
+        ...s.media,
+        src: first.url,
+        mime: first.mime,
+        gallery: items.length > 1 ? items.map((i) => ({ src: i.url, mime: i.mime })) : undefined,
+      },
+    };
   });
 }
 

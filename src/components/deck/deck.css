@@ -688,6 +688,96 @@
 .join-present { font-family: var(--f-mono); color: var(--muted); font-size: clamp(14px, 1.4vw, 22px); margin: 0; }
 .join-qr { width: clamp(220px, 28vw, 440px); background: #fff; padding: 12px; }
 .join-qr svg { display: block; width: 100%; height: auto; }
+/* =====================================================================
+   GALERÍA: abanico en la diapositiva + pantalla completa
+   ===================================================================== */
+.media.fan { border: 0; background: transparent; overflow: visible; }
+.fan-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.fan-card {
+  position: absolute;
+  inset: 6% 8%;
+  border: calc(var(--u) * 2) solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+  box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 30) rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease;
+}
+.fan-card img,
+.fan-card video { width: 100%; height: 100%; object-fit: contain; display: block; }
+.fan-card.back2 { transform: rotate(9deg) translate(6%, 2%); opacity: 0.85; }
+.fan-card.back1 { transform: rotate(-7deg) translate(-5%, 1%); opacity: 0.92; }
+.fan-card.front { border-color: var(--accent); }
+.fan-btn:hover .fan-card.back2 { transform: rotate(13deg) translate(9%, 3%); }
+.fan-btn:hover .fan-card.back1 { transform: rotate(-11deg) translate(-8%, 2%); }
+.fan-badge {
+  position: absolute;
+  right: 4%;
+  bottom: 0;
+  padding: calc(var(--u) * 8) calc(var(--u) * 16);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: calc(var(--u) * 24);
+}
+.deck.flow .media.fan { aspect-ratio: 4 / 3; height: auto; margin: 8px 6px 16px; }
+.deck.flow .fan-badge { font-size: 13px; padding: 6px 10px; }
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: rgba(5, 7, 10, 0.94);
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.lb-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.lb-stage img,
+.lb-stage video { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.lb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding-top: 12px;
+  color: #edf1f7;
+}
+.lb-nav,
+.lb-close {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid rgba(237, 241, 247, 0.35);
+  color: #edf1f7;
+  font-family: var(--f-mono);
+  font-size: 16px;
+}
+.lb-nav:hover,
+.lb-close:hover { border-color: var(--accent); }
+.lb-count { font-family: var(--f-mono); font-size: 14px; color: rgba(237, 241, 247, 0.75); }
+.lb-dots { display: flex; gap: 8px; }
+.lb-dots button {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(237, 241, 247, 0.6);
+  background: transparent;
+}
+.lb-dots button.on { background: var(--accent); border-color: var(--accent); }
+
 /* Diálogo para nombrar la partida */
 .start-card {
   width: min(560px, 100%);

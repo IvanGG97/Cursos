@@ -3,9 +3,10 @@
 import { useRef, useState, type ClipboardEvent, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/client";
-import { attachMedia, attachMediaUrl, detachMedia } from "@/app/admin/media-actions";
+import { attachMedia, attachMediaUrl, detachMedia, moveMedia } from "@/app/admin/media-actions";
 
 const MAX_BYTES = 15 * 1024 * 1024;
+const MAX_ITEMS = 12;
 const TYPES: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -16,13 +17,15 @@ const TYPES: Record<string, string> = {
   "video/webm": "webm",
 };
 
+export type GalleryItem = { id: string; url: string; mime: string; external: boolean };
+
 type Props = {
   slug: string;
   mediaId: string;
   caption: string;
-  /** Archivo subido o enlace cargado desde el panel (si hay). */
-  uploaded: { url: string; mime: string; external: boolean } | null;
-  /** Archivo por defecto del repo (si hay). */
+  /** Imágenes cargadas desde el panel, en orden (la primera es la portada). */
+  items: GalleryItem[];
+  /** Archivo por defecto del repo (se usa mientras no haya nada cargado). */
   fallback?: string;
 };
 
@@ -90,50 +93,56 @@ function probe(url: string): Promise<string | null> {
 
 // ---------------------------------------------------------------------------
 
-export function MediaUploader({ slug, mediaId, caption, uploaded, fallback }: Props) {
+export function MediaUploader({ slug, mediaId, caption, items, fallback }: Props) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState<"" | "up" | "rm" | "link">("");
+  const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState<{ ok?: string; error?: string }>({});
   const [over, setOver] = useState(false);
   const [link, setLink] = useState("");
+  const full = items.length >= MAX_ITEMS;
 
-  const shown = uploaded?.url ?? fallback;
-  const isVideo = uploaded?.mime.startsWith("video/") ?? false;
-
-  const upload = async (file: File | undefined | null) => {
-    if (!file) return;
-    const ext = TYPES[file.type];
-    if (!ext) return setMsg({ error: "Formato no admitido. Usá PNG, JPG, WEBP, GIF, SVG o un video MP4/WEBM." });
-    if (file.size > MAX_BYTES) return setMsg({ error: "El archivo pesa más de 15 MB. Si es un GIF, probá grabarlo como video MP4." });
-
-    setBusy("up");
-    setMsg({});
-    const path = `${slug}/${mediaId}-${Date.now()}.${ext}`;
-    const { error } = await getBrowserClient()
-      .storage.from("media")
-      .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
-    if (error) {
-      setBusy("");
-      return setMsg({ error: `No se pudo subir: ${error.message}` });
-    }
-    const res = await attachMedia(slug, mediaId, path, file.type);
+  const done = (res: { error?: string }, ok: string) => {
     setBusy("");
     if (res.error) return setMsg({ error: res.error });
-    const heavyGif = file.type === "image/gif" && file.size > 4 * 1024 * 1024;
-    setMsg({ ok: heavyGif ? "Listo. Es un GIF pesado: en el celular puede tardar; un video MP4 pesa mucho menos." : "Listo, ya se ve en la clase." });
+    setMsg({ ok });
     router.refresh();
+  };
+
+  /** Sube uno o varios archivos, en orden. */
+  const upload = async (files: File[]) => {
+    const list = files.slice(0, MAX_ITEMS - items.length);
+    if (files.length && !list.length) return setMsg({ error: `Máximo ${MAX_ITEMS} imágenes por lugar.` });
+    for (const [n, file] of list.entries()) {
+      const ext = TYPES[file.type];
+      if (!ext) return setMsg({ error: `“${file.name}”: formato no admitido. Usá PNG, JPG, WEBP, GIF, SVG o un video MP4/WEBM.` });
+      if (file.size > MAX_BYTES) return setMsg({ error: `“${file.name}” pesa más de 15 MB. Si es un GIF, probá grabarlo como video MP4.` });
+      setBusy(list.length > 1 ? `Subiendo ${n + 1} de ${list.length}…` : "Subiendo…");
+      setMsg({});
+      const path = `${slug}/${mediaId}-${Date.now()}-${n}.${ext}`;
+      const { error } = await getBrowserClient()
+        .storage.from("media")
+        .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
+      if (error) {
+        setBusy("");
+        return setMsg({ error: `No se pudo subir “${file.name}”: ${error.message}` });
+      }
+      const res = await attachMedia(slug, mediaId, path, file.type);
+      if (res.error) return done(res, "");
+    }
+    done({}, list.length > 1 ? `Listo: ${list.length} agregadas a la galería.` : "Listo, ya se ve en la clase.");
   };
 
   const applyLink = async (raw: string) => {
     const value = raw.trim();
     if (!value) return;
+    if (full) return setMsg({ error: `Máximo ${MAX_ITEMS} imágenes por lugar.` });
     if (!/^https:\/\//i.test(value)) return setMsg({ error: "El enlace tiene que empezar con https://" });
     const warn = pageWarning(value);
     if (warn) return setMsg({ error: warn });
 
     const url = directLink(value);
-    setBusy("link");
+    setBusy("Probando el enlace…");
     setMsg({});
     const mime = await probe(url);
     if (!mime) {
@@ -144,37 +153,35 @@ export function MediaUploader({ slug, mediaId, caption, uploaded, fallback }: Pr
       });
     }
     const res = await attachMediaUrl(slug, mediaId, url, mime);
-    setBusy("");
-    if (res.error) return setMsg({ error: res.error });
-    setLink("");
-    setMsg({ ok: "Listo, ya se ve en la clase. Ojo: si el sitio de origen borra o cambia la imagen, deja de verse." });
-    router.refresh();
+    if (!res.error) setLink("");
+    done(res, "Listo. Ojo: si el sitio de origen borra o cambia la imagen, deja de verse.");
   };
 
-  const remove = async () => {
-    setBusy("rm");
+  const remove = async (id: string) => {
+    setBusy("Quitando…");
     setMsg({});
-    const res = await detachMedia(slug, mediaId);
-    setBusy("");
-    if (res.error) return setMsg({ error: res.error });
-    setMsg({ ok: fallback ? "Quitado: vuelve la imagen por defecto." : "Quitado." });
-    router.refresh();
+    done(await detachMedia(slug, mediaId, id), "Quitada.");
+  };
+  const move = async (id: string, to: "up" | "down" | "first") => {
+    setBusy("Ordenando…");
+    setMsg({});
+    done(await moveMedia(slug, mediaId, id, to), to === "first" ? "Ahora es la portada." : "Orden guardado.");
   };
 
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) return upload(file);
+    const files = Array.from(e.dataTransfer.files ?? []);
+    if (files.length) return upload(files);
     // Arrastrar una imagen desde otra página trae su enlace.
     const url = e.dataTransfer.getData("text/uri-list") || e.dataTransfer.getData("text/plain");
     if (url) applyLink(url);
   };
   const onPaste = (e: ClipboardEvent) => {
-    const file = Array.from(e.clipboardData.files)[0];
-    if (file) {
+    const files = Array.from(e.clipboardData.files);
+    if (files.length) {
       e.preventDefault();
-      return upload(file);
+      return upload(files);
     }
     const text = e.clipboardData.getData("text/plain").trim();
     if (/^https?:\/\//i.test(text)) {
@@ -186,86 +193,104 @@ export function MediaUploader({ slug, mediaId, caption, uploaded, fallback }: Pr
 
   return (
     <div className="uploader">
-      <div
-        className={`drop${over ? " over" : ""}${shown ? " has" : ""}`}
-        role="button"
-        tabIndex={0}
-        aria-label={`Subir archivo: ${caption}`}
-        onClick={() => input.current?.click()}
-        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && input.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setOver(true);
-        }}
-        onDragLeave={() => setOver(false)}
-        onDrop={onDrop}
-        onPaste={onPaste}
-      >
-        {shown ? (
-          isVideo ? (
-            <video src={shown} autoPlay loop muted playsInline />
-          ) : (
-            <img src={shown} alt={caption} referrerPolicy="no-referrer" />
-          )
-        ) : (
+      {/* Galería actual */}
+      {items.length > 0 ? (
+        <ol className="gal-list">
+          {items.map((it, i) => (
+            <li key={it.id} className={i === 0 ? "cover" : ""}>
+              <div className="gal-thumb">
+                {it.mime.startsWith("video/") ? (
+                  <video src={it.url} muted playsInline preload="metadata" />
+                ) : (
+                  <img src={it.url} alt={`${caption} (${i + 1})`} referrerPolicy="no-referrer" />
+                )}
+                <span className="gal-n">{i === 0 ? "Portada" : i + 1}</span>
+                {it.external && <span className="gal-link">enlace</span>}
+              </div>
+              <div className="gal-actions">
+                <button type="button" onClick={() => move(it.id, "up")} disabled={!!busy || i === 0} aria-label="Mover antes" title="Mover antes">←</button>
+                <button type="button" onClick={() => move(it.id, "down")} disabled={!!busy || i === items.length - 1} aria-label="Mover después" title="Mover después">→</button>
+                {i > 0 && (
+                  <button type="button" onClick={() => move(it.id, "first")} disabled={!!busy} title="Usar como portada">Portada</button>
+                )}
+                <button type="button" onClick={() => remove(it.id)} disabled={!!busy} title="Quitar de la galería">Quitar</button>
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : fallback ? (
+        <div className="gal-fallback">
+          <img src={fallback} alt={caption} />
+          <span className="hint">Imagen por defecto. Lo que agregues la reemplaza.</span>
+        </div>
+      ) : null}
+
+      {/* Agregar */}
+      {!full && (
+        <div
+          className={`drop add${over ? " over" : ""}`}
+          role="button"
+          tabIndex={0}
+          aria-label={`Agregar imágenes: ${caption}`}
+          onClick={() => input.current?.click()}
+          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && input.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setOver(true);
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={onDrop}
+          onPaste={onPaste}
+        >
           <span className="drop-empty">
-            <strong>Tocá para elegir un archivo</strong>
-            <span>o arrastralo acá · o pegá un archivo o un enlace (Ctrl+V)</span>
+            <strong>{items.length ? "+ Agregar más imágenes" : "Tocá para elegir archivos"}</strong>
+            <span>podés elegir varios · arrastrarlos acá · o pegar un archivo o un enlace (Ctrl+V)</span>
           </span>
-        )}
-        {busy === "up" && <span className="drop-busy">Subiendo…</span>}
-        {busy === "link" && <span className="drop-busy">Probando el enlace…</span>}
-      </div>
+          {busy && <span className="drop-busy">{busy}</span>}
+        </div>
+      )}
       <input
         ref={input}
         type="file"
+        multiple
         accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,video/mp4,video/webm"
         hidden
         onChange={(e) => {
-          upload(e.target.files?.[0]);
+          upload(Array.from(e.target.files ?? []));
           e.target.value = "";
         }}
       />
 
-      <form
-        className="link-row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          applyLink(link);
-        }}
-      >
-        <input
-          type="url"
-          inputMode="url"
-          className="input"
-          placeholder="o pegá un enlace: https://…/imagen.gif"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          aria-label="Enlace a una imagen, GIF o video"
-        />
-        <button type="submit" className="btn btn-sm" disabled={busy !== "" || !link.trim()}>
-          {busy === "link" ? "Probando…" : "Usar enlace"}
-        </button>
-      </form>
-
-      <div className="btn-row">
-        <button type="button" className="btn btn-sm btn-primary" onClick={() => input.current?.click()} disabled={busy !== ""}>
-          {shown ? "Reemplazar con archivo" : "Subir archivo"}
-        </button>
-        {uploaded && (
-          <button type="button" className="btn btn-sm" onClick={remove} disabled={busy !== ""}>
-            {busy === "rm" ? "Quitando…" : "Quitar"}
+      {!full && (
+        <form
+          className="link-row"
+          onSubmit={(e) => {
+            e.preventDefault();
+            applyLink(link);
+          }}
+        >
+          <input
+            type="url"
+            inputMode="url"
+            className="input"
+            placeholder="o pegá un enlace: https://…/imagen.gif"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            aria-label="Enlace a una imagen, GIF o video"
+          />
+          <button type="submit" className="btn btn-sm" disabled={!!busy || !link.trim()}>
+            Agregar enlace
           </button>
-        )}
-        <span className="hint" style={{ margin: 0 }}>
-          {uploaded ? (uploaded.external ? "Enlace externo" : "Subida desde el panel") : fallback ? "Imagen por defecto" : "Sin archivo"}
-        </span>
-      </div>
-      {uploaded?.external && (
-        <p className="hint link-src" title={uploaded.url}>
-          {uploaded.url}
-        </p>
+        </form>
       )}
+
+      <p className="hint">
+        {items.length === 0
+          ? "Una imagen se ve sola; con dos o más, en la diapositiva aparece un abanico que se abre como galería."
+          : items.length === 1
+            ? "Agregá otra y en la diapositiva se verá como abanico (galería)."
+            : `${items.length} en la galería (máximo ${MAX_ITEMS}). En la diapositiva se ve como abanico.`}
+      </p>
       {(msg.ok || msg.error) && <p className={`aform-msg ${msg.error ? "err" : "ok"}`}>{msg.error ?? msg.ok}</p>}
     </div>
   );

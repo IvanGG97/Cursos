@@ -21,7 +21,7 @@ export default async function CourseMedia({ params }: Props) {
 
   const slots = mediaSlots(course);
   const uploaded = await getCourseMedia(slug);
-  const missing = slots.filter((s) => !uploaded.has(s.media.id) && !s.media.src).length;
+  const missing = slots.filter((s) => !uploaded.get(s.media.id)?.length && !s.media.src).length;
 
   return (
     <div style={{ "--accent": course.accent } as CSSProperties}>
@@ -36,8 +36,9 @@ export default async function CourseMedia({ params }: Props) {
         <p className="muted">
           {slots.length} lugar(es) · {missing} pendiente(s). Subí capturas, GIFs o videos cortos (MP4, en bucle y sin sonido:
           pesan mucho menos que un GIF), o pegá un <strong>enlace</strong> directo a una imagen, GIF o video (por ejemplo, de
-          Giphy). Se ven al instante en la clase, en el proyector y en los celulares. Máximo 15 MB por archivo. Para lo
-          importante conviene subir el archivo: un enlace deja de verse si el sitio de origen lo borra.
+          Giphy). Cada lugar admite <strong>varias imágenes</strong>: con dos o más, en la diapositiva se ven como un abanico
+          que se abre como galería. Máximo 15 MB por archivo. Para lo importante conviene subir el archivo: un enlace deja de
+          verse si el sitio de origen lo borra.
         </p>
       </section>
 
@@ -59,7 +60,7 @@ export default async function CourseMedia({ params }: Props) {
                   slug={slug}
                   mediaId={s.media.id}
                   caption={s.media.caption}
-                  uploaded={up ? { url: up.url, mime: up.mime, external: up.external } : null}
+                  items={(up ?? []).map((u) => ({ id: u.id, url: u.url, mime: u.mime, external: u.external }))}
                   fallback={s.media.src}
                 />
                 <Link href={`/cursos/${slug}/${classSlug(clase)}#${s.slide}`} className="btn btn-sm" style={{ marginTop: 10 }}>

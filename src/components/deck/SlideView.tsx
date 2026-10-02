@@ -1,5 +1,6 @@
 import type { Media, Slide } from "@/content/types";
 import { Quiz } from "./Quiz";
+import { MediaFan } from "./Gallery";
 
 type CourseInfo = { title: string; org: string };
 type ClaseInfo = { num: number; title: string };
@@ -219,6 +220,8 @@ function renderBody(
 }
 
 function MediaBox({ media }: { media: Media }) {
+  // Varias imágenes en el mismo lugar: abanico que se abre como galería.
+  if (media.gallery && media.gallery.length > 1) return <MediaFan media={media} />;
   if (media.src) {
     const isVideo = media.mime?.startsWith("video/") || /\.(mp4|webm)$/i.test(media.src);
     return (
