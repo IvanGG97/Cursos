@@ -19,8 +19,41 @@
   --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
 
   --accent: #22d3ee;
+
+  /* Colores usados como TEXTO (en modo claro se oscurecen para tener contraste sobre blanco) */
+  --ok-text: var(--ok);
+  --bad-text: var(--bad);
+  --warn-text: #f5b941;
+  /* Texto sobre fondos de color vivo (botón primario, divisores, marcas de quiz): siempre oscuro */
+  --on-accent: #0b0f14;
+  /* Fondo alrededor del lienzo de diapositivas */
+  --letterbox: #05070a;
   color-scheme: dark;
 }
+
+/* --accent cambia por curso/clase (style inline): el color de texto derivado se recalcula
+   en cada elemento, no solo en la raíz. */
+* { --accent-text: var(--accent); }
+
+/* =====================================================================
+   MODO CLARO — misma identidad (tipografías, líneas finas, acentos sólidos),
+   con contraste alto sobre fondo claro. Se activa con <html data-theme="light">.
+   ===================================================================== */
+[data-theme="light"] {
+  --bg: #f4f6f9;
+  --panel: #ffffff;
+  --line: #d3d9e3;
+  --text: #0b0f14;
+  --text-2: #2c3542;
+  --muted: #5b6577;
+  --ok-text: #3b7a07;
+  --bad-text: #c4183a;
+  --warn-text: #8a5a00;
+  --letterbox: #dfe3ea;
+  color-scheme: light;
+}
+[data-theme="light"] * { --accent-text: color-mix(in srgb, var(--accent) 55%, #000); }
+[data-theme="light"] .btn-google { border-color: var(--line); }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
@@ -50,7 +83,7 @@ kbd {
   font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .mono { font-family: var(--f-mono); }
 .muted { color: var(--muted); }
@@ -125,12 +158,14 @@ h2.section {
   text-decoration: none;
   white-space: nowrap;
 }
-.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-.btn-primary:hover:not(:disabled) { color: var(--bg); filter: brightness(1.1); }
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-text); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn-primary:hover:not(:disabled) { color: var(--on-accent); filter: brightness(1.1); }
 .btn:disabled { opacity: 0.45; }
 .btn-sm { padding: 6px 10px; font-size: 12px; }
 .btn-block { width: 100%; justify-content: center; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; }
+.btn.theme-toggle { padding: 6px 9px; }
 .btn-google {
   background: #fff;
   color: #1f1f1f;
@@ -166,7 +201,7 @@ h2.section {
 .notice.err { border-color: var(--bad); }
 .dev-banner {
   background: #f5b941;
-  color: var(--bg);
+  color: var(--on-accent);
   font-family: var(--f-mono);
   font-size: 12px;
   padding: 6px 16px;
@@ -216,8 +251,8 @@ h2.section {
   color: var(--muted);
   white-space: nowrap;
 }
-.tag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
-.tag.warn { color: #f5b941; border-color: color-mix(in srgb, #f5b941 50%, transparent); }
+.tag.ok { color: var(--ok-text); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+.tag.warn { color: var(--warn-text); border-color: color-mix(in srgb, #f5b941 50%, transparent); }
 
 /* ---------- Lista de clases (página del curso) ---------- */
 .classes { display: flex; flex-direction: column; gap: 14px; }

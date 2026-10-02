@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type TouchEvent } from
 import Link from "next/link";
 import type { Slide } from "@/content/types";
 import { SlideView } from "./SlideView";
+import { ThemeToggle } from "../ThemeToggle";
 import "./deck.css";
 
 const W = 1920;
@@ -118,6 +119,7 @@ export function Deck({ course, clase, backHref, pdfHref }: DeckProps) {
         </span>
         <button type="button" className="nav-btn" onClick={next} disabled={index === total - 1} title="Siguiente (→)" aria-label="Siguiente">→</button>
         {pdfHref && <a href={pdfHref} title="Descargar resumen en PDF">PDF</a>}
+        <ThemeToggle className="theme-toggle" />
         <button type="button" className="fs" onClick={toggleFullscreen} title="Pantalla completa (F)">Pantalla completa</button>
       </nav>
     </div>

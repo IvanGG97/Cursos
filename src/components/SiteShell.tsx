@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { canManage, getViewer } from "@/lib/access";
 import { SITE_NAME } from "@/lib/site";
+import { ThemeToggle } from "./ThemeToggle";
 
 /** Cabecera + pie de las páginas del sitio (no se usa en el visor de diapositivas). */
 export async function SiteShell({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="container">
           <Link href="/" className="brand">{SITE_NAME}</Link>
           <nav className="nav">
+            <ThemeToggle />
             {canManage(viewer) && <Link href="/admin" className="btn btn-sm">Admin</Link>}
             {viewer.kind === "user" && (
               <>

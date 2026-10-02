@@ -3,6 +3,10 @@
 /** Nombre provisorio de la plataforma (pendiente de definir). */
 export const SITE_NAME = "Cursos · Iván Gutiérrez";
 
+/** Modo de color. El oscuro es el de la identidad y el valor por defecto. */
+export type Theme = "dark" | "light";
+export const THEME_COOKIE = "theme";
+
 /** Zona horaria en la que se cargan y muestran las fechas de liberación de clases. */
 export const TIME_ZONE = "America/Argentina/Salta";
 /** Argentina no tiene horario de verano: el offset es fijo. */

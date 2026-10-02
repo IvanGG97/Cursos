@@ -46,7 +46,7 @@ export function LoginForm({ next, google, googleClientId }: Props) {
       <button type="submit" className={`btn btn-block ${google ? "" : "btn-primary"}`} disabled={pending}>
         {pending ? "Enviando…" : "Mandame el link"}
       </button>
-      {state.error && <p style={{ color: "var(--bad)" }}>{state.error}</p>}
+      {state.error && <p style={{ color: "var(--bad-text)" }}>{state.error}</p>}
     </form>
   );
 

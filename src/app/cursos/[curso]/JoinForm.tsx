@@ -25,7 +25,7 @@ export function JoinForm() {
           {pending ? "Verificando…" : "Inscribirme"}
         </button>
       </div>
-      {state.error && <p style={{ color: "var(--bad)", marginBottom: 0 }}>{state.error}</p>}
+      {state.error && <p style={{ color: "var(--bad-text)", marginBottom: 0 }}>{state.error}</p>}
     </form>
   );
 }

@@ -8,7 +8,7 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #05070a;
+  background: var(--letterbox);
 }
 .deck.idle { cursor: none; }
 
@@ -38,7 +38,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px;
-  background: rgba(18, 24, 38, 0.92);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
   border: 1px solid var(--line);
   font-family: var(--f-mono);
   font-size: 13px;
@@ -54,7 +54,7 @@
   text-decoration: none;
 }
 .controls button:hover:not(:disabled),
-.controls a:hover { border-color: var(--accent); color: var(--accent); }
+.controls a:hover { border-color: var(--accent); color: var(--accent-text); }
 .controls button:disabled { opacity: 0.35; }
 .controls .pos { color: var(--muted); padding: 0 6px; min-width: 64px; text-align: center; }
 .deck.idle .controls { opacity: 0; pointer-events: none; }
@@ -82,7 +82,7 @@
   font-size: calc(var(--u) * 28);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: calc(var(--u) * 26);
 }
 
@@ -145,7 +145,7 @@
   font-size: calc(var(--u) * 24);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .media figcaption { font-size: calc(var(--u) * 28); line-height: 1.4; color: var(--text-2); }
 
@@ -191,7 +191,7 @@
 /* ---------- Divisor de bloque ---------- */
 .s-divider {
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
   justify-content: center;
 }
 .s-divider .badge {
@@ -213,7 +213,7 @@
   text-wrap: balance;
 }
 .s-divider .sub { font-size: calc(var(--u) * 48); font-weight: 500; margin: calc(var(--u) * 32) 0 0; color: rgba(11, 15, 20, 0.85); }
-.s-divider .line { width: calc(var(--u) * 140); height: calc(var(--u) * 10); background: var(--bg); margin-top: calc(var(--u) * 52); }
+.s-divider .line { width: calc(var(--u) * 140); height: calc(var(--u) * 10); background: var(--on-accent); margin-top: calc(var(--u) * 52); }
 .s-divider .counter { color: rgba(11, 15, 20, 0.6); }
 
 /* ---------- Agenda ---------- */
@@ -227,7 +227,7 @@
   font-size: calc(var(--u) * 42);
   font-weight: 500;
 }
-.agenda .n { font-family: var(--f-mono); font-weight: 600; font-size: calc(var(--u) * 32); color: var(--accent); width: calc(var(--u) * 56); flex: none; }
+.agenda .n { font-family: var(--f-mono); font-weight: 600; font-size: calc(var(--u) * 32); color: var(--accent-text); width: calc(var(--u) * 56); flex: none; }
 
 /* ---------- Concepto + analogía ---------- */
 .s-concept .body { font-size: calc(var(--u) * 42); line-height: 1.45; font-weight: 500; margin: 0 0 calc(var(--u) * 48); max-width: calc(var(--u) * 1500); }
@@ -249,7 +249,7 @@
   font-size: calc(var(--u) * 24);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: calc(var(--u) * 12);
 }
 
@@ -313,13 +313,13 @@
 }
 
 .opt.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
-.opt.selected .mark { border-color: var(--accent); color: var(--accent); }
+.opt.selected .mark { border-color: var(--accent); color: var(--accent-text); }
 .opt.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--panel)); }
-.opt.correct .mark { border-color: var(--ok); background: var(--ok); color: var(--bg); }
-.opt.correct .verdict { color: var(--ok); }
+.opt.correct .mark { border-color: var(--ok); background: var(--ok); color: var(--on-accent); }
+.opt.correct .verdict { color: var(--ok-text); }
 .opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--panel)); }
-.opt.wrong .mark { border-color: var(--bad); background: var(--bad); color: var(--bg); }
-.opt.wrong .verdict { color: var(--bad); }
+.opt.wrong .mark { border-color: var(--bad); background: var(--bad); color: var(--on-accent); }
+.opt.wrong .verdict { color: var(--bad-text); }
 .opt.dim { opacity: 0.4; }
 
 /* Verdadero / Falso: dos botones grandes lado a lado */
@@ -341,7 +341,7 @@
 .reveal {
   background: transparent;
   border: calc(var(--u) * 2) solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   padding: calc(var(--u) * 16) calc(var(--u) * 30);
   font-family: var(--f-mono);
   font-weight: 600;
@@ -366,7 +366,7 @@
   font-weight: 600;
   font-size: calc(var(--u) * 24);
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: calc(var(--u) * 18);
 }
 .s-quote blockquote p { margin: 0; font-size: calc(var(--u) * 38); line-height: 1.42; white-space: pre-line; }
@@ -389,7 +389,7 @@
   height: calc(var(--u) * 68);
   border-radius: 50%;
   border: calc(var(--u) * 2) solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,7 +424,7 @@
   margin-bottom: calc(var(--u) * 22);
 }
 .col.bad .tag2 { color: var(--muted); }
-.col.good .tag2 { color: var(--accent); }
+.col.good .tag2 { color: var(--accent-text); }
 .col p { margin: 0; font-size: calc(var(--u) * 40); line-height: 1.4; font-weight: 500; }
 
 /* ---------- Checkpoint ---------- */
@@ -443,7 +443,7 @@
   width: calc(var(--u) * 60);
   height: calc(var(--u) * 60);
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -562,7 +562,7 @@
   padding: 8px var(--pad-x) calc(8px + env(safe-area-inset-bottom, 0px));
   gap: 8px;
   font-size: 14px;
-  background: rgba(11, 15, 20, 0.96);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
 }
 .deck.flow .controls button,
 .deck.flow .controls a {

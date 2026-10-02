@@ -113,7 +113,7 @@ export function GoogleButton({ clientId, next, fallback }: Props) {
       <div ref={box} className="google-gsi-box" aria-busy={status === "loading"} />
       {status === "loading" && <div className="google-gsi-placeholder">Cargando Google…</div>}
       {pending && <p className="muted" style={{ margin: "12px 0 0" }}>Ingresando…</p>}
-      {error && <p style={{ color: "var(--bad)", margin: "12px 0 0" }}>{error}</p>}
+      {error && <p style={{ color: "var(--bad-text)", margin: "12px 0 0" }}>{error}</p>}
     </div>
   );
 }
