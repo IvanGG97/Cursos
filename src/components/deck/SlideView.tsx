@@ -227,7 +227,8 @@ function MediaBox({ media }: { media: Media }) {
           // Video corto en bucle, sin sonido: se comporta como un GIF pero pesa mucho menos.
           <video src={media.src} autoPlay loop muted playsInline aria-label={media.caption} />
         ) : (
-          <img src={media.src} alt={media.caption} />
+          // no-referrer: muchos sitios bloquean imágenes enlazadas desde otro dominio si ven el origen.
+          <img src={media.src} alt={media.caption} referrerPolicy="no-referrer" />
         )}
       </figure>
     );

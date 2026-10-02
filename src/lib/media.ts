@@ -8,9 +8,13 @@ import { createClient } from "./supabase/server";
 // Lo subido tiene prioridad sobre el archivo por defecto del repo (Media.src).
 
 export const MEDIA_BUCKET = "media";
-export const publicMediaUrl = (path: string) => `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
 
-export type Uploaded = { url: string; mime: string; path: string; updatedAt: string };
+/** `path` es una ruta dentro del bucket, o un enlace externo (https://...) cargado desde el panel. */
+export const isExternal = (path: string) => /^https:\/\//i.test(path);
+export const publicMediaUrl = (path: string) =>
+  isExternal(path) ? path : `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
+
+export type Uploaded = { url: string; mime: string; path: string; updatedAt: string; external: boolean };
 
 export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Uploaded>> => {
   if (isLocalMode()) return new Map();
@@ -19,7 +23,7 @@ export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Up
   return new Map(
     (data ?? []).map((r) => [
       r.media_id as string,
-      { url: publicMediaUrl(r.path), mime: r.mime, path: r.path, updatedAt: r.updated_at },
+      { url: publicMediaUrl(r.path), mime: r.mime, path: r.path, updatedAt: r.updated_at, external: isExternal(r.path) },
     ]),
   );
 });

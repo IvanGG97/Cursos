@@ -35,7 +35,9 @@ export default async function CourseMedia({ params }: Props) {
         <h2>Imágenes, GIFs y videos de las clases</h2>
         <p className="muted">
           {slots.length} lugar(es) · {missing} pendiente(s). Subí capturas, GIFs o videos cortos (MP4, en bucle y sin sonido:
-          pesan mucho menos que un GIF). Se ven al instante en la clase, en el proyector y en los celulares. Máximo 15 MB.
+          pesan mucho menos que un GIF), o pegá un <strong>enlace</strong> directo a una imagen, GIF o video (por ejemplo, de
+          Giphy). Se ven al instante en la clase, en el proyector y en los celulares. Máximo 15 MB por archivo. Para lo
+          importante conviene subir el archivo: un enlace deja de verse si el sitio de origen lo borra.
         </p>
       </section>
 
@@ -57,7 +59,7 @@ export default async function CourseMedia({ params }: Props) {
                   slug={slug}
                   mediaId={s.media.id}
                   caption={s.media.caption}
-                  uploaded={up ? { url: up.url, mime: up.mime } : null}
+                  uploaded={up ? { url: up.url, mime: up.mime, external: up.external } : null}
                   fallback={s.media.src}
                 />
                 <Link href={`/cursos/${slug}/${classSlug(clase)}#${s.slide}`} className="btn btn-sm" style={{ marginTop: 10 }}>
