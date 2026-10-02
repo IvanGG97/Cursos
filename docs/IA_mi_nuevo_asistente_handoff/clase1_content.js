@@ -170,7 +170,7 @@ slides.push({
     rows: [
       { h: "Un chat por tema", d: "si cambiaste de asunto, abrí uno nuevo." },
       { h: "Error común", d: "meter todo en un solo chat eterno — la IA empieza a mezclar contextos viejos con lo nuevo." },
-      { h: "Recomendación", d: "si vas a volver sobre el mismo tema seguido (tu changa, tu casa), armate un proyecto." },
+      { h: "Recomendación", d: "si vas a volver sobre el mismo tema seguido (tu trabajo, tu casa), armate un proyecto." },
     ],
   },
 });
@@ -433,7 +433,7 @@ slides.push({
   params: {
     color: col, badgeLabel: "LA PRÓXIMA CLASE",
     title: "Clase 2: Crear, entender y comunicarte",
-    subtitle: "Ideas, textos y mensajes — también para tu changa",
+    subtitle: "Ideas, textos y mensajes — también para tu trabajo",
   },
 });
 

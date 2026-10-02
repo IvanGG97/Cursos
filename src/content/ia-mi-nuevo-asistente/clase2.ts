@@ -29,7 +29,7 @@ export const clase2Slides: Slide[] = [
       "Repaso de la Clase 1",
       "Generar ideas con la IA",
       "Entender textos difíciles y comunicarte mejor",
-      "Aplicarlo a tu changa o emprendimiento",
+      "Aplicarlo a tu trabajo o emprendimiento",
       "Práctica integradora: tu propio caso",
       "Cierre",
     ],
@@ -258,8 +258,8 @@ export const clase2Slides: Slide[] = [
     explanation: "Qué pasó, cuándo, qué hiciste y qué solución querés. Las claves, nunca: es regla de oro.",
   },
 
-  // ===================== BLOQUE 3: TU CHANGA O EMPRENDIMIENTO =====================
-  { type: "divider", badge: "BLOQUE 3 · 25 MIN", title: "Aplicarlo a tu changa o emprendimiento", subtitle: "Clientes, productos y reclamos" },
+  // ===================== BLOQUE 3: TU TRABAJO O EMPRENDIMIENTO =====================
+  { type: "divider", badge: "BLOQUE 3 · 25 MIN", title: "Aplicarlo a tu trabajo o emprendimiento", subtitle: "Clientes, productos y reclamos" },
   {
     type: "concept",
     kicker: "Tu trabajo",
@@ -354,7 +354,7 @@ export const clase2Slides: Slide[] = [
     kicker: "Si no se te ocurre nada",
     title: "Casos para elegir",
     rows: [
-      { h: "Changa", d: "avisar a tus clientes de siempre que aumentás el precio." },
+      { h: "Trabajo", d: "avisar a tus clientes de siempre que aumentás el precio." },
       { h: "Emprendimiento", d: "10 nombres para un producto nuevo y la descripción del que elijas." },
       { h: "Vida diaria", d: "entender en simple una carta del banco o de la obra social (sin tus datos)." },
       { h: "Reclamo", d: "una carta porque un producto que compraste llegó roto." },

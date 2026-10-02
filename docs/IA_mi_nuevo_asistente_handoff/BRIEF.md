@@ -42,7 +42,7 @@ Al ver la Clase 1 armada, el feedback fue: "el contenido está genial, pero la p
 (Ver también `IA_mi_nuevo_asistente_Resumen_Curso.pdf` adjunto — tiene el desglose completo con tiempos por bloque.)
 
 - **Clase 1 — Qué es esto y cómo le hablo**: conceptos (tokens, contexto, chat, proyecto, con analogías — ej. "los tokens son como nuestra moneda de intercambio"), límites (alucinaciones), primer contacto (crear cuenta — incluye mini-guías de instalación de Claude, ChatGPT y Gemini, las 3), cómo pedir bien las cosas, cierre con reglas de oro. CONTENIDO COMPLETO YA ESCRITO en `clase1_content.js` (38 slides).
-- **Clase 2 — Crear, entender y comunicarte**: combina tres ejes aprobados — creativa/brainstorming, entender y comunicar, changa/emprendimiento — en una clase con apertura + 3 bloques de contenido + práctica integradora + cierre. Contenido detallado: pendiente de escribir (ver resumen PDF para la distribución de tiempos ya definida).
+- **Clase 2 — Crear, entender y comunicarte**: combina tres ejes aprobados — creativa/brainstorming, entender y comunicar, trabajo/emprendimiento — en una clase con apertura + 3 bloques de contenido + práctica integradora + cierre. Contenido detallado: pendiente de escribir (ver resumen PDF para la distribución de tiempos ya definida).
 - **Clase 3 — Organización de la vida diaria**: listas y planes, presupuestos básicos, comparar opciones con criterios. Contenido detallado: pendiente.
 - **Clase 4 — Decisiones y cuidado digital**: combina tres ejes aprobados — decisiones importantes, casa y bolsillo, cuidado y sentido crítico — SIN gancho hacia Herramientas de Google. Contenido detallado: pendiente.
 

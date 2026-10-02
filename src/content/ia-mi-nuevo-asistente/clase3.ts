@@ -278,10 +278,10 @@ export const clase3Slides: Slide[] = [
   {
     type: "quote",
     kicker: "Ejemplo",
-    title: "Elegir entre dos changas",
+    title: "Elegir entre dos trabajos",
     quoteLabel: "LE PEDIMOS",
     quoteText:
-      "\"Me ofrecieron dos changas para los sábados. A: pintar un local, $80.000 por día, a 40 minutos en colectivo. B: atender una verdulería, $60.000 por día, a 10 cuadras de casa. Tengo dos hijos y me importa volver temprano. Comparalas con esos criterios.\"",
+      "\"Me ofrecieron dos trabajos para los sábados. A: pintar un local, $80.000 por día, a 40 minutos en colectivo. B: atender una verdulería, $60.000 por día, a 10 cuadras de casa. Tengo dos hijos y me importa volver temprano. Comparalos con esos criterios.\"",
     caption: "No es solo la plata: la comparación tiene en cuenta lo que le dijiste que te importa.",
   },
   {
@@ -329,7 +329,7 @@ export const clase3Slides: Slide[] = [
     type: "practice",
     title: "Tu comparación",
     instructions:
-      "Pensá en algo que tengas que decidir: un electrodoméstico, un plan de celular o de internet, dos changas, dos escuelas.\n\nPedile a la IA una tabla comparando las opciones con TUS criterios. Después cambiá una prioridad y fijate si cambia la recomendación.",
+      "Pensá en algo que tengas que decidir: un electrodoméstico, un plan de celular o de internet, dos trabajos, dos escuelas.\n\nPedile a la IA una tabla comparando las opciones con TUS criterios. Después cambiá una prioridad y fijate si cambia la recomendación.",
   },
 
   // ===================== CIERRE =====================

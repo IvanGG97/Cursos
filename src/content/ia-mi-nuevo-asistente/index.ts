@@ -45,7 +45,7 @@ export const iaMiNuevoAsistente: Course = {
         { name: "Apertura: repaso y presentación del día", min: 15 },
         { name: "Creativa: generar ideas", min: 25 },
         { name: "Entender y comunicar", min: 25 },
-        { name: "Aplicarlo a tu changa o emprendimiento", min: 25 },
+        { name: "Aplicarlo a tu trabajo o emprendimiento", min: 25 },
         { name: "Práctica integradora", min: 20 },
         { name: "Cierre", min: 10 },
       ],
