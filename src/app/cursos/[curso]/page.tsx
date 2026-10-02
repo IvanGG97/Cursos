@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { classSlug, getCourse } from "@/content/registry";
-import { canManage, classStatus, getCourseState, getPublishedSlugs, getViewer, type ClassStatus } from "@/lib/access";
+import { canManage, classStatus, getCourseState, getViewer, getVisibleCourseSlugs, type ClassStatus } from "@/lib/access";
 import { formatDateTime } from "@/lib/site";
 import { JoinForm } from "./JoinForm";
 
@@ -20,8 +20,8 @@ export default async function CoursePage({ params }: Params) {
   const course = getCourse(curso);
   if (!course) notFound();
 
-  const published = await getPublishedSlugs();
-  if (published !== "all" && !published.has(course.slug)) notFound();
+  const visible = await getVisibleCourseSlugs();
+  if (visible !== "all" && !visible.has(course.slug)) notFound();
 
   const viewer = await getViewer();
   const state = await getCourseState(course.slug);
@@ -41,8 +41,8 @@ export default async function CoursePage({ params }: Params) {
 
       {admin && viewer.kind !== "local" && !state.published && (
         <div className="notice warn" style={{ marginBottom: 24 }}>
-          <strong>Curso sin publicar.</strong> Solo lo ven los administradores. Publicalo desde{" "}
-          <Link href="/admin">Admin</Link>.
+          <strong>Curso sin publicar.</strong> Solo lo ven los administradores y quienes tengan acceso individual.
+          Publicalo desde <Link href={`/admin/cursos/${course.slug}`}>Admin</Link>.
         </div>
       )}
 
@@ -55,7 +55,19 @@ export default async function CoursePage({ params }: Params) {
         </div>
       )}
 
-      {viewer.kind === "user" && !admin && !state.enrolled && <JoinForm />}
+      {viewer.kind === "user" && viewer.blocked && (
+        <div className="notice err" style={{ marginBottom: 32 }}>
+          <strong>Tu cuenta está suspendida.</strong> Si creés que es un error, hablá con tu docente.
+        </div>
+      )}
+      {viewer.kind === "user" && !viewer.blocked && !admin && state.enrollment === "suspended" && (
+        <div className="notice warn" style={{ marginBottom: 32 }}>
+          <strong>Tu inscripción a este curso está suspendida.</strong> Hablá con tu docente para reactivarla.
+        </div>
+      )}
+      {viewer.kind === "user" && !viewer.blocked && !admin && state.enrollment === "none" && state.published && (
+        <JoinForm />
+      )}
 
       <div className="classes">
         {course.classes.map((clase) => {
@@ -107,6 +119,10 @@ function statusLabel(s: ClassStatus) {
       return "Ingresá para verla";
     case "enroll":
       return "Inscribite para verla";
+    case "suspended":
+      return "Inscripción suspendida";
+    case "blocked":
+      return "Cuenta suspendida";
     case "open":
       return "";
   }

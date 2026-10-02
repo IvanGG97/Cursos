@@ -2,10 +2,10 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { courses } from "@/content/registry";
-import { getPublishedSlugs } from "@/lib/access";
+import { getVisibleCourseSlugs } from "@/lib/access";
 
 export default async function CatalogPage() {
-  const published = await getPublishedSlugs();
+  const published = await getVisibleCourseSlugs();
   const visible = courses.filter((c) => published === "all" || published.has(c.slug));
 
   return (

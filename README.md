@@ -52,7 +52,9 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
 ## Conectar Supabase
 
 1. Crear un proyecto en [supabase.com](https://supabase.com).
-2. Correr la migración `supabase/migrations/20261001000000_init.sql`: pegarla en **SQL Editor** y ejecutar (o `supabase db push` con la CLI).
+2. Correr las migraciones de `supabase/migrations/` **en orden**, cada una una sola vez: pegarla en **SQL Editor** y ejecutar (o `supabase db push` con la CLI).
+   - `20261001000000_init.sql` — esquema base.
+   - `20261001020000_admin_panel.sql` — panel de admin (invitaciones, accesos individuales, suspensiones, registro de actividad).
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).
@@ -74,13 +76,25 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
 4. Copiar **ID de cliente** y **Secreto de cliente** en Supabase → **Authentication → Providers → Google**, activar y guardar.
 5. Verificar que en Supabase → Authentication → URL Configuration estén `http://localhost:3000/auth/callback` (y la de Vercel cuando exista) en Redirect URLs.
 
+## Panel de administración (`/admin`)
+
+| Sección | Qué se hace |
+|---|---|
+| **Resumen** | Números generales, últimos registros y actividad reciente. |
+| **Cursos** → curso | Publicar/despublicar · código de inscripción (escribirlo, generarlo al azar o desactivarlo) · por clase: **Liberar ahora**, **Ocultar** o **Programar** fecha y hora · inscriptos (buscar, suspender, reactivar, quitar) · **agregar personas pegando mails** (las que ya tienen cuenta quedan inscriptas; las otras quedan invitadas) · invitaciones pendientes · accesos individuales. |
+| **Personas** → ficha | Buscar y filtrar por rol/estado · en la ficha: **hacer/quitar admin**, **suspender/reactivar cuenta**, inscribir/suspender/quitar en cada curso y **dar acceso individual a una clase**, más el historial de acciones sobre esa persona. |
+| **Actividad** | Registro de todas las acciones de los admins. |
+
+Las acciones delicadas piden confirmación con un segundo toque. Nadie puede quitarse su propio rol de admin ni suspender su propia cuenta.
+
 ## Flujo de un curso
 
-1. En **/admin**: publicar el curso, definir el **código de inscripción** (ej. `SALTA2026`).
-2. Los alumnos entran a la página del curso, ingresan con su mail y escriben el código.
-3. Antes de cada clase, en **/admin** se la pone en **Liberada** (opcionalmente con fecha y hora de Argentina: se libera sola a esa hora).
+1. En **/admin → Cursos**: publicar el curso y definir el **código de inscripción** (ej. `SALTA2026`, o generar uno al azar).
+2. Los alumnos entran a la página del curso, ingresan con Google y escriben el código. Si tenés la lista de mails, podés invitarlos de antemano.
+3. Antes de cada clase, **Liberar ahora** (o programarla con fecha y hora de Argentina: se libera sola).
 4. Como admin podés abrir y proyectar cualquier clase aunque esté oculta para los alumnos ("modo presentador").
-5. Cada clase liberada tiene su **Resumen PDF**, armado automáticamente desde las diapositivas, con una autoevaluación al final.
+5. Si alguien faltó y querés que vea una clase puntual: en su ficha, **Dar acceso** a esa clase.
+6. Cada clase liberada tiene su **Resumen PDF**, armado automáticamente desde las diapositivas, con una autoevaluación al final.
 
 ## Agregar contenido
 

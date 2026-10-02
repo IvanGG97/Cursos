@@ -14,9 +14,9 @@ export async function joinCourse(_prev: JoinState, formData: FormData): Promise<
   const { data: slug, error } = await supabase.rpc("join_course", { p_code: code });
 
   if (error) {
-    return error.code === "P0002"
-      ? { error: "Ese código no es válido. Revisalo con tu docente." }
-      : { error: "No pudimos inscribirte. Probá de nuevo en un rato." };
+    if (error.code === "P0002") return { error: "Ese código no es válido. Revisalo con tu docente." };
+    if (error.code === "42501") return { error: "Tu cuenta está suspendida. Hablá con tu docente." };
+    return { error: "No pudimos inscribirte. Probá de nuevo en un rato." };
   }
 
   revalidatePath(`/cursos/${slug}`);

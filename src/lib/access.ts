@@ -11,7 +11,7 @@ import { createClient } from "./supabase/server";
 export type Viewer =
   | { kind: "local" } // sin Supabase configurado (solo desarrollo): acceso total
   | { kind: "anon" }
-  | { kind: "user"; id: string; email: string; isAdmin: boolean };
+  | { kind: "user"; id: string; email: string; name: string | null; isAdmin: boolean; blocked: boolean };
 
 export const getViewer = cache(async (): Promise<Viewer> => {
   // Todo lo que depende del visitante se resuelve por request, nunca en el build.
@@ -23,12 +23,19 @@ export const getViewer = cache(async (): Promise<Viewer> => {
   const claims = data?.claims;
   if (!claims) return { kind: "anon" };
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", claims.sub).maybeSingle();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, status, full_name")
+    .eq("id", claims.sub)
+    .maybeSingle();
+  const blocked = profile?.status === "blocked";
   return {
     kind: "user",
     id: claims.sub,
     email: typeof claims.email === "string" ? claims.email : "",
-    isAdmin: profile?.role === "admin",
+    name: profile?.full_name ?? null,
+    isAdmin: profile?.role === "admin" && !blocked,
+    blocked,
   };
 });
 
@@ -39,44 +46,60 @@ export type Release = { visible: boolean; visibleFrom: string | null };
 
 export type CourseState = {
   published: boolean;
-  enrolled: boolean;
+  enrollment: "none" | "active" | "suspended";
+  /** Clases a las que este visitante tiene acceso individual (aunque estén ocultas). */
+  grants: Set<number>;
   releases: Map<number, Release>;
 };
 
 export const getCourseState = cache(async (slug: string): Promise<CourseState> => {
   const viewer = await getViewer();
-  if (viewer.kind === "local") return { published: true, enrolled: true, releases: new Map() };
+  if (viewer.kind === "local") {
+    return { published: true, enrollment: "active", grants: new Set(), releases: new Map() };
+  }
 
   const supabase = await createClient();
-  const [course, releases, enrollment] = await Promise.all([
+  const isUser = viewer.kind === "user";
+  const [course, releases, enrollment, grants] = await Promise.all([
     supabase.from("courses").select("published").eq("slug", slug).maybeSingle(),
     supabase.from("class_releases").select("class_num, visible, visible_from").eq("course_slug", slug),
-    viewer.kind === "user"
-      ? supabase
-          .from("enrollments")
-          .select("course_slug")
-          .eq("course_slug", slug)
-          .eq("user_id", viewer.id)
-          .maybeSingle()
+    isUser
+      ? supabase.from("enrollments").select("status").eq("course_slug", slug).eq("user_id", viewer.id).maybeSingle()
       : Promise.resolve({ data: null }),
+    isUser
+      ? supabase.from("class_grants").select("class_num").eq("course_slug", slug).eq("user_id", viewer.id)
+      : Promise.resolve({ data: [] as { class_num: number }[] }),
   ]);
 
   return {
     published: Boolean(course.data?.published),
-    enrolled: Boolean(enrollment.data),
+    enrollment: enrollment.data ? (enrollment.data.status === "suspended" ? "suspended" : "active") : "none",
+    grants: new Set((grants.data ?? []).map((g) => g.class_num as number)),
     releases: new Map(
       (releases.data ?? []).map((r) => [r.class_num as number, { visible: r.visible, visibleFrom: r.visible_from }]),
     ),
   };
 });
 
-/** Qué cursos aparecen en el catálogo para este visitante. */
-export const getPublishedSlugs = cache(async (): Promise<Set<string> | "all"> => {
+/**
+ * Qué cursos puede ver este visitante: los publicados, más aquellos en los que está inscripto
+ * o tiene acceso individual a alguna clase (aunque el curso no esté publicado). El admin ve todos.
+ */
+export const getVisibleCourseSlugs = cache(async (): Promise<Set<string> | "all"> => {
   const viewer = await getViewer();
   if (canManage(viewer)) return "all";
   const supabase = await createClient();
   const { data } = await supabase.from("courses").select("slug").eq("published", true);
-  return new Set((data ?? []).map((c) => c.slug as string));
+  const slugs = new Set((data ?? []).map((c) => c.slug as string));
+
+  if (viewer.kind === "user" && !viewer.blocked) {
+    const [enr, gr] = await Promise.all([
+      supabase.from("enrollments").select("course_slug").eq("user_id", viewer.id).eq("status", "active"),
+      supabase.from("class_grants").select("course_slug").eq("user_id", viewer.id),
+    ]);
+    for (const r of [...(enr.data ?? []), ...(gr.data ?? [])]) slugs.add(r.course_slug as string);
+  }
+  return slugs;
 });
 
 export type ClassStatus =
@@ -85,7 +108,9 @@ export type ClassStatus =
   | { kind: "scheduled"; from: string } // liberada con fecha futura
   | { kind: "hidden" }
   | { kind: "login" }
-  | { kind: "enroll" };
+  | { kind: "enroll" }
+  | { kind: "suspended" } // inscripción suspendida
+  | { kind: "blocked" }; // cuenta suspendida
 
 export function isReleased(state: CourseState, num: number, now = new Date()) {
   const r = state.releases.get(num);
@@ -99,7 +124,13 @@ export function classStatus(viewer: Viewer, state: CourseState, clase: ClassDef)
   const released = isReleased(state, clase.num);
   if (canManage(viewer)) return { kind: "open", preview: !released };
   if (viewer.kind === "anon") return { kind: "login" };
-  if (!state.enrolled) return { kind: "enroll" };
+  if (viewer.blocked) return { kind: "blocked" };
+
+  // El acceso individual habilita la clase aunque esté oculta y aunque no haya inscripción.
+  if (state.grants.has(clase.num)) return { kind: "open", preview: false };
+
+  if (state.enrollment === "suspended") return { kind: "suspended" };
+  if (state.enrollment === "none") return { kind: "enroll" };
   if (released) return { kind: "open", preview: false };
 
   const r = state.releases.get(clase.num);
