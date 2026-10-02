@@ -18,8 +18,24 @@ export type Media = {
    * Galería (la completa el panel cuando hay más de una imagen en el lugar). La primera es la
    * portada (= `src`). En la diapositiva se ve como un abanico y se abre en pantalla completa.
    */
-  gallery?: { src: string; mime?: string }[];
+  gallery?: { src: string; mime?: string; annot?: Annotations }[];
+  /** Flechas y recuadros dibujados sobre la imagen desde el panel (portada / imagen sola). */
+  annot?: Annotations;
 };
+
+/**
+ * Señalamientos sobre una imagen. Coordenadas en píxeles de la imagen original (w × h), así
+ * quedan siempre sobre el mismo punto aunque la imagen se vea más chica, más grande o con zoom.
+ */
+export type Annotations = {
+  w: number;
+  h: number;
+  shapes: AnnotShape[];
+};
+
+export type AnnotShape =
+  | { t: "arrow"; x1: number; y1: number; x2: number; y2: number; c: string; s: 1 | 2 | 3 }
+  | { t: "rect"; x: number; y: number; w: number; h: number; c: string; s: 1 | 2 | 3 };
 
 export type Row = { h: string; d: string };
 

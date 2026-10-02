@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent as RPointerEvent } from "react";
 import { createPortal } from "react-dom";
-import type { Media } from "@/content/types";
+import type { Annotations, Media } from "@/content/types";
+import { AnnotLayer } from "./AnnotLayer";
 
 // Imágenes de las diapositivas:
 // · Una sola imagen: se toca y se abre en pantalla completa.
@@ -11,22 +12,26 @@ import type { Media } from "@/content/types";
 // botones − / + , rueda o pellizco del touchpad, doble clic / doble toque, pellizco con dos dedos,
 // arrastrar para mover y teclas + − 0.
 
-type Item = { src: string; mime?: string };
+type Item = { src: string; mime?: string; annot?: Annotations };
 
 const isVideo = (it: Item) => Boolean(it.mime?.startsWith("video/")) || /\.(mp4|webm)$/i.test(it.src);
 
-function Visual({ item, alt, active = true }: { item: Item; alt: string; active?: boolean }) {
+/** Imagen (con sus flechas y recuadros, si tiene) o video. */
+function Visual({ item, alt, active = true, hideAnnot }: { item: Item; alt: string; active?: boolean; hideAnnot?: boolean }) {
   return isVideo(item) ? (
     <video src={item.src} autoPlay={active} loop muted playsInline aria-label={alt} />
   ) : (
-    <img src={item.src} alt={alt} referrerPolicy="no-referrer" draggable={false} />
+    <>
+      <img src={item.src} alt={alt} referrerPolicy="no-referrer" draggable={false} />
+      <AnnotLayer annot={item.annot} hidden={hideAnnot} />
+    </>
   );
 }
 
 /** Imagen sola: se ve como siempre y al tocarla se abre en pantalla completa (con zoom). */
 export function MediaSingle({ media }: { media: Media }) {
   const [open, setOpen] = useState(false);
-  const item = { src: media.src!, mime: media.mime };
+  const item = { src: media.src!, mime: media.mime, annot: media.annot };
   return (
     <>
       <figure className="media zoomable">
@@ -89,6 +94,7 @@ const RESET: View = { s: 1, x: 0, y: 0 };
 function Lightbox({ items, caption, start, onClose }: { items: Item[]; caption: string; start: number; onClose: () => void }) {
   const [i, setI] = useState(start);
   const [view, setView] = useState<View>(RESET);
+  const [showAnnot, setShowAnnot] = useState(true);
   const stage = useRef<HTMLDivElement>(null);
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -138,6 +144,7 @@ function Lightbox({ items, caption, start, onClose }: { items: Item[]; caption: 
       else if (k === "+" || k === "=") zoomTo(viewRef.current.s * 1.5);
       else if (k === "-" || k === "_") zoomTo(viewRef.current.s / 1.5);
       else if (k === "0") setView(RESET);
+      else if (k === "s" || k === "S") setShowAnnot((x) => !x);
       else if (k === "Escape") onClose();
       else return;
       e.preventDefault();
@@ -247,7 +254,7 @@ function Lightbox({ items, caption, start, onClose }: { items: Item[]; caption: 
         onTouchEnd={(e) => e.stopPropagation() /* que el visor no cambie de diapositiva */}
       >
         <div className="lb-media" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.s})` }}>
-          <Visual key={i} item={items[i]} alt={`${caption}${n > 1 ? ` (${i + 1} de ${n})` : ""}`} />
+          <Visual key={i} item={items[i]} alt={`${caption}${n > 1 ? ` (${i + 1} de ${n})` : ""}`} hideAnnot={!showAnnot} />
         </div>
       </div>
 
@@ -284,6 +291,17 @@ function Lightbox({ items, caption, start, onClose }: { items: Item[]; caption: 
           </button>
           <button type="button" onClick={() => zoomTo(view.s * 1.5)} disabled={view.s >= MAX} aria-label="Acercar">+</button>
         </div>
+        {items[i].annot && !isVideo(items[i]) && (
+          <button
+            type="button"
+            className="lb-annot"
+            aria-pressed={showAnnot}
+            onClick={() => setShowAnnot((x) => !x)}
+            title="Mostrar u ocultar las flechas y recuadros (S)"
+          >
+            {showAnnot ? "Ocultar señales" : "Mostrar señales"}
+          </button>
+        )}
         <button type="button" className="lb-close" onClick={onClose}>Cerrar</button>
       </div>
       <p className="lb-hint" onClick={(e) => e.stopPropagation()}>

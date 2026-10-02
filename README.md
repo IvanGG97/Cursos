@@ -60,6 +60,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
    - `20261002020000_live_game.sql` — clase en vivo estilo Kahoot (nombre de partida, apodos, ranking).
    - `20261002030000_media.sql` — imágenes, GIFs y videos subidos desde el panel (Storage + `slide_media`).
    - `20261002040000_media_gallery.sql` — galerías (varias imágenes por lugar, en orden).
+   - `20261002050000_media_annotations.sql` — flechas y recuadros dibujados sobre cada imagen ("Señalar").
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).

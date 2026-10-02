@@ -60,7 +60,7 @@ export default async function CourseMedia({ params }: Props) {
                   slug={slug}
                   mediaId={s.media.id}
                   caption={s.media.caption}
-                  items={(up ?? []).map((u) => ({ id: u.id, url: u.url, mime: u.mime, external: u.external }))}
+                  items={(up ?? []).map((u) => ({ id: u.id, url: u.url, mime: u.mime, external: u.external, annot: u.annot }))}
                   fallback={s.media.src}
                 />
                 <Link href={`/cursos/${slug}/${classSlug(clase)}#${s.slide}`} className="btn btn-sm" style={{ marginTop: 10 }}>

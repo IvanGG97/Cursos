@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import type { Course, Media, Slide } from "@/content/types";
+import type { Annotations, Course, Media, Slide } from "@/content/types";
 import { SUPABASE_URL, isLocalMode } from "./supabase/config";
 import { createClient } from "./supabase/server";
 
@@ -16,7 +16,22 @@ export const isExternal = (path: string) => /^https:\/\//i.test(path);
 export const publicMediaUrl = (path: string) =>
   isExternal(path) ? path : `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${path}`;
 
-export type Uploaded = { id: string; url: string; mime: string; path: string; position: number; external: boolean };
+export type Uploaded = {
+  id: string;
+  url: string;
+  mime: string;
+  path: string;
+  position: number;
+  external: boolean;
+  annot?: Annotations;
+};
+
+/** Valida lo guardado en la base (si está mal formado, se ignora). */
+function readAnnot(v: unknown): Annotations | undefined {
+  const a = v as Annotations | null;
+  if (!a || typeof a.w !== "number" || typeof a.h !== "number" || !Array.isArray(a.shapes) || a.shapes.length === 0) return undefined;
+  return a;
+}
 
 /** Por lugar (media_id): sus imágenes en orden. */
 export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Uploaded[]>> => {
@@ -34,6 +49,7 @@ export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Up
       path: r.path,
       position: (r.position as number | undefined) ?? 0,
       external: isExternal(r.path),
+      annot: readAnnot(r.annotations),
     });
     map.set(r.media_id, list);
   }
@@ -55,7 +71,8 @@ export function withMedia(slides: Slide[], uploaded: Map<string, Uploaded[]>): S
         ...s.media,
         src: first.url,
         mime: first.mime,
-        gallery: items.length > 1 ? items.map((i) => ({ src: i.url, mime: i.mime })) : undefined,
+        annot: first.annot,
+        gallery: items.length > 1 ? items.map((i) => ({ src: i.url, mime: i.mime, annot: i.annot })) : undefined,
       },
     };
   });

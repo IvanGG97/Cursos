@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
+import type { AnnotShape, Annotations } from "@/content/types";
 import { adminCtx, audit, type AdminCtx } from "@/lib/admin";
 import { isExternal, MAX_GALLERY, MEDIA_BUCKET, mediaSlots } from "@/lib/media";
 
@@ -108,6 +109,53 @@ export async function detachMedia(slug: string, mediaId: string, itemId: string)
     return {};
   } catch (e) {
     return { error: e instanceof Error ? e.message : "No se pudo quitar." };
+  }
+}
+
+const MAX_SHAPES = 50;
+const num = (v: unknown, max: number) => typeof v === "number" && Number.isFinite(v) && v >= -max && v <= max * 2;
+
+/** Revisa lo que manda el editor: solo flechas y recuadros, con números y colores válidos. */
+function cleanAnnotations(a: Annotations | null): Annotations | null | "invalid" {
+  if (!a || !Array.isArray(a.shapes) || a.shapes.length === 0) return null;
+  const W = a.w;
+  const H = a.h;
+  if (!(typeof W === "number" && typeof H === "number" && W > 0 && H > 0 && W <= 20000 && H <= 20000)) return "invalid";
+  if (a.shapes.length > MAX_SHAPES) return "invalid";
+  const shapes: AnnotShape[] = [];
+  for (const s of a.shapes) {
+    const c = typeof s?.c === "string" && /^#[0-9a-f]{6}$/i.test(s.c) ? s.c.toLowerCase() : null;
+    const size = s?.s === 1 || s?.s === 2 || s?.s === 3 ? s.s : null;
+    if (!c || !size) return "invalid";
+    if (s.t === "arrow" && num(s.x1, W) && num(s.y1, H) && num(s.x2, W) && num(s.y2, H)) {
+      shapes.push({ t: "arrow", x1: s.x1, y1: s.y1, x2: s.x2, y2: s.y2, c, s: size });
+    } else if (s.t === "rect" && num(s.x, W) && num(s.y, H) && num(s.w, W) && num(s.h, H) && s.w > 0 && s.h > 0) {
+      shapes.push({ t: "rect", x: s.x, y: s.y, w: s.w, h: s.h, c, s: size });
+    } else return "invalid";
+  }
+  return { w: W, h: H, shapes };
+}
+
+/** Guarda (o borra, con null) las flechas y recuadros de una imagen. La imagen no se toca. */
+export async function saveAnnotations(slug: string, mediaId: string, itemId: string, data: Annotations | null): Promise<Result> {
+  try {
+    const ctx = await adminCtx();
+    const clean = cleanAnnotations(data);
+    if (clean === "invalid") return { error: "Los señalamientos no son válidos." };
+    if (!(await items(ctx, slug, mediaId)).some((i) => i.id === itemId)) return { error: "Esa imagen ya no está." };
+    const { error } = await ctx.supabase.from("slide_media").update({ annotations: clean }).eq("id", itemId);
+    if (error) {
+      return {
+        error: /annotations|column/i.test(error.message)
+          ? "Falta correr la migración 20261002050000_media_annotations.sql en Supabase."
+          : error.message,
+      };
+    }
+    await audit(ctx, "media.annotate", `${slug}/${mediaId}`, { shapes: clean?.shapes.length ?? 0 });
+    revalidatePath("/", "layout");
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "No se pudo guardar." };
   }
 }
 

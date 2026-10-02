@@ -3,7 +3,10 @@
 import { useRef, useState, type ClipboardEvent, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/client";
-import { attachMedia, attachMediaUrl, detachMedia, moveMedia } from "@/app/admin/media-actions";
+import { attachMedia, attachMediaUrl, detachMedia, moveMedia, saveAnnotations } from "@/app/admin/media-actions";
+import type { Annotations } from "@/content/types";
+import { AnnotLayer } from "@/components/deck/AnnotLayer";
+import { AnnotEditor } from "./AnnotEditor";
 
 const MAX_BYTES = 15 * 1024 * 1024;
 const MAX_ITEMS = 12;
@@ -17,7 +20,7 @@ const TYPES: Record<string, string> = {
   "video/webm": "webm",
 };
 
-export type GalleryItem = { id: string; url: string; mime: string; external: boolean };
+export type GalleryItem = { id: string; url: string; mime: string; external: boolean; annot?: Annotations };
 
 type Props = {
   slug: string;
@@ -100,7 +103,9 @@ export function MediaUploader({ slug, mediaId, caption, items, fallback }: Props
   const [msg, setMsg] = useState<{ ok?: string; error?: string }>({});
   const [over, setOver] = useState(false);
   const [link, setLink] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
   const full = items.length >= MAX_ITEMS;
+  const editItem = items.find((it) => it.id === editing);
 
   const done = (res: { error?: string }, ok: string) => {
     setBusy("");
@@ -202,12 +207,21 @@ export function MediaUploader({ slug, mediaId, caption, items, fallback }: Props
                 {it.mime.startsWith("video/") ? (
                   <video src={it.url} muted playsInline preload="metadata" />
                 ) : (
-                  <img src={it.url} alt={`${caption} (${i + 1})`} referrerPolicy="no-referrer" />
+                  <>
+                    <img src={it.url} alt={`${caption} (${i + 1})`} referrerPolicy="no-referrer" />
+                    <AnnotLayer annot={it.annot} />
+                  </>
                 )}
                 <span className="gal-n">{i === 0 ? "Portada" : i + 1}</span>
                 {it.external && <span className="gal-link">enlace</span>}
+                {it.annot && <span className="gal-annot">{it.annot.shapes.length} señal{it.annot.shapes.length === 1 ? "" : "es"}</span>}
               </div>
               <div className="gal-actions">
+                {!it.mime.startsWith("video/") && (
+                  <button type="button" onClick={() => setEditing(it.id)} disabled={!!busy} title="Dibujar flechas y recuadros sobre la imagen">
+                    Señalar
+                  </button>
+                )}
                 <button type="button" onClick={() => move(it.id, "up")} disabled={!!busy || i === 0} aria-label="Mover antes" title="Mover antes">←</button>
                 <button type="button" onClick={() => move(it.id, "down")} disabled={!!busy || i === items.length - 1} aria-label="Mover después" title="Mover después">→</button>
                 {i > 0 && (
@@ -292,6 +306,23 @@ export function MediaUploader({ slug, mediaId, caption, items, fallback }: Props
             : `${items.length} en la galería (máximo ${MAX_ITEMS}). En la diapositiva se ve como abanico.`}
       </p>
       {(msg.ok || msg.error) && <p className={`aform-msg ${msg.error ? "err" : "ok"}`}>{msg.error ?? msg.ok}</p>}
+
+      {editItem && (
+        <AnnotEditor
+          src={editItem.url}
+          caption={caption}
+          initial={editItem.annot}
+          onClose={() => setEditing(null)}
+          onSave={async (a) => {
+            const res = await saveAnnotations(slug, mediaId, editItem.id, a);
+            if (!res.error) {
+              setMsg({ ok: a ? "Señalamientos guardados. Ya se ven en la clase." : "Señalamientos quitados." });
+              router.refresh();
+            }
+            return res;
+          }}
+        />
+      )}
     </div>
   );
 }
