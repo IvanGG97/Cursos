@@ -2,11 +2,18 @@
 // Para agregar contenido no hace falta tocar el motor: alcanza con escribir objetos Slide.
 
 export type Media = {
+  /**
+   * Identificador fijo del lugar (ej. "c1-login-claude"). Con él, el admin sube o reemplaza el
+   * archivo desde el panel (Admin → curso → Imágenes). No cambiarlo una vez que hay archivo subido.
+   */
+  id: string;
   kind: "IMAGEN" | "GIF";
-  /** Qué buscar / mostrar. Se ve como placeholder mientras no haya `src`. */
+  /** Qué buscar / mostrar. Se ve como placeholder mientras no haya archivo. */
   caption: string;
-  /** Ruta a un archivo en /public (ej. "/img/ia-mi-nuevo-asistente/login-claude.png"). */
+  /** Archivo por defecto en /public (ej. "/img/ia-mi-nuevo-asistente/x.svg"). Lo subido desde el panel tiene prioridad. */
   src?: string;
+  /** Tipo de archivo (lo completa el panel; "video/mp4" se muestra como video en bucle, sin sonido). */
+  mime?: string;
 };
 
 export type Row = { h: string; d: string };

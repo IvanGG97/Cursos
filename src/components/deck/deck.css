@@ -129,7 +129,9 @@
   background: var(--panel);
   overflow: hidden;
 }
-.media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* "contain": las capturas del celular son verticales; se ven completas, sin recortar. */
+.media img,
+.media video { width: 100%; height: 100%; object-fit: contain; display: block; }
 .media.placeholder {
   border-style: dashed;
   border-color: var(--muted);
@@ -518,7 +520,8 @@
 .deck.flow .with-media { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }
 .deck.flow .media { aspect-ratio: auto; }
 .deck.flow .media.placeholder { padding: 20px; gap: 10px; }
-.deck.flow .media img { height: auto; }
+.deck.flow .media img,
+.deck.flow .media video { height: auto; max-height: 70vh; }
 .deck.flow .row,
 .deck.flow .with-media .row { grid-template-columns: 1fr; gap: 6px; padding: 14px 0; }
 .deck.flow .row strong { font-size: 20px; }

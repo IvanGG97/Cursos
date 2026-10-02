@@ -38,7 +38,12 @@ export const clase1Slides: Slide[] = [
     title: "¿Qué es, en criollo, un asistente de IA?",
     body: "Es un programa que entiende lenguaje natural — lo que escribís como le hablarías a una persona — y te responde con texto, también en lenguaje natural. Nada más (y nada menos) que eso.",
     analogy: "Es como un empleado nuevo, muy leído, que no conoce tu negocio todavía: le tenés que explicar lo que necesitás, pero entiende instrucciones complejas al toque.",
-    media: { kind: "IMAGEN", caption: "Buscar: ilustración simple de una persona chateando con un asistente virtual en el celular (estilo flat / amigable, sin logos de marcas)." },
+    media: {
+      id: "c1-asistente",
+      src: "/img/ia-mi-nuevo-asistente/asistente-celular.svg",
+      kind: "IMAGEN",
+      caption: "Ilustración: una persona chateando con un asistente virtual en el celular (estilo flat, sin logos de marcas).",
+    },
   },
   {
     type: "content",
@@ -92,7 +97,12 @@ export const clase1Slides: Slide[] = [
     title: "Contexto: la memoria de la charla",
     body: "El contexto es todo lo que se dijo en la conversación hasta ahora. La IA lo \"tiene arriba de la mesa\" para responder, pero esa mesa tiene un tamaño límite.",
     analogy: "Es como una mesa de trabajo: todo lo que pusiste encima lo podés usar, pero si la llenás de papeles viejos, no entra nada nuevo y se empieza a mezclar todo.",
-    media: { kind: "IMAGEN", caption: "Buscar: ilustración de un escritorio con documentos apilados, como metáfora de la 'mesa de trabajo' con límite de espacio." },
+    media: {
+      id: "c1-mesa",
+      src: "/img/ia-mi-nuevo-asistente/mesa-de-trabajo.svg",
+      kind: "IMAGEN",
+      caption: "Ilustración: un escritorio con papeles apilados, como metáfora de la 'mesa de trabajo' con límite de espacio.",
+    },
   },
   {
     type: "content",
@@ -195,7 +205,7 @@ export const clase1Slides: Slide[] = [
       "Confirmá tu cuenta si te lo pide por mail.",
       "Ya podés escribir tu primer mensaje en el chat.",
     ],
-    media: { kind: "IMAGEN", caption: "Captura de pantalla real de la pantalla de inicio de sesión de claude.ai." },
+    media: { id: "c1-login-claude", kind: "IMAGEN", caption: "Captura del celular, en castellano: pantalla de inicio de sesión de Claude (claude.ai o la app)." },
   },
   {
     type: "steps",
@@ -207,7 +217,7 @@ export const clase1Slides: Slide[] = [
       "Confirmá tu cuenta si te lo pide.",
       "Ya podés escribir tu primer mensaje en el chat.",
     ],
-    media: { kind: "IMAGEN", caption: "Captura de pantalla real de la pantalla de inicio de sesión de chatgpt.com." },
+    media: { id: "c1-login-chatgpt", kind: "IMAGEN", caption: "Captura del celular, en castellano: pantalla de inicio de sesión de ChatGPT (chatgpt.com o la app)." },
   },
   {
     type: "steps",
@@ -219,7 +229,7 @@ export const clase1Slides: Slide[] = [
       "Aceptá los términos de uso la primera vez.",
       "Ya podés escribir tu primer mensaje en el chat.",
     ],
-    media: { kind: "IMAGEN", caption: "Captura de pantalla real de la pantalla de inicio de gemini.google.com." },
+    media: { id: "c1-login-gemini", kind: "IMAGEN", caption: "Captura del celular, en castellano: pantalla de inicio de Gemini (gemini.google.com o la app)." },
   },
   {
     type: "content",
@@ -230,7 +240,11 @@ export const clase1Slides: Slide[] = [
       { h: "Un botón para \"Chat nuevo\"", d: "para arrancar un tema distinto." },
       { h: "Un historial a la izquierda", d: "con todos tus chats anteriores, para volver a ellos cuando quieras." },
     ],
-    media: { kind: "GIF", caption: "Buscar/grabar un GIF corto mostrando: escribir un mensaje, recibir respuesta, y abrir un chat nuevo." },
+    media: {
+      id: "c1-interfaz",
+      kind: "GIF",
+      caption: "Video corto o GIF grabado en el celular: escribir un mensaje, recibir la respuesta y abrir un chat nuevo.",
+    },
   },
   {
     type: "practice",

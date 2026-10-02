@@ -5,6 +5,7 @@ import { getClass, getCourse } from "@/content/registry";
 import { classStatus, getCourseState, getViewer } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { getOrigin } from "@/lib/urls";
+import { getCourseMedia, withMedia } from "@/lib/media";
 import type { LiveConfig } from "@/components/deck/LivePresenter";
 
 type Params = { params: Promise<{ curso: string; clase: string }> };
@@ -49,7 +50,12 @@ export default async function ClassPage({ params }: Params) {
   return (
     <Deck
       course={{ title: course.title, org: course.org }}
-      clase={{ num: clase.num, title: clase.title, accent: clase.accent, slides: clase.slides }}
+      clase={{
+        num: clase.num,
+        title: clase.title,
+        accent: clase.accent,
+        slides: withMedia(clase.slides, await getCourseMedia(course.slug)),
+      }}
       backHref={base}
       pdfHref={`${base}/${slug}/resumen`}
       trackProgress={viewer.kind === "user" && !viewer.isAdmin ? { slug: course.slug, num: clase.num } : undefined}

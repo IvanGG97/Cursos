@@ -67,6 +67,9 @@ Registro de decisiones que importan a futuro. Una línea por decisión, con fech
 - 2026-10-01 — Tipos de diapositiva: title, agenda, divider, concept, content, quiz (vf/single/multi), quote, steps, practice, compare, checkpoint.
 - 2026-10-01 — Los quizzes son interactivos en la web: se elige opción (clic o teclas 1–4) y `R` revela la respuesta. Reemplaza las notas para Genially.
 - 2026-10-01 — Las imágenes pendientes se muestran como placeholder con la descripción de qué buscar, hasta que haya archivo (`media.src`).
+- 2026-10-02 — **Imágenes, GIFs y videos se suben desde el panel** (Admin → curso → **Imágenes**): tocar/elegir de la galería, arrastrar o pegar. Se guardan en Supabase Storage (bucket `media`, lectura pública, escritura solo admin) y se asocian a cada lugar por `Media.id` (tabla `slide_media`, migración `20261002030000_media.sql`). Lo subido tiene prioridad sobre el archivo por defecto del repo. Máximo 15 MB; se aceptan PNG, JPG, WEBP, GIF, SVG, MP4 y WEBM. Para animaciones se recomienda **MP4** (se ve en bucle y sin sonido, como un GIF, y pesa mucho menos).
+- 2026-10-02 — **El texto de las clases NO se edita desde el navegador** (por ahora): sigue en el repo, con historial y revisión contra las reglas de contenido; los cambios de texto se piden y se publican en minutos. Se reconsidera si aparecen otros autores o ediciones muy frecuentes (con historial y vista previa).
+- 2026-10-02 — Las imágenes se muestran completas (`object-fit: contain`), porque las capturas de celular son verticales. Las ilustraciones propias van en SVG con el estilo del curso y fondo propio (se ven igual en modo claro y oscuro). Las capturas de las apps se sacan **desde el celular y en castellano** (lo que ven los alumnos).
 
 ## Diseño
 

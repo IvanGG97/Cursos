@@ -64,6 +64,8 @@ export const AUDIT_LABELS: Record<string, string> = {
   "live.start": "Inició una clase en vivo",
   "live.end": "Terminó una clase en vivo",
   "live.rename": "Renombró una clase en vivo",
+  "media.set": "Subió una imagen o video",
+  "media.remove": "Quitó una imagen o video",
   "course.code.set": "Cambió el código de inscripción",
   "course.code.remove": "Desactivó el código de inscripción",
   "class.release": "Cambió la liberación de una clase",

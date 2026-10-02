@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Una persona chatea con un asistente de inteligencia artificial en su celular">
+  <rect width="800" height="600" fill="#121826"/>
+  <!-- piso / sombra -->
+  <ellipse cx="330" cy="545" rx="230" ry="18" fill="#0b0f14"/>
+
+  <!-- persona -->
+  <g>
+    <!-- cuerpo -->
+    <path d="M150 545 C150 430 190 370 265 370 C340 370 380 430 380 545 Z" fill="#232b3a"/>
+    <!-- cuello -->
+    <rect x="248" y="330" width="34" height="48" rx="10" fill="#c9a27e"/>
+    <!-- cabeza -->
+    <circle cx="265" cy="285" r="62" fill="#c9a27e"/>
+    <!-- pelo -->
+    <path d="M203 280 C200 222 240 200 272 202 C318 204 338 238 330 270 C312 252 282 246 250 252 C228 256 212 266 203 280 Z" fill="#2b2f3a"/>
+    <!-- ojo y sonrisa (mirando el celular) -->
+    <circle cx="292" cy="285" r="5" fill="#0b0f14"/>
+    <path d="M290 310 Q302 318 312 308" stroke="#0b0f14" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- brazo -->
+    <path d="M330 430 C380 430 410 410 432 380" stroke="#232b3a" stroke-width="40" stroke-linecap="round" fill="none"/>
+    <circle cx="440" cy="372" r="22" fill="#c9a27e"/>
+  </g>
+
+  <!-- celular -->
+  <g transform="rotate(-8 520 300)">
+    <rect x="430" y="110" width="210" height="390" rx="28" fill="#0b0f14" stroke="#edf1f7" stroke-width="8"/>
+    <rect x="505" y="126" width="60" height="10" rx="5" fill="#232b3a"/>
+    <!-- burbuja de la persona (derecha) -->
+    <rect x="520" y="170" width="100" height="46" rx="14" fill="#22d3ee"/>
+    <rect x="534" y="186" width="70" height="7" rx="3.5" fill="#0b0f14" opacity=".55"/>
+    <rect x="534" y="199" width="46" height="7" rx="3.5" fill="#0b0f14" opacity=".55"/>
+    <!-- burbuja del asistente (izquierda) -->
+    <rect x="450" y="236" width="140" height="78" rx="14" fill="#232b3a"/>
+    <rect x="464" y="252" width="110" height="7" rx="3.5" fill="#edf1f7" opacity=".85"/>
+    <rect x="464" y="266" width="96" height="7" rx="3.5" fill="#edf1f7" opacity=".85"/>
+    <rect x="464" y="280" width="104" height="7" rx="3.5" fill="#edf1f7" opacity=".85"/>
+    <rect x="464" y="294" width="60" height="7" rx="3.5" fill="#edf1f7" opacity=".85"/>
+    <!-- otra pregunta -->
+    <rect x="540" y="334" width="80" height="34" rx="12" fill="#22d3ee"/>
+    <rect x="554" y="348" width="52" height="7" rx="3.5" fill="#0b0f14" opacity=".55"/>
+    <!-- "escribiendo…" -->
+    <rect x="450" y="388" width="70" height="30" rx="12" fill="#232b3a"/>
+    <circle cx="468" cy="403" r="5" fill="#8a93a6"/>
+    <circle cx="485" cy="403" r="5" fill="#8a93a6"/>
+    <circle cx="502" cy="403" r="5" fill="#8a93a6"/>
+    <!-- caja de texto -->
+    <rect x="448" y="446" width="174" height="34" rx="17" fill="none" stroke="#8a93a6" stroke-width="3"/>
+    <circle cx="604" cy="463" r="11" fill="#22d3ee"/>
+  </g>
+
+  <!-- chispas: "asistente de IA" -->
+  <g fill="#22d3ee">
+    <path d="M690 150 l10 28 l28 10 l-28 10 l-10 28 l-10 -28 l-28 -10 l28 -10 z"/>
+    <path d="M720 260 l6 16 l16 6 l-16 6 l-6 16 l-6 -16 l-16 -6 l16 -6 z" opacity=".8"/>
+    <path d="M660 90 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 l11 -4 z" opacity=".6"/>
+  </g>
+</svg>

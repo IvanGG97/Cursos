@@ -220,9 +220,15 @@ function renderBody(
 
 function MediaBox({ media }: { media: Media }) {
   if (media.src) {
+    const isVideo = media.mime?.startsWith("video/") || /\.(mp4|webm)$/i.test(media.src);
     return (
       <figure className="media">
-        <img src={media.src} alt={media.caption} />
+        {isVideo ? (
+          // Video corto en bucle, sin sonido: se comporta como un GIF pero pesa mucho menos.
+          <video src={media.src} autoPlay loop muted playsInline aria-label={media.caption} />
+        ) : (
+          <img src={media.src} alt={media.caption} />
+        )}
       </figure>
     );
   }

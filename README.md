@@ -58,6 +58,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
    - `20261002000000_course_access.sql` — estado "Libre" de un curso (visible sin registrarse).
    - `20261002010000_engagement.sql` — progreso, evaluaciones, clase en vivo (asistencia + quiz) y encuesta.
    - `20261002020000_live_game.sql` — clase en vivo estilo Kahoot (nombre de partida, apodos, ranking).
+   - `20261002030000_media.sql` — imágenes, GIFs y videos subidos desde el panel (Storage + `slide_media`).
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).
@@ -110,7 +111,7 @@ Las acciones delicadas piden confirmación con un segundo toque. Nadie puede qui
 
 - **Nueva clase de un curso existente:** crear `src/content/<curso>/claseN.ts` exportando un `Slide[]` y asignarlo en `slides` de esa clase en `index.ts`. Mientras `slides` esté vacío, la clase figura "En preparación".
 - **Nuevo curso:** crear `src/content/<slug>/index.ts` con un objeto `Course` y sumarlo a `RAW` en `src/content/registry.ts`. Aparece en /admin; queda oculto hasta publicarlo.
-- **Imágenes:** ponerlas en `public/img/<curso>/` y referenciarlas con `media.src` (ej. `"/img/ia-mi-nuevo-asistente/login-claude.png"`). Sin `src` se muestra un recuadro con la descripción de qué buscar.
+- **Imágenes:** cada lugar de imagen tiene un `media.id` fijo. Lo más simple es subir el archivo desde **Admin → curso → Imágenes** (tiene prioridad). También se puede poner un archivo por defecto en `public/img/<curso>/` con `media.src`. Sin archivo se muestra un recuadro con la descripción de qué buscar.
 - Los tipos de diapositiva están documentados en `src/content/types.ts`.
 
 ## Deploy en Vercel
