@@ -2,13 +2,21 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { sendMagicLink, signInWithGoogle, type LoginState } from "./actions";
+import { GoogleButton } from "./GoogleButton";
 
 /** Navegadores dentro de apps (Instagram, Facebook, TikTok...): Google bloquea el login ahí. */
 function isInAppBrowser(ua: string) {
   return /FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|musical_ly|Snapchat|Twitter|; wv\)/i.test(ua);
 }
 
-export function LoginForm({ next, google }: { next: string; google: boolean }) {
+type Props = {
+  next: string;
+  google: boolean;
+  /** Si está, se usa el botón oficial de Google en nuestro sitio; si no, la redirección vía Supabase. */
+  googleClientId?: string;
+};
+
+export function LoginForm({ next, google, googleClientId }: Props) {
   const [state, action, pending] = useActionState<LoginState, FormData>(sendMagicLink, {});
   const [inApp, setInApp] = useState(false);
   const [googlePending, setGooglePending] = useState(false);
@@ -44,6 +52,17 @@ export function LoginForm({ next, google }: { next: string; google: boolean }) {
 
   if (!google) return emailForm;
 
+  // Flujo por redirección a través de Supabase (Google muestra el dominio de Supabase).
+  const redirectButton = (
+    <form action={signInWithGoogle} onSubmit={() => setGooglePending(true)}>
+      <input type="hidden" name="next" value={next} />
+      <button type="submit" className="btn btn-google btn-block" disabled={googlePending}>
+        <GoogleMark />
+        {googlePending ? "Abriendo Google…" : "Continuar con Google"}
+      </button>
+    </form>
+  );
+
   return (
     <>
       {inApp && (
@@ -53,13 +72,11 @@ export function LoginForm({ next, google }: { next: string; google: boolean }) {
         </div>
       )}
 
-      <form action={signInWithGoogle} onSubmit={() => setGooglePending(true)}>
-        <input type="hidden" name="next" value={next} />
-        <button type="submit" className="btn btn-google btn-block" disabled={googlePending}>
-          <GoogleMark />
-          {googlePending ? "Abriendo Google…" : "Continuar con Google"}
-        </button>
-      </form>
+      {googleClientId ? (
+        <GoogleButton clientId={googleClientId} next={next} fallback={redirectButton} />
+      ) : (
+        redirectButton
+      )}
 
       <details className="alt-login">
         <summary>¿No tenés cuenta de Google? Entrá con tu mail</summary>

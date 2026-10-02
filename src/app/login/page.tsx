@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { getViewer } from "@/lib/access";
-import { googleAuthEnabled } from "@/lib/supabase/config";
+import { googleAuthEnabled, googleClientId } from "@/lib/supabase/config";
 import { safeNext } from "@/lib/urls";
 import { LoginForm } from "./LoginForm";
 
@@ -35,7 +35,7 @@ export default async function LoginPage({ searchParams }: Props) {
         {error && ERRORS[error] && (
           <div className="notice err" style={{ marginBottom: 20 }}>{ERRORS[error]}</div>
         )}
-        <LoginForm next={next} google={googleAuthEnabled} />
+        <LoginForm next={next} google={googleAuthEnabled} googleClientId={googleClientId} />
       </div>
     </SiteShell>
   );

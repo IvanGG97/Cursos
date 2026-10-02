@@ -28,6 +28,18 @@ export async function sendMagicLink(_prev: LoginState, formData: FormData): Prom
   return { sent: email };
 }
 
+/** Login con el token que devuelve el botón de Google (Google Identity Services). */
+export async function signInWithGoogleToken(credential: string, nonce: string, next: string): Promise<LoginState> {
+  if (!credential || !nonce) return { error: "No pudimos completar el ingreso con Google. Probá de nuevo." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: credential, nonce });
+  if (error) return { error: "No pudimos completar el ingreso con Google. Probá de nuevo." };
+
+  redirect(safeNext(next));
+}
+
+/** Login con Google por redirección a través de Supabase (alternativa si no hay ID de cliente). */
 export async function signInWithGoogle(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({

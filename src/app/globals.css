@@ -257,6 +257,15 @@ h2.section {
   margin: 20px 0;
 }
 .divider-or::before, .divider-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+/* Botón oficial de Google (lo dibuja Google en un iframe; acá solo se centra y se reserva el alto) */
+.google-gsi { position: relative; min-height: 44px; }
+.google-gsi-box { display: flex; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto; }
+.google-gsi-placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); color: var(--muted);
+  font-family: var(--f-mono); font-size: 12px;
+}
 .alt-login { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
 .alt-login summary {
   cursor: pointer;

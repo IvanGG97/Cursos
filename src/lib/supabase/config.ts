@@ -19,3 +19,10 @@ export function isLocalMode() {
 }
 
 export const googleAuthEnabled = process.env.NEXT_PUBLIC_AUTH_GOOGLE === "on";
+
+/**
+ * ID de cliente OAuth de Google (público). Con él, el login usa el botón oficial de Google en
+ * nuestro propio sitio (Google muestra nuestro dominio, no el de Supabase). Sin él, se usa el
+ * flujo por redirección a través de Supabase.
+ */
+export const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
