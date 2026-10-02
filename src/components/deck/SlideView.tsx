@@ -1,6 +1,6 @@
 import type { Media, Slide } from "@/content/types";
 import { Quiz } from "./Quiz";
-import { MediaFan } from "./Gallery";
+import { MediaFan, MediaSingle } from "./Gallery";
 
 type CourseInfo = { title: string; org: string };
 type ClaseInfo = { num: number; title: string };
@@ -220,22 +220,10 @@ function renderBody(
 }
 
 function MediaBox({ media }: { media: Media }) {
-  // Varias imágenes en el mismo lugar: abanico que se abre como galería.
+  // Varias imágenes en el mismo lugar: abanico que se abre como galería (con zoom).
   if (media.gallery && media.gallery.length > 1) return <MediaFan media={media} />;
-  if (media.src) {
-    const isVideo = media.mime?.startsWith("video/") || /\.(mp4|webm)$/i.test(media.src);
-    return (
-      <figure className="media">
-        {isVideo ? (
-          // Video corto en bucle, sin sonido: se comporta como un GIF pero pesa mucho menos.
-          <video src={media.src} autoPlay loop muted playsInline aria-label={media.caption} />
-        ) : (
-          // no-referrer: muchos sitios bloquean imágenes enlazadas desde otro dominio si ven el origen.
-          <img src={media.src} alt={media.caption} referrerPolicy="no-referrer" />
-        )}
-      </figure>
-    );
-  }
+  // Una sola: se toca y se abre en pantalla completa (con zoom).
+  if (media.src) return <MediaSingle media={media} />;
   return (
     <figure className="media placeholder">
       <span className="media-kind">{media.kind} pendiente</span>
