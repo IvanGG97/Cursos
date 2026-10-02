@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
-import { getCourse } from "@/content/registry";
+import { classSlug, getCourse } from "@/content/registry";
 import { getViewer } from "@/lib/access";
 import { getCourseMedia, withMedia } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
@@ -11,10 +11,11 @@ import "../vivo.css";
 
 export const metadata: Metadata = { title: "Clase en vivo" };
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ alumno?: string }> };
 
-export default async function LiveSessionPage({ params }: Props) {
+export default async function LiveSessionPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const asStudent = (await searchParams).alumno === "1";
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const viewer = await getViewer();
   if (viewer.kind === "local") notFound();
@@ -40,8 +41,31 @@ export default async function LiveSessionPage({ params }: Props) {
     );
   }
 
-  // Si entró directo al link con la sesión iniciada, igual queda registrada la asistencia.
-  if (viewer.kind === "user") await supabase.rpc("join_live", { p_code: s.code });
+  // El admin es el presentador: no entra como alumno (salvo que lo elija, para probar).
+  const isAdmin = viewer.kind === "user" && viewer.isAdmin;
+  if (isAdmin && !asStudent) {
+    const presentHref = `/cursos/${course.slug}/${classSlug(clase)}#${s.current_slide}`;
+    return (
+      <SiteShell>
+        <div className="live-wrap">
+          <div className="kicker-sm">En vivo · {s.title ?? `Clase ${clase.num}`}</div>
+          <h1 className="live-h1">Sos el presentador de esta clase</h1>
+          <p className="muted">
+            Código {s.code} · Clase {clase.num}: {clase.title} · va por la diapositiva {s.current_slide}. Al volver, la clase
+            sigue donde la dejaste, con las respuestas y el ranking.
+          </p>
+          <div className="btn-row">
+            <Link href={presentHref} className="btn btn-primary">Volver a presentar</Link>
+            <Link href={`/vivo/${s.id}?alumno=1`} className="btn">Entrar como alumno (para probar)</Link>
+          </div>
+        </div>
+      </SiteShell>
+    );
+  }
+
+  // Si entró directo al link con la sesión iniciada, igual queda registrada la asistencia
+  // (el admin que entra para probar no suma asistencia).
+  if (viewer.kind === "user" && !isAdmin) await supabase.rpc("join_live", { p_code: s.code });
 
   // Las preguntas van aparte (se responden desde el celular, indexadas por número de diapositiva).
   // El resto de las diapositivas viaja para mostrar en el celular la que se está proyectando.

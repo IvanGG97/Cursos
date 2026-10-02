@@ -26,11 +26,16 @@ export type SlideCounts = { opts: number[]; n: number };
 const POLL_MS = 3000;
 const HEARTBEAT_MS = 4000;
 
+/**
+ * `ready`: el visor ya sabe en qué diapositiva está. Hasta entonces no se escribe ni se avisa nada,
+ * para no mandar a los celulares a la diapositiva 1 al retomar una clase en vivo.
+ */
 export function useLivePresenter(
   cfg: LiveConfig | undefined,
   slide: number,
   revealed: boolean,
   correctBySlide: Record<number, number[]>,
+  ready = true,
 ) {
   const [session, setSession] = useState<LiveSession | null>(cfg?.initial ?? null);
   const [answers, setAnswers] = useState<LiveAnswerRow[]>([]);
@@ -106,7 +111,7 @@ export function useLivePresenter(
   // si es una pregunta nueva, se marca su hora de inicio (para puntuar por rapidez).
   const last = useRef("");
   useEffect(() => {
-    if (!session) return;
+    if (!session || !ready) return;
     const key = `${slide}:${revealed}`;
     if (key === last.current) return;
     last.current = key;
@@ -116,16 +121,16 @@ export function useLivePresenter(
       sb.from("live_questions").insert({ session_id: session.id, slide }).then(() => refresh());
     }
     broadcastState();
-  }, [session, slide, revealed, correctBySlide, broadcastState, refresh]);
+  }, [session, slide, revealed, correctBySlide, broadcastState, refresh, ready]);
 
   // Latido: cada pocos segundos se reenvía el estado (para quien entra tarde o perdió un mensaje).
   const beat = useRef(broadcastState);
   beat.current = broadcastState;
   useEffect(() => {
-    if (!session) return;
+    if (!session || !ready) return;
     const i = setInterval(() => beat.current(), HEARTBEAT_MS);
     return () => clearInterval(i);
-  }, [session]);
+  }, [session, ready]);
 
   const start = async (title: string) => {
     if (!cfg) return;

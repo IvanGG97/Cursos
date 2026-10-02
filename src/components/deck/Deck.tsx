@@ -28,21 +28,28 @@ export type DeckProps = {
 
 export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: DeckProps) {
   const total = clase.slides.length;
-  const [index, setIndex] = useSlideHash(total);
+  // Clase en vivo abierta: se retoma en la diapositiva (y con la respuesta revelada o no) donde estaba.
+  const resume = useRef(live?.initial ? { slide: live.initial.current_slide ?? 1, revealed: Boolean(live.initial.revealed) } : null);
+  const [index, setIndex, ready] = useSlideHash(total, resume.current?.slide);
   const current = clase.slides[index];
 
   const scale = useStageScale();
   // Modo celular: si el lienzo quedara demasiado chico para leer, las diapositivas se acomodan al ancho.
   const flow = scale > 0 && scale < FLOW_BELOW;
-  const [revealed, setRevealed] = useState(false);
+  // Arranca ya con el estado retomado: así lo primero que se avisa a los celulares es lo correcto.
+  const [revealed, setRevealed] = useState(Boolean(resume.current?.revealed));
   const idle = useIdle(2500) && !flow;
   const back = useRef<HTMLAnchorElement>(null);
 
   // Al cambiar de diapositiva, el quiz vuelve a quedar sin revelar (y en celular, volvemos arriba).
+  // Al retomar una clase en vivo, la diapositiva donde estaba conserva si ya se había revelado.
   useEffect(() => {
-    setRevealed(false);
+    if (!ready) return;
+    const r = resume.current;
+    resume.current = null;
+    setRevealed(Boolean(r && r.slide === index + 1 && r.revealed));
     window.scrollTo(0, 0);
-  }, [index]);
+  }, [index, ready]);
 
   // Progreso: se guarda con un pequeño retraso para no escribir en cada toque de flecha.
   useEffect(() => {
@@ -61,7 +68,7 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
     });
     return m;
   }, [clase.slides]);
-  const liveState = useLivePresenter(live, index + 1, revealed, correctBySlide);
+  const liveState = useLivePresenter(live, index + 1, revealed, correctBySlide, ready);
   const [showJoin, setShowJoin] = useState(false);
   const [showStart, setShowStart] = useState(false);
   const [showRank, setShowRank] = useState(false);
@@ -215,16 +222,26 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
   );
 }
 
-/** Diapositiva actual (base 0) sincronizada con el hash de la URL: #12 = diapositiva 12. */
-function useSlideHash(total: number) {
+/**
+ * Diapositiva actual (base 0) sincronizada con el hash de la URL: #12 = diapositiva 12.
+ * `startAt` (base 1): arrancar ahí aunque el link diga otra cosa (retomar una clase en vivo).
+ * `ready`: ya se leyó la posición inicial (antes de eso, el índice 0 es provisorio).
+ */
+function useSlideHash(total: number, startAt?: number) {
   const [index, setIndexState] = useState(0);
+  const [ready, setReady] = useState(false);
+  const start = useRef(startAt);
 
   useEffect(() => {
-    const read = () => {
-      const n = Number(location.hash.slice(1));
-      setIndexState(Number.isInteger(n) && n >= 1 ? Math.min(n, total) - 1 : 0);
-    };
-    read();
+    const clampN = (n: number) => (Number.isInteger(n) && n >= 1 ? Math.min(n, total) - 1 : 0);
+    const read = () => setIndexState(clampN(Number(location.hash.slice(1))));
+    if (start.current) {
+      const i = clampN(start.current);
+      start.current = undefined;
+      history.replaceState(history.state, "", `#${i + 1}`);
+      setIndexState(i);
+    } else read();
+    setReady(true);
     window.addEventListener("hashchange", read);
     return () => window.removeEventListener("hashchange", read);
   }, [total]);
@@ -235,7 +252,7 @@ function useSlideHash(total: number) {
     setIndexState(i);
   };
 
-  return [index, setIndex] as const;
+  return [index, setIndex, ready] as const;
 }
 
 function toggleFullscreen() {

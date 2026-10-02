@@ -31,13 +31,14 @@ export default async function CoursePage({ params }: Params) {
   const totalMin = course.classes.reduce((acc, c) => acc + c.blocks.reduce((a, b) => a + b.min, 0), 0);
   const mine = await getMyCourseProgress(course.slug);
 
-  // ¿Hay una clase en vivo ahora? (los alumnos ven el botón para sumarse)
-  let liveNow: { code: string; class_num: number }[] = [];
+  // ¿Hay una clase en vivo ahora? Los alumnos ven el botón para sumarse; el admin, para volver a
+  // presentarla (retoma en la diapositiva donde estaba).
+  let liveNow: { code: string; class_num: number; current_slide: number }[] = [];
   if (viewer.kind !== "local") {
     const supabase = await createClient();
     const { data } = await supabase
       .from("live_sessions")
-      .select("code, class_num")
+      .select("code, class_num, current_slide")
       .eq("course_slug", course.slug)
       .eq("status", "open");
     liveNow = data ?? [];
@@ -55,15 +56,28 @@ export default async function CoursePage({ params }: Params) {
         <p className="org">{course.org}</p>
       </div>
 
-      {liveNow.map((l) => (
-        <div key={l.code} className="notice live-banner" style={{ marginBottom: 24 }}>
-          <div>
-            <strong>Clase {l.class_num} en vivo ahora.</strong> Sumate desde el celular para responder las preguntas
-            {viewer.kind === "user" ? " y registrar tu asistencia" : ""}.
+      {liveNow.map((l) => {
+        const clase = course.classes.find((c) => c.num === l.class_num);
+        return admin && clase ? (
+          <div key={l.code} className="notice live-banner" style={{ marginBottom: 24 }}>
+            <div>
+              <strong>Clase {l.class_num} en vivo ahora</strong> (código {l.code}, diapositiva {l.current_slide}). Sos el
+              presentador: volvé a la clase y sigue donde la dejaste.
+            </div>
+            <Link href={`/cursos/${course.slug}/${classSlug(clase)}#${l.current_slide}`} className="btn btn-primary">
+              Volver a presentar
+            </Link>
           </div>
-          <Link href={`/vivo?c=${l.code}`} className="btn btn-primary">Unirme a la clase</Link>
-        </div>
-      ))}
+        ) : (
+          <div key={l.code} className="notice live-banner" style={{ marginBottom: 24 }}>
+            <div>
+              <strong>Clase {l.class_num} en vivo ahora.</strong> Sumate desde el celular para responder las preguntas
+              {viewer.kind === "user" ? " y registrar tu asistencia" : ""}.
+            </div>
+            <Link href={`/vivo?c=${l.code}`} className="btn btn-primary">Unirme a la clase</Link>
+          </div>
+        );
+      })}
 
       {admin && viewer.kind !== "local" && !state.published && (
         <div className="notice warn" style={{ marginBottom: 24 }}>

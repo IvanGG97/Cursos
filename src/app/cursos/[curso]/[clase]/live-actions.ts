@@ -5,7 +5,9 @@ import { getCourse } from "@/content/registry";
 import { adminCtx, audit } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
 
-export type LiveSession = { id: string; code: string; title: string | null };
+/** `current_slide` / `revealed`: dónde estaba la clase (para retomarla si el presentador se fue y volvió). */
+export type LiveSession = { id: string; code: string; title: string | null; current_slide?: number; revealed?: boolean };
+const SESSION_COLS = "id, code, title, current_slide, revealed";
 
 /**
  * Abre la clase en vivo (o devuelve la que ya está abierta para esa clase). Solo admin.
@@ -19,7 +21,7 @@ export async function startLive(slug: string, num: number, title?: string): Prom
 
     const { data: open } = await ctx.supabase
       .from("live_sessions")
-      .select("id, code, title")
+      .select(SESSION_COLS)
       .eq("course_slug", slug)
       .eq("class_num", num)
       .eq("status", "open")
@@ -34,7 +36,7 @@ export async function startLive(slug: string, num: number, title?: string): Prom
       const { data, error } = await ctx.supabase
         .from("live_sessions")
         .insert({ code, title: name, course_slug: slug, class_num: num, created_by: ctx.viewer.id })
-        .select("id, code, title")
+        .select(SESSION_COLS)
         .single();
       if (!error && data) {
         await audit(ctx, "live.start", `${slug}/clase-${num}`, { code, title: name });

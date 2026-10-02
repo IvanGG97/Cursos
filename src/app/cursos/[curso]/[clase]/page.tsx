@@ -32,16 +32,19 @@ export default async function ClassPage({ params }: Params) {
   if (status.kind === "login") redirect(`/login?next=${base}/${slug}`);
   if (status.kind !== "open") redirect(base);
 
-  // Admin: datos para la clase en vivo (si ya hay una abierta para esta clase, se retoma).
+  // Admin: datos para la clase en vivo. Si ya hay una abierta para esta clase, se retoma donde
+  // estaba (diapositiva y respuesta revelada), aunque el presentador haya cerrado la pestaña.
   let live: LiveConfig | undefined;
   if (viewer.kind === "user" && viewer.isAdmin) {
     const supabase = await createClient();
     const { data: open } = await supabase
       .from("live_sessions")
-      .select("id, code, title")
+      .select("id, code, title, current_slide, revealed")
       .eq("course_slug", course.slug)
       .eq("class_num", clase.num)
       .eq("status", "open")
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
     live = { slug: course.slug, num: clase.num, initial: open ?? null, joinBase: await getOrigin() };
   }
