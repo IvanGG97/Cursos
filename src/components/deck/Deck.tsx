@@ -170,6 +170,8 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
           {index + 1} / {total}
         </span>
         <button type="button" className="nav-btn" onClick={next} disabled={index === total - 1} title="Siguiente (→)" aria-label="Siguiente">→</button>
+        {/* En el celular, esto va en una segunda fila (en la compu, todo en una sola). */}
+        <div className="controls-extra">
         {pdfHref && <a href={pdfHref} title="Descargar resumen en PDF">PDF</a>}
         {liveState.enabled &&
           (liveState.session ? (
@@ -191,6 +193,7 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
           ))}
         <ThemeToggle className="theme-toggle" />
         <button type="button" className="fs" onClick={toggleFullscreen} title="Pantalla completa (F)">Pantalla completa</button>
+        </div>
       </nav>
 
       {liveState.error && <div className="live-error" role="alert">{liveState.error}</div>}

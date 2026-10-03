@@ -215,6 +215,12 @@ a.alist-main:hover strong { color: var(--accent-text); }
 .pager { justify-content: center; }
 
 @media (max-width: 640px) {
+  /* Pestañas: en el celular bajan de línea en vez de quedar cortadas ("AC…", "IMÁGENE…"). */
+  .admin-nav { flex-wrap: wrap; overflow-x: visible; gap: 0 2px; }
+  .admin-nav a { padding: 12px 9px; font-size: 11px; letter-spacing: 0.04em; min-height: 44px; }
+  .admin-nav.sub a { padding: 9px 8px; font-size: 11px; }
+  .chip { white-space: normal; }
+  .alist-meta { white-space: normal; }
   .panel { padding: 16px; }
   .alist-actions { width: 100%; }
   .alist-actions .aform-inline { flex: 1 1 auto; }

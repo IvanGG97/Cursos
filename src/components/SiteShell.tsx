@@ -16,7 +16,15 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       )}
       <header className="site-header">
         <div className="container">
-          <Link href="/" className="brand">{SITE_NAME}</Link>
+          <Link href="/" className="brand" aria-label={SITE_NAME}>
+            {/* "Cursos · Iván Gutiérrez": en el celular se apila en dos líneas, como un logo. */}
+            {SITE_NAME.split(" · ").map((part, i) => (
+              <span key={i} className={i === 0 ? "brand-a" : "brand-b"}>
+                {i > 0 && <span className="brand-sep"> · </span>}
+                {part}
+              </span>
+            ))}
+          </Link>
           <nav className="nav">
             <ThemeToggle />
             {canManage(viewer) && <Link href="/admin" className="btn btn-sm">Admin</Link>}

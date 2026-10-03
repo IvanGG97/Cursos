@@ -21,11 +21,24 @@ export default async function LiveSessionPage({ params, searchParams }: Props) {
   if (viewer.kind === "local") notFound();
 
   const supabase = await createClient();
-  const { data: s } = await supabase
+  const { data: s, error } = await supabase
     .from("live_sessions")
     .select("id, code, title, course_slug, class_num, status, current_slide, revealed")
     .eq("id", id)
     .maybeSingle();
+
+  // Una falla de conexión no es "la clase terminó": se avisa y se ofrece reintentar.
+  if (error) {
+    return (
+      <SiteShell>
+        <div className="live-wrap">
+          <h1 className="live-h1">No pudimos conectarnos</h1>
+          <p className="muted">Revisá tu conexión a internet y probá de nuevo. La clase sigue en curso.</p>
+          <Link href={`/vivo/${id}`} className="btn btn-primary">Reintentar</Link>
+        </div>
+      </SiteShell>
+    );
+  }
 
   const course = s && getCourse(s.course_slug);
   const clase = course?.classes.find((c) => c.num === s?.class_num);
