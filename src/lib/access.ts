@@ -52,12 +52,27 @@ export type CourseState = {
   /** Clases a las que este visitante tiene acceso individual (aunque estén ocultas). */
   grants: Set<number>;
   releases: Map<number, Release>;
+  /** Encuesta final: habilitada sí/no + desde cuándo (opcional). Mismo criterio que las clases. */
+  survey: Release;
 };
+
+/** ¿Se puede responder la encuesta ahora? */
+export function isSurveyOpen(state: CourseState, now = new Date()) {
+  const s = state.survey;
+  return Boolean(s.visible && (!s.visibleFrom || new Date(s.visibleFrom) <= now));
+}
 
 export const getCourseState = cache(async (slug: string): Promise<CourseState> => {
   const viewer = await getViewer();
   if (viewer.kind === "local") {
-    return { published: true, isPublic: false, enrollment: "active", grants: new Set(), releases: new Map() };
+    return {
+      published: true,
+      isPublic: false,
+      enrollment: "active",
+      grants: new Set(),
+      releases: new Map(),
+      survey: { visible: true, visibleFrom: null },
+    };
   }
 
   const supabase = await createClient();
@@ -75,7 +90,10 @@ export const getCourseState = cache(async (slug: string): Promise<CourseState> =
   ]);
 
   const published = Boolean(course.data?.published);
+  // Sin la migración de la encuesta (columna inexistente) se mantiene como antes: abierta.
+  const surveyOpen = course.data?.survey_open as boolean | undefined;
   return {
+    survey: { visible: surveyOpen ?? true, visibleFrom: (course.data?.survey_open_from as string | null) ?? null },
     published,
     isPublic: published && course.data?.access === "public",
     enrollment: enrollment.data ? (enrollment.data.status === "suspended" ? "suspended" : "active") : "none",

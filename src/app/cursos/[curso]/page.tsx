@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { classSlug, getCourse } from "@/content/registry";
-import { canManage, classStatus, getCourseState, getViewer, getVisibleCourseSlugs, type ClassStatus } from "@/lib/access";
+import { canManage, classStatus, getCourseState, getViewer, getVisibleCourseSlugs, isSurveyOpen, type ClassStatus } from "@/lib/access";
 import { formatDateTime } from "@/lib/site";
 import { getMyCourseProgress } from "@/lib/progress";
 import { createClient } from "@/lib/supabase/server";
@@ -43,6 +43,7 @@ export default async function CoursePage({ params }: Params) {
       .eq("status", "open");
     liveNow = data ?? [];
   }
+  const surveyOpen = isSurveyOpen(state);
   const canSeeSomething = course.classes.some((c) => classStatus(viewer, state, c).kind === "open");
 
   return (
@@ -171,7 +172,18 @@ export default async function CoursePage({ params }: Params) {
         })}
       </div>
 
-      {course.survey && viewer.kind !== "local" && (viewer.kind === "user" ? canSeeSomething : state.isPublic) && (
+      {/* Admin: estado de la encuesta (los alumnos solo la ven cuando está habilitada). */}
+      {course.survey && admin && viewer.kind !== "local" && !surveyOpen && (
+        <div className="notice survey-cta">
+          <strong>Encuesta final {state.survey.visible && state.survey.visibleFrom
+            ? `programada para el ${formatDateTime(state.survey.visibleFrom)}`
+            : "deshabilitada"}.</strong>{" "}
+          Los alumnos todavía no la ven.{" "}
+          <Link href={`/admin/cursos/${course.slug}/encuesta`}>Habilitarla →</Link>
+        </div>
+      )}
+
+      {course.survey && surveyOpen && viewer.kind !== "local" && (viewer.kind === "user" ? canSeeSomething : state.isPublic) && (
         <section className="notice survey-cta">
           {mine.surveyDone ? (
             <p style={{ margin: 0 }}>

@@ -71,6 +71,8 @@ export const AUDIT_LABELS: Record<string, string> = {
   "course.code.set": "Cambió el código de inscripción",
   "course.code.remove": "Desactivó el código de inscripción",
   "class.release": "Cambió la liberación de una clase",
+  "survey.open": "Habilitó la encuesta final",
+  "survey.close": "Deshabilitó la encuesta final",
   "enrollment.add": "Inscribió a una persona",
   "enrollment.invite": "Invitó por mail",
   "enrollment.suspend": "Suspendió una inscripción",

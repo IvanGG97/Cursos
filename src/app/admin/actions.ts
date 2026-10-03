@@ -142,6 +142,29 @@ export const setRelease = action(async (ctx, f) => {
 });
 
 // ---------------------------------------------------------------------------
+// Encuesta final
+// ---------------------------------------------------------------------------
+
+/** Habilita (ya o desde una fecha y hora) o deshabilita la encuesta final del curso. */
+export const setSurveyOpen = action(async (ctx, f) => {
+  const course = courseFrom(f);
+  if (!course.survey) throw new Error("Este curso no tiene encuesta.");
+  const open = str(f, "open") === "true";
+  const from = open ? fromLocalInput(str(f, "open_from")) : null;
+  await ensureCourseRow(ctx, course.slug);
+  const missing = "Falta correr la migración 20261003000000_survey_open.sql en Supabase.";
+  check(
+    (await ctx.supabase.from("courses").update({ survey_open: open, survey_open_from: from }).eq("slug", course.slug)).error,
+    { PGRST204: missing, "42703": missing },
+  );
+  await audit(ctx, open ? "survey.open" : "survey.close", course.slug, { from });
+  if (!open) return "Encuesta deshabilitada: los alumnos ya no la ven.";
+  return from && new Date(from) > new Date()
+    ? "Encuesta programada: se habilita sola a esa hora."
+    : "Encuesta habilitada: los alumnos ya la pueden responder.";
+});
+
+// ---------------------------------------------------------------------------
 // Inscripciones e invitaciones
 // ---------------------------------------------------------------------------
 

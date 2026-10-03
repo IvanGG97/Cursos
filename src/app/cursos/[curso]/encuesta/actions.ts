@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
-import { getViewer, getVisibleCourseSlugs } from "@/lib/access";
+import { getCourseState, getViewer, getVisibleCourseSlugs, isSurveyOpen } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 
 export type SurveyState = { error?: string; done?: boolean };
@@ -15,6 +15,8 @@ export async function submitSurvey(slug: string, _prev: SurveyState, formData: F
   if (!course || !survey) return { error: "Encuesta inexistente." };
   const visible = await getVisibleCourseSlugs();
   if (visible !== "all" && !visible.has(slug)) return { error: "Este curso no está disponible para vos." };
+  // La base también lo rechaza (política de la tabla), pero así el mensaje es claro.
+  if (!isSurveyOpen(await getCourseState(slug))) return { error: "La encuesta no está habilitada en este momento." };
 
   const answers: Record<string, string | number> = {};
   for (const q of survey.questions) {

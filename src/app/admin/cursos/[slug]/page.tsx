@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { classSlug, getCourse } from "@/content/registry";
 import { requireAdmin } from "@/lib/admin";
+import { getCourseState, isSurveyOpen } from "@/lib/access";
 import { formatDateTime, toLocalInput } from "@/lib/site";
 import {
   addPeople,
@@ -75,6 +76,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
       .order("class_num"),
   ]);
 
+  const courseState = await getCourseState(slug);
   const published = Boolean(row.data?.published);
   const mode: "hidden" | "enrolled" | "public" = !published
     ? "hidden"
@@ -170,6 +172,19 @@ export default async function AdminCourse({ params, searchParams }: Props) {
           </div>
         </section>
       </div>
+
+      {/* ---------------- Encuesta final (atajo: se maneja en la pestaña Encuesta) ---------------- */}
+      {course.survey && (
+        <div className="notice" style={{ marginTop: 20 }}>
+          <strong>Encuesta final:</strong>{" "}
+          {isSurveyOpen(courseState)
+            ? "habilitada, los alumnos la pueden responder."
+            : courseState.survey.visible && courseState.survey.visibleFrom
+              ? `se habilita sola el ${formatDateTime(courseState.survey.visibleFrom)}.`
+              : "deshabilitada, los alumnos no la ven."}{" "}
+          <Link href={`/admin/cursos/${slug}/encuesta`}>Habilitar o deshabilitar →</Link>
+        </div>
+      )}
 
       {/* ---------------- Clases ---------------- */}
       <div className="section-head">

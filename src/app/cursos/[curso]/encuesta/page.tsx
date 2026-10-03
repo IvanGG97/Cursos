@@ -4,8 +4,9 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { getCourse } from "@/content/registry";
-import { getViewer, getVisibleCourseSlugs } from "@/lib/access";
+import { canManage, getCourseState, getViewer, getVisibleCourseSlugs, isSurveyOpen } from "@/lib/access";
 import { getMyCourseProgress } from "@/lib/progress";
+import { formatDateTime } from "@/lib/site";
 import { SurveyForm } from "./SurveyForm";
 import "@/app/vivo/vivo.css";
 import "./encuesta.css";
@@ -25,6 +26,9 @@ export default async function SurveyPage({ params }: Props) {
   const visible = await getVisibleCourseSlugs();
   if (visible !== "all" && !visible.has(course.slug)) notFound();
   const { surveyDone } = await getMyCourseProgress(course.slug);
+  // Deshabilitada: los alumnos no la pueden responder (el admin la ve igual, para revisarla).
+  const state = await getCourseState(course.slug);
+  const closed = !isSurveyOpen(state) && !canManage(viewer);
 
   return (
     <SiteShell>
@@ -38,8 +42,23 @@ export default async function SurveyPage({ params }: Props) {
           <div className="notice ok">
             <strong>Ya respondiste esta encuesta.</strong> ¡Gracias!
           </div>
+        ) : closed ? (
+          <div className="notice">
+            <strong>La encuesta todavía no está habilitada.</strong>{" "}
+            {state.survey.visible && state.survey.visibleFrom
+              ? `Se habilita el ${formatDateTime(state.survey.visibleFrom)}.`
+              : "Se habilita al final del curso."}
+          </div>
         ) : (
-          <SurveyForm slug={course.slug} questions={course.survey.questions} courseHref={base} />
+          <>
+            {!isSurveyOpen(state) && (
+              <div className="notice warn" style={{ marginBottom: 16 }}>
+                <strong>Vista de admin:</strong> la encuesta está deshabilitada para los alumnos.{" "}
+                <Link href={`/admin/cursos/${course.slug}/encuesta`}>Habilitarla →</Link>
+              </div>
+            )}
+            <SurveyForm slug={course.slug} questions={course.survey.questions} courseHref={base} />
+          </>
         )}
       </div>
     </SiteShell>

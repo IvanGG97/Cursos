@@ -4,6 +4,10 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { getCourse } from "@/content/registry";
 import { requireAdmin } from "@/lib/admin";
+import { getCourseState, isSurveyOpen } from "@/lib/access";
+import { formatDateTime, toLocalInput } from "@/lib/site";
+import { setSurveyOpen } from "../../../actions";
+import { ActionForm, Submit } from "../../../_ui";
 import { CourseTabs } from "../tabs";
 
 export const metadata: Metadata = { title: "Encuesta" };
@@ -26,6 +30,13 @@ export default async function SurveyResults({ params }: Props) {
     .eq("survey_id", survey.id);
   const rows = (data ?? []).map((r) => r.answers as Record<string, string | number>);
 
+  // Estado: habilitada ya, programada (se abre sola a una hora) o deshabilitada.
+  const state = await getCourseState(slug);
+  const open = isSurveyOpen(state);
+  const from = state.survey.visibleFrom;
+  const scheduled = state.survey.visible && !open && from;
+  const f = { slug };
+
   return (
     <div style={{ "--accent": course.accent } as CSSProperties}>
       <div className="page-head admin-page-head">
@@ -33,6 +44,55 @@ export default async function SurveyResults({ params }: Props) {
         <h1>{course.title}</h1>
       </div>
       <CourseTabs slug={slug} active="encuesta" hasSurvey />
+
+      <section className="panel" style={{ marginBottom: 14 }}>
+        <div className="panel-head">
+          <h2>Encuesta para los alumnos</h2>
+          {open ? (
+            <span className="tag ok">Habilitada</span>
+          ) : scheduled ? (
+            <span className="tag warn">Se habilita el {formatDateTime(from!)}</span>
+          ) : (
+            <span className="tag">Deshabilitada</span>
+          )}
+        </div>
+        <p className="muted">
+          {open
+            ? "Los alumnos la ven en la página del curso y la pueden responder."
+            : scheduled
+              ? "Se habilita sola a esa hora (hora de Argentina). Hasta entonces, los alumnos no la ven."
+              : "Los alumnos no la ven ni la pueden responder. Habilitala cuando quieras (por ejemplo, el último día)."}
+        </p>
+        <div className="btn-row">
+          {!open && (
+            <ActionForm action={setSurveyOpen} fields={{ ...f, open: "true", open_from: "" }} inline>
+              <Submit small variant="primary">Habilitar ahora</Submit>
+            </ActionForm>
+          )}
+          {(open || scheduled) && (
+            <ActionForm action={setSurveyOpen} fields={{ ...f, open: "false", open_from: "" }} inline>
+              <Submit small>Deshabilitar</Submit>
+            </ActionForm>
+          )}
+        </div>
+        <details className="more">
+          <summary>Programar para una fecha y hora</summary>
+          <ActionForm action={setSurveyOpen} fields={{ ...f, open: "true" }}>
+            <div className="form-row">
+              <input
+                type="datetime-local"
+                name="open_from"
+                className="input"
+                defaultValue={toLocalInput(scheduled ? from : null)}
+                aria-label="Habilitar desde (hora de Argentina)"
+                required
+              />
+              <Submit>Programar</Submit>
+            </div>
+            <p className="hint">Hora de Argentina. La encuesta se habilita sola a esa hora.</p>
+          </ActionForm>
+        </details>
+      </section>
 
       <section className="panel">
         <h2>{survey.title}</h2>
