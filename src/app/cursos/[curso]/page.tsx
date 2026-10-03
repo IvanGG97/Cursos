@@ -175,9 +175,12 @@ export default async function CoursePage({ params }: Params) {
       {/* Admin: estado de la encuesta (los alumnos solo la ven cuando está habilitada). */}
       {course.survey && admin && viewer.kind !== "local" && !surveyOpen && (
         <div className="notice survey-cta">
-          <strong>Encuesta final {state.survey.visible && state.survey.visibleFrom
-            ? `programada para el ${formatDateTime(state.survey.visibleFrom)}`
-            : "deshabilitada"}.</strong>{" "}
+          <strong>
+            Encuesta final{" "}
+            {state.survey.visible && state.survey.visibleFrom
+              ? `programada para el ${formatDateTime(state.survey.visibleFrom)}`
+              : "deshabilitada."}
+          </strong>{" "}
           Los alumnos todavía no la ven.{" "}
           <Link href={`/admin/cursos/${course.slug}/encuesta`}>Habilitarla →</Link>
         </div>

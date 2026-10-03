@@ -180,7 +180,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
           {isSurveyOpen(courseState)
             ? "habilitada, los alumnos la pueden responder."
             : courseState.survey.visible && courseState.survey.visibleFrom
-              ? `se habilita sola el ${formatDateTime(courseState.survey.visibleFrom)}.`
+              ? `se habilita sola el ${formatDateTime(courseState.survey.visibleFrom)}`
               : "deshabilitada, los alumnos no la ven."}{" "}
           <Link href={`/admin/cursos/${slug}/encuesta`}>Habilitar o deshabilitar →</Link>
         </div>

@@ -46,7 +46,7 @@ export default async function SurveyPage({ params }: Props) {
           <div className="notice">
             <strong>La encuesta todavía no está habilitada.</strong>{" "}
             {state.survey.visible && state.survey.visibleFrom
-              ? `Se habilita el ${formatDateTime(state.survey.visibleFrom)}.`
+              ? `Se habilita el ${formatDateTime(state.survey.visibleFrom)}`
               : "Se habilita al final del curso."}
           </div>
         ) : (
