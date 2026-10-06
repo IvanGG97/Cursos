@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { getCourse } from "@/content/registry";
 import { requireAdmin } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
+import { getCourseEvaluations } from "@/lib/evaluations";
 import { closeLiveSession } from "../../../actions";
 import { ActionForm, ConfirmSubmit } from "../../../_ui";
 import { CourseTabs } from "../tabs";
@@ -30,7 +31,7 @@ export default async function CourseTracking({ params }: Props) {
       .eq("course_slug", slug)
       .eq("status", "active"),
     supabase.from("class_progress").select("user_id, class_num, max_slide, total_slides, completed_at").eq("course_slug", slug),
-    supabase.from("evaluation_attempts").select("user_id, class_num, score, total, passed, answers").eq("course_slug", slug),
+    supabase.from("evaluation_attempts").select("user_id, class_num, evaluation_id, score, total, passed, answers").eq("course_slug", slug),
     supabase
       .from("live_sessions")
       .select("id, code, title, class_num, status, created_at, closed_at, live_attendance(count), live_participants(count)")
@@ -47,6 +48,7 @@ export default async function CourseTracking({ params }: Props) {
   const progress = prog.data ?? [];
   const attempts = atts.data ?? [];
   const classes = course.classes.filter((c) => c.slides.length > 0);
+  const evals = await getCourseEvaluations(slug);
 
   // Mejor intento de cada persona en cada clase.
   const best = new Map<string, { score: number; total: number; passed: boolean }>();
@@ -76,6 +78,10 @@ export default async function CourseTracking({ params }: Props) {
             const started = pr.length;
             const done = pr.filter((p) => p.completed_at).length;
             const at = attempts.filter((a) => a.class_num === c.num);
+            const ce = evals.get(c.num);
+            // Acierto por pregunta: solo los intentos de la versión vigente (si se editaron las
+            // preguntas, los intentos anteriores eran de otras preguntas).
+            const atNow = ce ? at.filter((a) => a.evaluation_id === ce.ev.id) : [];
             const takers = new Set(at.map((a) => a.user_id));
             const passed = [...takers].filter((u) => best.get(`${u}/${c.num}`)?.passed).length;
             const avgBest = takers.size
@@ -94,7 +100,7 @@ export default async function CourseTracking({ params }: Props) {
                   <div><dt>Inscriptos activos</dt><dd>{people.length}</dd></div>
                   <div><dt>Abrieron la clase</dt><dd>{started}</dd></div>
                   <div><dt>La vieron completa</dt><dd>{done}</dd></div>
-                  {c.evaluation && (
+                  {ce && (
                     <>
                       <div><dt>Rindieron la evaluación</dt><dd>{takers.size}</dd></div>
                       <div><dt>Aprobaron</dt><dd>{passed}</dd></div>
@@ -103,17 +109,20 @@ export default async function CourseTracking({ params }: Props) {
                   )}
                 </dl>
 
-                {c.evaluation && at.length > 0 && (
+                {ce && atNow.length > 0 && (
                   <details className="more">
-                    <summary>Acierto por pregunta ({at.length} intento(s))</summary>
-                    <p className="hint">Las preguntas con menos acierto son temas para repasar en clase.</p>
-                    {c.evaluation.questions.map((q, i) => {
+                    <summary>Acierto por pregunta ({atNow.length} intento(s){ce.edited ? " · versión editada" : ""})</summary>
+                    <p className="hint">
+                      Las preguntas con menos acierto son temas para repasar en clase.
+                      {at.length > atNow.length && ` No se cuentan ${at.length - atNow.length} intento(s) de una versión anterior de las preguntas.`}
+                    </p>
+                    {ce.ev.questions.map((q, i) => {
                       const correct = q.options.map((o, j) => (o.correct ? j : -1)).filter((j) => j >= 0);
-                      const right = at.filter((a) => {
+                      const right = atNow.filter((a) => {
                         const ch = ((a.answers as Record<string, number[]>)[q.id] ?? []) as number[];
                         return ch.length === correct.length && correct.every((j) => ch.includes(j));
                       }).length;
-                      const p = pct(right, at.length);
+                      const p = pct(right, atNow.length);
                       return (
                         <div key={q.id} className="hbar">
                           <span className="hbar-label">

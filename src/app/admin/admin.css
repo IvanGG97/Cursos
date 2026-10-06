@@ -288,3 +288,64 @@ a.alist-main:hover strong { color: var(--accent-text); }
   .ae-bar { gap: 6px 10px; }
   .ae-group > button { padding: 0 9px; font-size: 12px; }
 }
+
+/* ---------- Editor de evaluaciones ---------- */
+.ev-editor { display: flex; flex-direction: column; gap: 14px; padding-bottom: 8px; }
+.ev-editor .field > span { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.ev-editor textarea.input { resize: vertical; font-family: var(--f-body); line-height: 1.45; }
+.ev-note { margin: 0 0 14px; font-size: 14px; }
+.ev-pass-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ev-pass-row .input { width: 96px; }
+.ev-pass-row .muted { font-size: 13px; }
+.ev-questions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.ev-q.has-error { border-color: var(--bad); }
+.ev-q-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ev-q-n { font-family: var(--f-title); font-size: 18px; }
+.ev-q-tools { display: flex; gap: 4px; flex-wrap: wrap; }
+.ev-q-tools button,
+.ev-kinds button,
+.ev-opt-del {
+  min-height: 40px; min-width: 40px; padding: 0 10px;
+  background: transparent; border: 1px solid var(--line); color: var(--text);
+  font-family: var(--f-mono); font-size: 12px;
+}
+.ev-q-tools button:hover:not(:disabled),
+.ev-kinds button:hover:not(.on),
+.ev-opt-del:hover { border-color: var(--accent); }
+.ev-q-tools button:disabled { opacity: 0.35; }
+.ev-q-tools .danger:hover { border-color: var(--bad); color: var(--bad-text); }
+.ev-kinds { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px; }
+.ev-kinds button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.ev-opts { border: 0; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ev-opts legend { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; padding: 0; }
+.ev-opt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 6px; border: 1px solid var(--line); background: var(--bg); }
+.ev-opt.correct { border-color: var(--ok); }
+.ev-opt .input { padding: 8px 10px; min-width: 0; }
+.ev-mark { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 8px; cursor: pointer; font-family: var(--f-mono); font-weight: 600; }
+.ev-mark input { width: 20px; height: 20px; margin: 0; accent-color: var(--ok); cursor: pointer; }
+.ev-vf-text { font-weight: 600; padding: 8px 4px; }
+.ev-ok { grid-column: 2 / -1; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ok-text); padding-left: 4px; }
+.ev-opts > .btn { align-self: flex-start; }
+.ev-problems { margin: 0; padding: 10px 14px 10px 30px; border: 1px solid var(--bad); color: var(--bad-text); font-size: 14px; line-height: 1.5; }
+.ev-add { align-self: flex-start; }
+/* Barra de guardar: siempre a mano al final de la pantalla mientras se edita. */
+.ev-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.ev-bar-msg { flex: 1 1 220px; font-size: 14px; }
+.ev-bar-msg .aform-msg { margin: 0; }
+.ev-bar-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (pointer: coarse) {
+  .ev-q-tools button, .ev-kinds button, .ev-opt-del, .ev-mark { min-height: 44px; min-width: 44px; }
+}
+@media (max-width: 640px) {
+  .ev-bar-actions { width: 100%; }
+  .ev-bar-actions > * { flex: 1 1 auto; justify-content: center; }
+  .ev-kinds button { flex: 1 1 auto; }
+}

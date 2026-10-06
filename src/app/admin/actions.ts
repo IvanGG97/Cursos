@@ -4,6 +4,11 @@ import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
 import { adminCtx, audit, parseEmails, randomCode, type ActionResult, type AdminCtx } from "@/lib/admin";
 import { fromLocalInput } from "@/lib/site";
+import { createServiceClient } from "@/lib/supabase/admin";
+
+const MISSING_EVAL_MIGRATION = "Falta correr la migración 20261006000000_evaluation_settings.sql en Supabase.";
+/** La tabla de evaluaciones tiene las respuestas correctas: solo la usa el servidor (clave secreta). */
+const evaluationTable = () => createServiceClient().from("evaluation_settings");
 
 // Todas las acciones del panel. Cada una verifica admin acá Y en la base (RLS + funciones protegidas),
 // deja registro en admin_audit y devuelve un mensaje para mostrar en el formulario.
@@ -162,6 +167,29 @@ export const setSurveyOpen = action(async (ctx, f) => {
   return from && new Date(from) > new Date()
     ? "Encuesta programada: se habilita sola a esa hora."
     : "Encuesta habilitada: los alumnos ya la pueden responder.";
+});
+
+// ---------------------------------------------------------------------------
+// Evaluaciones (habilitar / deshabilitar; editar preguntas está en evaluation-actions.ts)
+// ---------------------------------------------------------------------------
+
+/** Habilita (ya o desde una fecha y hora) o deshabilita la evaluación de una clase. */
+export const setEvaluationOpen = action(async (ctx, f) => {
+  const { course, clase } = classFrom(f);
+  if (!clase.evaluation) throw new Error("Esta clase no tiene evaluación.");
+  const open = str(f, "open") === "true";
+  const from = open ? fromLocalInput(str(f, "open_from")) : null;
+  await ensureCourseRow(ctx, course.slug);
+  const { error } = await evaluationTable().upsert(
+    { course_slug: course.slug, class_num: clase.num, open, open_from: from, updated_at: new Date().toISOString(), updated_by: ctx.viewer.id },
+    { onConflict: "course_slug,class_num" },
+  );
+  check(error, { "42P01": MISSING_EVAL_MIGRATION, PGRST205: MISSING_EVAL_MIGRATION });
+  await audit(ctx, open ? "evaluation.open" : "evaluation.close", `${course.slug}/clase-${clase.num}`, { from });
+  if (!open) return `Evaluación de la clase ${clase.num} deshabilitada.`;
+  return from && new Date(from) > new Date()
+    ? `Evaluación de la clase ${clase.num} programada.`
+    : `Evaluación de la clase ${clase.num} habilitada.`;
 });
 
 // ---------------------------------------------------------------------------

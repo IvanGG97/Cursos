@@ -7,6 +7,7 @@ import { classSlug, getCourse } from "@/content/registry";
 import { canManage, classStatus, getCourseState, getViewer, getVisibleCourseSlugs, isSurveyOpen, type ClassStatus } from "@/lib/access";
 import { formatDateTime } from "@/lib/site";
 import { getMyCourseProgress } from "@/lib/progress";
+import { getCourseEvaluations } from "@/lib/evaluations";
 import { createClient } from "@/lib/supabase/server";
 import { JoinForm } from "./JoinForm";
 
@@ -44,6 +45,7 @@ export default async function CoursePage({ params }: Params) {
     liveNow = data ?? [];
   }
   const surveyOpen = isSurveyOpen(state);
+  const evals = await getCourseEvaluations(course.slug);
   const canSeeSomething = course.classes.some((c) => classStatus(viewer, state, c).kind === "open");
 
   return (
@@ -154,10 +156,14 @@ export default async function CoursePage({ params }: Params) {
                   <>
                     {status.preview && <span className="tag warn">Oculta para alumnos</span>}
                     <a href={`${href}/resumen`} className="btn">Resumen PDF</a>
-                    {clase.evaluation && (
+                    {/* Evaluación: los alumnos la ven solo habilitada; el admin, siempre (con aviso). */}
+                    {evals.get(clase.num) && (evals.get(clase.num)!.isOpen || admin) && (
                       <Link href={`${href}/evaluacion`} className="btn">
                         {ev?.passed ? "Evaluación ✓" : "Evaluación"}
                       </Link>
+                    )}
+                    {admin && evals.get(clase.num) && !evals.get(clase.num)!.isOpen && (
+                      <span className="tag">Evaluación deshabilitada</span>
                     )}
                     <Link href={inProgress ? `${href}#${prog.last}` : href} className="btn btn-primary">
                       {inProgress ? "Seguir →" : "Abrir clase →"}

@@ -9,7 +9,7 @@ import { iaMiNuevoAsistente } from "./ia-mi-nuevo-asistente";
 const RAW: Course[] = [iaMiNuevoAsistente];
 
 /** Convierte "comillas rectas" en “comillas tipográficas” (Space Grotesk dibuja mal las rectas). */
-function typeset<T>(value: T): T {
+export function typeset<T>(value: T): T {
   if (typeof value === "string") return value.replace(/"([^"\n]*)"/g, "“$1”") as T;
   if (Array.isArray(value)) return value.map(typeset) as T;
   if (value && typeof value === "object") {
