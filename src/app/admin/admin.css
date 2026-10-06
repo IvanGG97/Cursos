@@ -369,7 +369,7 @@ a.alist-main:hover strong { color: var(--accent-text); }
 .bulk-all input, .req-check { width: 22px; height: 22px; margin: 0; accent-color: var(--accent); cursor: pointer; flex: none; }
 .bulk-count { font-family: var(--f-mono); font-size: 12px; }
 .bulk-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: 1 1 100%; }
-.bulk-actions .input { width: auto; max-width: 100%; padding: 6px 8px; font-size: 14px; }
+.bulk-actions .input { width: auto; max-width: 100%; min-width: 0; padding: 6px 8px; font-size: 14px; text-overflow: ellipsis; }
 .bulk-bar .aform-msg { flex-basis: 100%; }
 .alist li.req-row { flex-wrap: nowrap; align-items: flex-start; }
 .alist li.req-row > .req-check { margin-top: 2px; }
@@ -377,5 +377,7 @@ a.alist-main:hover strong { color: var(--accent-text); }
 @media (max-width: 640px) {
   .alist li.req-row { flex-wrap: wrap; }
   .alist li.req-row > .alist-main { flex: 1 1 calc(100% - 40px); }
-  .bulk-actions > * { flex: 1 1 100%; justify-content: center; }
+  .bulk-actions { min-width: 0; }
+  .bulk-actions > * { flex: 1 1 100%; min-width: 0; justify-content: center; }
+  .bulk-actions .input { width: 100%; }
 }
