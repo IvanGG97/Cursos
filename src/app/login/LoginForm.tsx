@@ -78,12 +78,21 @@ export function LoginForm({ next, google, googleClientId }: Props) {
         redirectButton
       )}
 
-      <details className="alt-login">
-        <summary>¿No tenés cuenta de Google? Entrá con tu mail</summary>
-        {emailForm}
-      </details>
+      {/* Sin Google: se pide acceso con nombre y mail y el docente lo aprueba en clase (sin mail ni
+          contraseña). El ingreso con link por mail queda para cuando haya un servicio de mail propio. */}
+      <div className="alt-login">
+        <p style={{ margin: "0 0 10px", color: "var(--text-2)" }}>¿No tenés cuenta de Google?</p>
+        <a href={`/solicitar-acceso${courseFromNext(next) ? `?curso=${courseFromNext(next)}` : ""}`} className="btn btn-block">
+          Pedí acceso con tu nombre y tu mail
+        </a>
+      </div>
     </>
   );
+}
+
+/** "/cursos/<slug>/..." → "<slug>" (para pedir acceso a ese curso). */
+function courseFromNext(next: string) {
+  return next.match(/^\/cursos\/([\w-]+)/)?.[1] ?? "";
 }
 
 function GoogleMark() {

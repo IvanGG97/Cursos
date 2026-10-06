@@ -73,6 +73,8 @@ export const AUDIT_LABELS: Record<string, string> = {
   "class.release": "Cambió la liberación de una clase",
   "survey.open": "Habilitó la encuesta final",
   "survey.close": "Deshabilitó la encuesta final",
+  "access.approve": "Aprobó una solicitud de admisión",
+  "access.reject": "Rechazó una solicitud de admisión",
   "evaluation.open": "Habilitó la evaluación de una clase",
   "evaluation.close": "Deshabilitó la evaluación de una clase",
   "evaluation.edit": "Editó las preguntas de una evaluación",

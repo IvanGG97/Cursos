@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import type { ActionResult } from "@/lib/admin";
@@ -109,10 +109,12 @@ const TABS = [
   { href: "/admin", label: "Resumen" },
   { href: "/admin/cursos", label: "Cursos" },
   { href: "/admin/personas", label: "Personas" },
+  { href: "/admin/solicitudes", label: "Solicitudes de admisión" },
   { href: "/admin/actividad", label: "Actividad" },
 ];
 
-export function AdminNav() {
+/** `pending`: solicitudes de admisión sin resolver (se muestra como número en la pestaña). */
+export function AdminNav({ pending = 0 }: { pending?: number }) {
   const path = usePathname();
   return (
     <nav className="admin-nav" aria-label="Secciones del panel">
@@ -121,9 +123,28 @@ export function AdminNav() {
         return (
           <Link key={t.href} href={t.href} className={active ? "active" : ""} aria-current={active ? "page" : undefined}>
             {t.label}
+            {t.href === "/admin/solicitudes" && pending > 0 && (
+              <span className="nav-badge" aria-label={`${pending} pendiente(s)`}>{pending}</span>
+            )}
           </Link>
         );
       })}
     </nav>
   );
+}
+
+
+/** Refresca la página cada `ms` (lista de solicitudes pendientes: aparecen solas en clase). */
+export function AutoRefresh({ ms = 5000 }: { ms?: number }) {
+  const router = useRouter();
+  useEffect(() => {
+    const t = setInterval(() => {
+      // No refrescar mientras se está eligiendo algo (un select abierto, un campo con foco).
+      const el = document.activeElement;
+      if (el && /^(SELECT|INPUT|TEXTAREA)$/.test(el.tagName)) return;
+      router.refresh();
+    }, ms);
+    return () => clearInterval(t);
+  }, [ms, router]);
+  return null;
 }

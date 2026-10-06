@@ -100,7 +100,10 @@ export default async function CoursePage({ params }: Params) {
           <p style={{ marginTop: 0 }}>
             <strong>Para ver las clases, ingresá con tu cuenta.</strong> Es un toque con Google, sin contraseñas nuevas.
           </p>
-          <Link href={`/login?next=/cursos/${course.slug}`} className="btn btn-primary">Ingresar</Link>
+          <div className="btn-row">
+            <Link href={`/login?next=/cursos/${course.slug}`} className="btn btn-primary">Ingresar</Link>
+            <Link href={`/solicitar-acceso?curso=${course.slug}`} className="btn">No tengo Google: pedir acceso</Link>
+          </div>
         </div>
       )}
 

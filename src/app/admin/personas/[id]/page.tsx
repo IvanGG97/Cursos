@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Ficha" };
 
 type Props = { params: Promise<{ id: string }> };
 
-const SOURCE: Record<string, string> = { code: "con código", admin: "por admin", invite: "por invitación" };
+const SOURCE: Record<string, string> = { code: "con código", admin: "por admin", invite: "por invitación", request: "por solicitud" };
 
 export default async function AdminPerson({ params }: Props) {
   const { id } = await params;

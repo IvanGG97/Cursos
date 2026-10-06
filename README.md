@@ -63,6 +63,7 @@ Atajos en el visor: `←` `→` (o espacio / PageUp / PageDown) navegar · `F` p
    - `20261002050000_media_annotations.sql` — flechas y recuadros dibujados sobre cada imagen ("Señalar").
    - `20261003000000_survey_open.sql` — habilitar / deshabilitar (o programar) la encuesta final.
    - `20261006000000_evaluation_settings.sql` — evaluaciones: habilitar / deshabilitar por clase y editar sus preguntas desde el panel.
+   - `20261006010000_access_requests.sql` — solicitudes de admisión (quien no tiene Google pide acceso y se aprueba en el panel).
 3. Copiar `.env.example` a `.env.local` y completar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Project Settings → API Keys).
 4. **Authentication → URL Configuration:**
    - Site URL: `http://localhost:3000` (en producción, el dominio real).

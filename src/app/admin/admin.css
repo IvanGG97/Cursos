@@ -349,3 +349,12 @@ a.alist-main:hover strong { color: var(--accent-text); }
   .ev-bar-actions > * { flex: 1 1 auto; justify-content: center; }
   .ev-kinds button { flex: 1 1 auto; }
 }
+
+/* Número de solicitudes pendientes en la pestaña */
+.nav-badge {
+  display: inline-block; min-width: 20px; margin-left: 6px; padding: 1px 6px;
+  border-radius: 10px; background: var(--bad); color: var(--on-accent);
+  font-size: 11px; font-weight: 700; text-align: center; letter-spacing: 0;
+}
+.req-course { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.req-course .input { width: auto; min-width: 0; padding: 6px 8px; font-size: 14px; }

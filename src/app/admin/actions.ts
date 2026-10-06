@@ -193,6 +193,86 @@ export const setEvaluationOpen = action(async (ctx, f) => {
 });
 
 // ---------------------------------------------------------------------------
+// Solicitudes de admisión (quien no tiene Google; aprobación presencial)
+// ---------------------------------------------------------------------------
+
+const MISSING_REQ_MIGRATION = "Falta correr la migración 20261006010000_access_requests.sql en Supabase.";
+
+async function pendingRequest(id: string) {
+  const { data, error } = await createServiceClient()
+    .from("access_requests")
+    .select("id, full_name, email, course_slug, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(/access_requests/.test(error.message) ? MISSING_REQ_MIGRATION : error.message);
+  if (!data) throw new Error("Esa solicitud ya no existe.");
+  if (data.status !== "pending") throw new Error("Esa solicitud ya fue resuelta.");
+  return data;
+}
+
+/**
+ * Aprueba: crea la cuenta (con el nombre que dejó), la inscribe en el curso elegido y marca la
+ * solicitud. La pantalla que estaba esperando entra sola en los próximos segundos.
+ */
+export const approveAccessRequest = action(async (ctx, f) => {
+  const r = await pendingRequest(str(f, "id"));
+  const slug = str(f, "course");
+  const course = slug ? getCourse(slug) : undefined;
+  if (slug && !course) throw new Error("Curso inexistente.");
+  const svc = createServiceClient();
+
+  // ¿Ya hay una cuenta con ese mail?
+  const { data: prof } = await svc.from("profiles").select("id").eq("email", r.email).maybeSingle();
+  let userId = prof?.id as string | undefined;
+  if (userId) {
+    const { data: u } = await svc.auth.admin.getUserById(userId);
+    // Cuenta de Google: no se entrega desde una solicitud (cualquiera podría pedir con un mail ajeno).
+    if (u.user?.identities?.some((i) => i.provider === "google")) {
+      throw new Error(
+        `${r.email} ya tiene una cuenta de Google: esa persona tiene que entrar con Google. Rechazá esta solicitud y, si hace falta, inscribila desde Personas.`,
+      );
+    }
+  } else {
+    const { data: created, error } = await svc.auth.admin.createUser({
+      email: r.email,
+      email_confirm: true,
+      user_metadata: { full_name: r.full_name },
+      app_metadata: { via: "access_request" },
+    });
+    if (error || !created.user) throw new Error(error?.message ?? "No se pudo crear la cuenta.");
+    userId = created.user.id;
+  }
+  await svc.from("profiles").update({ full_name: r.full_name }).eq("id", userId);
+
+  if (course) {
+    await ensureCourseRow(ctx, course.slug);
+    const { error } = await svc
+      .from("enrollments")
+      .upsert({ user_id: userId, course_slug: course.slug, source: "request" }, { onConflict: "user_id,course_slug", ignoreDuplicates: true });
+    check(error, { "23514": MISSING_REQ_MIGRATION });
+  }
+
+  const { error } = await svc
+    .from("access_requests")
+    .update({ status: "approved", user_id: userId, course_slug: course?.slug ?? r.course_slug, decided_at: new Date().toISOString(), decided_by: ctx.viewer.id })
+    .eq("id", r.id);
+  check(error);
+  await audit(ctx, "access.approve", r.email, { name: r.full_name, course: course?.slug ?? null });
+  return `${r.full_name} aprobada${course ? ` e inscripta en ${course.title}` : ""}. Su pantalla entra sola en unos segundos.`;
+});
+
+export const rejectAccessRequest = action(async (ctx, f) => {
+  const r = await pendingRequest(str(f, "id"));
+  const { error } = await createServiceClient()
+    .from("access_requests")
+    .update({ status: "rejected", decided_at: new Date().toISOString(), decided_by: ctx.viewer.id })
+    .eq("id", r.id);
+  check(error);
+  await audit(ctx, "access.reject", r.email, { name: r.full_name });
+  return `Solicitud de ${r.full_name} rechazada.`;
+});
+
+// ---------------------------------------------------------------------------
 // Inscripciones e invitaciones
 // ---------------------------------------------------------------------------
 

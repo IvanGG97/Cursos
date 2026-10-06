@@ -70,3 +70,9 @@
 .live-wrap.wide { max-width: 1280px; }
 .live-mirror-wrap { display: flex; flex-direction: column; gap: 10px; }
 .live-mirror-note { margin: 0; }
+
+/* Solicitud de acceso: esperando la aprobación */
+.req-wait { display: flex; gap: 14px; align-items: flex-start; margin-top: 8px; border-color: var(--accent); }
+.req-dot { flex: none; width: 12px; height: 12px; margin-top: 6px; border-radius: 50%; background: var(--accent); animation: req-pulse 1.4s ease-in-out infinite; }
+@keyframes req-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .req-dot { animation: none; } }

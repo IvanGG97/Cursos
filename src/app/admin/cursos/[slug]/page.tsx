@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: getCourse((await params).slug)?.title ?? "Curso" };
 }
 
-const SOURCE: Record<string, string> = { code: "con código", admin: "por admin", invite: "por invitación" };
+const SOURCE: Record<string, string> = { code: "con código", admin: "por admin", invite: "por invitación", request: "por solicitud" };
 
 const MODES = {
   hidden: {
