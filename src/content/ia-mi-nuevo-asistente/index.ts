@@ -9,12 +9,12 @@ import { clase4Slides } from "./clase4";
 import { clase4Evaluacion } from "./clase4-evaluacion";
 import { encuestaCurso } from "./encuesta";
 
-// Curso "IA, mi nuevo asistente". Tiempos tomados del resumen del curso (PDF).
+// Curso "IA, desde 0" (antes "IA, mi nuevo asistente"; el slug quedó igual). Tiempos tomados del resumen del curso (PDF).
 // Una clase con `slides: []` aparece como "En preparación".
 
 export const iaMiNuevoAsistente: Course = {
   slug: "ia-mi-nuevo-asistente",
-  title: "IA, mi nuevo asistente",
+  title: "IA, desde 0",
   tagline: "Perderle el miedo a la Inteligencia Artificial y usarla en la vida diaria",
   org: "Escuela de Emprendedores — Municipalidad de la Ciudad de Salta",
   accent: "#22D3EE",

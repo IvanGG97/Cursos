@@ -12,5 +12,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - **Antes de cualquier tarea, leer `DECISIONES.md`** y no contradecir lo que ya está decidido. Cada decisión nueva importante se agrega ahí como una línea con fecha.
 - El contenido de los cursos vive en `src/content/<slug-del-curso>/` como datos TypeScript (`Slide[]`); el motor (`src/components/deck`) no se toca para agregar contenido. Ver `README.md`.
-- Reglas de contenido: antes de cada quiz tiene que haber contenido que lo explique; varios quizzes por clase; ejemplos concretos, errores comunes y recomendaciones en cada bloque; el curso "IA, mi nuevo asistente" no hace referencia al curso "Herramientas de Google".
+- Reglas de contenido: antes de cada quiz tiene que haber contenido que lo explique; varios quizzes por clase; ejemplos concretos, errores comunes y recomendaciones en cada bloque; el curso "IA, desde 0" no hace referencia al curso "Herramientas de Google".
 - Diseño: identidad de `docs/IA_mi_nuevo_asistente_handoff/Main.dc.html` — oscuro, alto contraste, Space Grotesk / IBM Plex Sans / IBM Plex Mono; nada de Inter/Roboto/Arial, gradientes, emojis ni tarjetas con borde izquierdo de color.

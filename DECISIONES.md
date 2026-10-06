@@ -1,9 +1,10 @@
-# Decisiones del proyecto — "IA, mi nuevo asistente"
+# Decisiones del proyecto — "IA, desde 0"
 
 Registro de decisiones que importan a futuro. Una línea por decisión, con fecha. Releer antes de cada tarea nueva.
 
 ## Curso y contenido
 
+- 2026-10-06 — **El curso se llama "IA, desde 0"** (como en el flyer); antes "IA, mi nuevo asistente". Se cambia solo el título visible (`title` en `src/content/ia-mi-nuevo-asistente/index.ts`, de donde lo leen todas las páginas, diapositivas y PDFs). El **slug** `ia-mi-nuevo-asistente` (URL `/cursos/ia-mi-nuevo-asistente` y clave en la base) **no se cambia**: cambiarlo rompería los links ya compartidos y los datos guardados. Los documentos originales de `docs/` quedan con el nombre viejo (son de referencia).
 - 2026-10-01 — Curso de 4 clases de 2 h (16 a 18 hs) para la Escuela de Emprendedores (Municipalidad de Salta). Estructura y tiempos por bloque según `docs/IA_mi_nuevo_asistente_handoff/IA_mi_nuevo_asistente_Resumen_Curso.pdf`.
 - 2026-10-01 — El contenido de la Clase 1 (`clase1_content.js`, 38 slides) es fuente de verdad: se portea tal cual, no se reescribe.
 - 2026-10-01 — Regla de contenido: antes de cada quiz tiene que haber contenido que lo explique; nunca preguntar algo no explicado antes.
