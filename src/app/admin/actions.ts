@@ -210,13 +210,16 @@ async function pendingRequest(id: string) {
   return data;
 }
 
+/** Curso elegido al aprobar: "" = sin inscribir; "__own" = el que pidió cada uno. */
+const OWN_COURSE = "__own";
+
 /**
- * Aprueba: crea la cuenta (con el nombre que dejó), la inscribe en el curso elegido y marca la
- * solicitud. La pantalla que estaba esperando entra sola en los próximos segundos.
+ * Aprueba una solicitud: crea la cuenta (con el nombre que dejó), la inscribe en el curso y la
+ * marca. La pantalla que estaba esperando entra sola en los próximos segundos.
  */
-export const approveAccessRequest = action(async (ctx, f) => {
-  const r = await pendingRequest(str(f, "id"));
-  const slug = str(f, "course");
+async function approveOne(ctx: AdminCtx, id: string, courseChoice: string) {
+  const r = await pendingRequest(id);
+  const slug = courseChoice === OWN_COURSE ? (r.course_slug ?? "") : courseChoice;
   const course = slug ? getCourse(slug) : undefined;
   if (slug && !course) throw new Error("Curso inexistente.");
   const svc = createServiceClient();
@@ -258,18 +261,50 @@ export const approveAccessRequest = action(async (ctx, f) => {
     .eq("id", r.id);
   check(error);
   await audit(ctx, "access.approve", r.email, { name: r.full_name, course: course?.slug ?? null });
-  return `${r.full_name} aprobada${course ? ` e inscripta en ${course.title}` : ""}. Su pantalla entra sola en unos segundos.`;
-});
+  return { name: r.full_name, course };
+}
 
-export const rejectAccessRequest = action(async (ctx, f) => {
-  const r = await pendingRequest(str(f, "id"));
+async function rejectOne(ctx: AdminCtx, id: string) {
+  const r = await pendingRequest(id);
   const { error } = await createServiceClient()
     .from("access_requests")
     .update({ status: "rejected", decided_at: new Date().toISOString(), decided_by: ctx.viewer.id })
     .eq("id", r.id);
   check(error);
   await audit(ctx, "access.reject", r.email, { name: r.full_name });
-  return `Solicitud de ${r.full_name} rechazada.`;
+  return r.full_name;
+}
+
+export const approveAccessRequest = action(async (ctx, f) => {
+  const { name, course } = await approveOne(ctx, str(f, "id"), str(f, "course"));
+  return `${name} aprobada${course ? ` e inscripta en ${course.title}` : ""}. Su pantalla entra sola en unos segundos.`;
+});
+
+export const rejectAccessRequest = action(async (ctx, f) => `Solicitud de ${await rejectOne(ctx, str(f, "id"))} rechazada.`);
+
+/** Aprobar o rechazar varias a la vez (las marcadas con "Seleccionar"). Las que fallan no frenan al resto. */
+export const bulkAccessRequests = action(async (ctx, f) => {
+  const op = str(f, "op");
+  if (op !== "approve" && op !== "reject") throw new Error("Acción inválida.");
+  const ids = [...new Set(f.getAll("ids").map(String).filter((x) => /^[0-9a-f-]{36}$/i.test(x)))].slice(0, 200);
+  if (ids.length === 0) throw new Error("No hay ninguna solicitud seleccionada.");
+  const course = str(f, "course");
+  let done = 0;
+  const failed: string[] = [];
+  for (const id of ids) {
+    try {
+      if (op === "approve") await approveOne(ctx, id, course);
+      else await rejectOne(ctx, id);
+      done++;
+    } catch (e) {
+      failed.push(e instanceof Error ? e.message : "error desconocido");
+    }
+  }
+  const verb = op === "approve" ? "aprobada(s)" : "rechazada(s)";
+  if (failed.length === 0) {
+    return `${done} solicitud(es) ${verb}.${op === "approve" ? " Sus pantallas entran solas en unos segundos." : ""}`;
+  }
+  return { error: `${done} ${verb}. No se pudieron procesar ${failed.length}: ${failed.join(" · ")}` };
 });
 
 // ---------------------------------------------------------------------------

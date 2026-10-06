@@ -18,12 +18,15 @@ export function ActionForm({
   children,
   className,
   inline = false,
+  id,
 }: {
   action: ServerAction;
   fields?: Record<string, string | number>;
   children: ReactNode;
   className?: string;
   inline?: boolean;
+  /** Para que campos de otro lugar de la página se sumen con form="id" (ej. casillas de una lista). */
+  id?: string;
 }) {
   const [state, formAction] = useActionState(action, {});
   const [shown, setShown] = useState<ActionResult>({});
@@ -38,7 +41,7 @@ export function ActionForm({
   }, [state]);
 
   return (
-    <form action={formAction} className={`${inline ? "aform-inline" : "aform"} ${className ?? ""}`}>
+    <form id={id} action={formAction} className={`${inline ? "aform-inline" : "aform"} ${className ?? ""}`}>
       {Object.entries(fields).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
       ))}
@@ -81,7 +84,19 @@ export function Submit({
 }
 
 /** Acción delicada: primer toque pide confirmación, el segundo ejecuta. */
-export function ConfirmSubmit({ children, confirm, small = true }: { children: ReactNode; confirm: string; small?: boolean }) {
+export function ConfirmSubmit({
+  children,
+  confirm,
+  small = true,
+  name,
+  value,
+}: {
+  children: ReactNode;
+  confirm: string;
+  small?: boolean;
+  name?: string;
+  value?: string;
+}) {
   const [armed, setArmed] = useState(false);
   const { pending } = useFormStatus();
 
@@ -99,7 +114,7 @@ export function ConfirmSubmit({ children, confirm, small = true }: { children: R
     );
   }
   return (
-    <button type="submit" disabled={pending} className={`btn btn-danger ${small ? "btn-sm" : ""}`}>
+    <button type="submit" name={name} value={value} disabled={pending} className={`btn btn-danger ${small ? "btn-sm" : ""}`}>
       {pending ? "Guardando…" : confirm}
     </button>
   );
@@ -142,6 +157,8 @@ export function AutoRefresh({ ms = 5000 }: { ms?: number }) {
       // No refrescar mientras se está eligiendo algo (un select abierto, un campo con foco).
       const el = document.activeElement;
       if (el && /^(SELECT|INPUT|TEXTAREA)$/.test(el.tagName)) return;
+      // Hay casillas marcadas (selección para aprobar varias): no refrescar, para no perderlas.
+      if (document.querySelector("input[data-keep-selection]:checked")) return;
       router.refresh();
     }, ms);
     return () => clearInterval(t);

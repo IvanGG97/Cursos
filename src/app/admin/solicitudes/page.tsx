@@ -6,6 +6,10 @@ import { formatDateTime } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { approveAccessRequest, rejectAccessRequest } from "../actions";
 import { ActionForm, AutoRefresh, ConfirmSubmit, Submit } from "../_ui";
+import { BulkBar } from "./BulkBar";
+
+/** Formulario de la barra "Seleccionar todas" (las casillas de cada fila se suman a él). */
+const BULK_FORM = "bulk-requests";
 
 export const metadata: Metadata = { title: "Solicitudes de admisión" };
 
@@ -83,6 +87,12 @@ export default async function AccessRequests({ searchParams }: Props) {
           </h2>
           <span className="muted mono">Página {page} de {pages}</span>
         </div>
+        {status === "pending" && (data ?? []).length > 0 && (
+          <BulkBar
+            courses={courses.map((c) => ({ slug: c.slug, title: c.title }))}
+            defaultCourse={courses.length === 1 ? courses[0].slug : "__own"}
+          />
+        )}
         {(data ?? []).length === 0 ? (
           <p className="muted">
             {status === "pending"
@@ -94,7 +104,18 @@ export default async function AccessRequests({ searchParams }: Props) {
             {(data ?? []).map((r) => {
               const course = r.course_slug ? getCourse(r.course_slug) : undefined;
               return (
-                <li key={r.id}>
+                <li key={r.id} className={r.status === "pending" ? "req-row" : ""}>
+                  {r.status === "pending" && (
+                    <input
+                      type="checkbox"
+                      name="ids"
+                      value={r.id}
+                      form={BULK_FORM}
+                      data-keep-selection
+                      className="req-check"
+                      aria-label={`Seleccionar a ${r.full_name}`}
+                    />
+                  )}
                   <div className="alist-main">
                     <strong>{r.full_name}</strong>
                     <span className="muted">
