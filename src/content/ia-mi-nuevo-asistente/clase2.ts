@@ -1,13 +1,11 @@
 import type { Slide } from "@/content/types";
 
-// Clase 2 — Crear, entender y comunicarte. Bloques y tiempos según el resumen del curso (PDF).
-// Mismas reglas que la Clase 1: contenido antes de cada quiz, ejemplos concretos, error común y
-// recomendación en cada bloque.
+// Clase 2 — Crear, entender y comunicarte (v2, revisada con Ivan después de dar la Clase 1).
+// Criterio: ejemplos generales (le sirven a cualquiera) + una plantilla para completar con lo propio
+// + una tarea corta después de cada tema, cada uno con su celular. Público: muchos adultos mayores
+// que recién empiezan, por eso el bloque de voz, fotos, archivos y enlaces va paso a paso.
+// Reglas de siempre: contenido antes de cada quiz, error común y recomendación en cada bloque.
 
-const VERDADERO = [
-  { text: "Verdadero", correct: true },
-  { text: "Falso", correct: false },
-];
 const FALSO = [
   { text: "Verdadero", correct: false },
   { text: "Falso", correct: true },
@@ -18,7 +16,7 @@ export const clase2Slides: Slide[] = [
   {
     type: "title",
     claseLine: "Clase 2 — Crear, entender y comunicarte",
-    subtitle: "Ideas, textos y mensajes — también para tu trabajo",
+    subtitle: "Ideas, voz, fotos, archivos y mensajes — también para tu trabajo",
     duracion: "Clase de 2 horas",
   },
 
@@ -28,15 +26,15 @@ export const clase2Slides: Slide[] = [
     items: [
       "Repaso de la Clase 1",
       "Generar ideas con la IA",
-      "Entender textos difíciles y comunicarte mejor",
+      "Hablarle y mostrarle cosas: voz, fotos, archivos y enlaces",
+      "Entender textos difíciles y escribir mejores mensajes",
       "Aplicarlo a tu trabajo o emprendimiento",
-      "Práctica integradora: tu propio caso",
-      "Cierre",
+      "Práctica integradora y cierre",
     ],
   },
 
   // ===================== APERTURA =====================
-  { type: "divider", badge: "APERTURA · 15 MIN", title: "Repaso de la Clase 1", subtitle: "Lo que ya sabés, en cinco minutos" },
+  { type: "divider", badge: "APERTURA · 10 MIN", title: "Repaso de la Clase 1", subtitle: "Lo que ya sabés, en cinco minutos" },
   {
     type: "content",
     kicker: "Repaso",
@@ -69,39 +67,29 @@ export const clase2Slides: Slide[] = [
   {
     type: "concept",
     kicker: "Hoy",
-    title: "Crear, entender y comunicarte",
-    body: "Hoy usamos la IA para tres cosas: crear (tirar ideas), entender (textos difíciles, en simple) y comunicarte (mails, reclamos, mensajes a clientes). Y después lo llevamos a tu trabajo o emprendimiento.",
-    analogy: "La IA hoy es tu compañera de equipo: te tira ideas, te traduce lo complicado y te ayuda a escribir. Vos elegís, corregís y firmás.",
+    title: "Crear, hablar, mostrar y comunicar",
+    body: "Hoy usamos la IA para tirar ideas, para hablarle con la voz, para mostrarle fotos, archivos y enlaces, para entender textos difíciles y para escribir mejores mensajes. Y en cada tema hacés una tarea corta con tu celular.",
+    analogy: "La IA hoy es tu compañera de equipo: te escucha, mira lo que le mostrás y te ayuda a escribir. Vos elegís, corregís y decidís.",
+  },
+  {
+    type: "content",
+    kicker: "Cómo trabajamos hoy",
+    title: "Ejemplo, plantilla y tarea",
+    rows: [
+      { h: "Un ejemplo resuelto", d: "para ver cómo se pide cada cosa." },
+      { h: "Una plantilla", d: "el mismo pedido con [espacios entre corchetes]: los cambiás por tus datos y borrás los corchetes." },
+      { h: "Una tarea corta", d: "3 a 5 minutos, cada uno con su celular y la IA que usó en la Clase 1." },
+    ],
   },
 
   // ===================== BLOQUE 1: GENERAR IDEAS =====================
-  { type: "divider", badge: "BLOQUE 1 · 25 MIN", title: "Generar ideas", subtitle: "La IA como compañera de lluvia de ideas" },
+  { type: "divider", badge: "BLOQUE 1 · 20 MIN", title: "Generar ideas", subtitle: "La IA como compañera de lluvia de ideas" },
   {
     type: "concept",
     kicker: "Lluvia de ideas",
     title: "Una lluvia de ideas que no se cansa",
-    body: "La IA es muy buena para tirar muchas ideas rápido: nombres, temas para publicar, platos para un menú. No todas van a servir — y no hace falta. Su trabajo es darte material; el tuyo, elegir.",
+    body: "La IA es muy buena para tirar muchas ideas rápido: nombres, cosas para publicar, propuestas nuevas. No todas van a servir — y no hace falta. Su trabajo es darte material; el tuyo, elegir.",
     analogy: "Es como una reunión con alguien que nunca se queda sin ideas: tira veinte, vos te quedás con las dos buenas y las mejorás.",
-  },
-  {
-    type: "content",
-    kicker: "Para qué sirve",
-    title: "Tres usos que funcionan muy bien",
-    rows: [
-      { h: "Nombres", d: "para un producto, un emprendimiento, un combo o una promo." },
-      { h: "Ideas para redes", d: "qué publicar esta semana en Instagram, Facebook o los estados de WhatsApp." },
-      { h: "Un menú nuevo", d: "platos de temporada, opciones sin TACC, combos para el fin de semana." },
-    ],
-  },
-  {
-    type: "compare",
-    kicker: "Pedir ideas",
-    title: "Sin criterios vs. con criterios",
-    leftLabel: "Sin criterios",
-    rightLabel: "Con criterios",
-    left: "\"Dame nombres para mi emprendimiento.\"",
-    right:
-      "\"Dame 10 nombres para mi emprendimiento de viandas saludables en Salta. Cortos, fáciles de decir, que no suenen a dieta y que sirvan como usuario de Instagram.\"",
   },
   {
     type: "content",
@@ -109,29 +97,50 @@ export const clase2Slides: Slide[] = [
     title: "\"Dame 10 ideas para...\" + tus criterios",
     rows: [
       { h: "Cuántas", d: "un número concreto: 10 ideas, 5 nombres, 3 opciones." },
-      { h: "Para quién", d: "tu público: vecinos del barrio, oficinistas, familias con chicos." },
-      { h: "Qué condiciones", d: "presupuesto, estilo, y también lo que NO querés." },
+      { h: "Para quién", d: "tus clientes, tu familia, tus vecinos: a quién va dirigido." },
+      { h: "Qué condiciones", d: "estilo, presupuesto, y también lo que NO querés." },
       { h: "Cómo te las da", d: "en una lista, con una línea que explique cada idea." },
     ],
   },
   {
     type: "quote",
-    kicker: "Ejemplo",
-    title: "Ideas para redes, con criterios",
+    kicker: "Ejemplo resuelto",
+    title: "Ideas para publicar, con criterios",
     quoteLabel: "LE PEDIMOS",
     quoteText:
-      "\"Tengo una panadería de barrio en Salta. Dame 10 ideas de publicaciones para Instagram para esta semana. Mi público son las familias del barrio. Nada de ofertas: quiero mostrar el trabajo del día a día. Una línea por idea.\"",
-    caption: "Cantidad, negocio, público, una condición y el formato: todo en un solo mensaje.",
+      "\"Dame 10 ideas de publicaciones para las redes de mi emprendimiento. Mis clientes son personas de mi barrio. Nada de ofertas: quiero mostrar cómo trabajo. Una línea por idea.\"",
+    caption: "Tiene cantidad, para quién, una condición y el formato.",
+  },
+  {
+    type: "quote",
+    kicker: "Plantilla",
+    title: "Ahora, con lo tuyo",
+    quoteLabel: "COMPLETÁ LOS [ESPACIOS]",
+    quoteText:
+      "\"Tengo [tu trabajo o emprendimiento]. Dame [cantidad] ideas de [nombres / publicaciones / promociones] para [a quién le vendés]. Que sean [cómo las querés] y que no [lo que no querés]. Una línea por idea.\"",
+    caption: "Si no tenés un emprendimiento, usala para otra cosa: un regalo, una salida, un cumpleaños.",
+  },
+  {
+    type: "practice",
+    title: "Tarea 1 · Tu lluvia de ideas",
+    instructions:
+      "Abrí la IA que usaste en la Clase 1 y escribile la plantilla, completada con lo tuyo.\n\nLeé las ideas con calma y elegí las 2 que más te gusten.",
   },
   {
     type: "content",
     kicker: "Para tener en cuenta",
     title: "Error común y recomendación",
     rows: [
-      { h: "Error común", d: "pedir ideas sin contexto: te devuelve lo mismo que a todos (\"Delicias\", \"El Buen Sabor\")." },
-      { h: "Recomendación", d: "dale tus criterios y pedile otra vuelta: \"estas son muy comunes, dame 10 más originales\"." },
+      { h: "Error común", d: "pedir ideas sin contexto: te devuelve las mismas ideas que le da a cualquiera." },
+      { h: "Recomendación", d: "pedile otra vuelta: \"estas son muy comunes, dame 10 más originales\"." },
       { h: "Tip extra", d: "pedile que combine: \"tomá la idea 3 y la 7, y armá una nueva\"." },
     ],
+  },
+  {
+    type: "practice",
+    title: "Tarea 2 · Otra vuelta",
+    instructions:
+      "En el mismo chat, pedile: \"Estas ideas son muy comunes. Dame 10 más originales.\"\n\nDespués elegí las 2 mejores de todas y pedile que las combine en una sola.",
   },
   {
     type: "quiz",
@@ -139,81 +148,235 @@ export const clase2Slides: Slide[] = [
     question: "¿Cuál de estos pedidos de ideas va a dar mejores resultados?",
     options: [
       { text: "\"Dame ideas para mi negocio.\"", correct: false },
-      { text: "\"Dame 10 ideas de combos para mi rotisería, pensados para oficinistas, que se puedan llevar y comer rápido.\"", correct: true },
-      { text: "\"Hacé que mi negocio venda más.\"", correct: false },
+      { text: "\"Dame 10 ideas de promociones para mi emprendimiento, para clientes del barrio, que no sean descuentos.\"", correct: true },
+      { text: "\"Hacé que venda más.\"", correct: false },
     ],
-    explanation: "Tiene cantidad (10), negocio (rotisería), público (oficinistas) y condiciones (para llevar, rápido).",
+    explanation: "Tiene cantidad (10), qué (promociones), para quién (clientes del barrio) y una condición (sin descuentos).",
   },
   {
     type: "quiz",
-    kind: "vf",
-    question: "Si de 10 ideas solo te sirven 2, la IA hizo mal su trabajo.",
-    options: FALSO,
-    explanation: "La lluvia de ideas es para tener material: no todas tienen que servir. Elegir y mejorar es tu parte.",
-  },
-  {
-    type: "practice",
-    title: "Tu lluvia de ideas",
-    instructions:
-      "Pedile a la IA 10 ideas para algo tuyo: un nombre, publicaciones para redes o un plato nuevo. Usá la receta: cuántas, para quién, qué condiciones y cómo te las da.\n\nDespués elegí las 2 que más te gusten y pedile que las mejore.",
+    kind: "single",
+    question: "\"Dame 10 nombres para mi emprendimiento.\" ¿Qué le falta a este pedido?",
+    options: [
+      { text: "Contar de qué se trata y para quién es.", correct: true },
+      { text: "Pedirlo con más educación.", correct: false },
+      { text: "Nada: así está perfecto.", correct: false },
+    ],
+    explanation: "Sin saber de qué se trata ni para quién es, te da nombres que le servirían a cualquiera.",
   },
 
-  // ===================== BLOQUE 2: ENTENDER Y COMUNICAR =====================
-  { type: "divider", badge: "BLOQUE 2 · 25 MIN", title: "Entender y comunicar", subtitle: "Lo difícil, en simple. Y tus mensajes, mejor escritos." },
+  // ===================== BLOQUE 2: HABLARLE Y MOSTRARLE COSAS =====================
+  { type: "divider", badge: "BLOQUE 2 · 25 MIN", title: "Hablarle y mostrarle cosas", subtitle: "Voz, fotos, archivos y enlaces: no hace falta escribir todo" },
   {
     type: "concept",
-    kicker: "Entender",
-    title: "\"Explicámelo como si tuviera 10 años\"",
-    body: "Cuando algo está escrito difícil — una nota del banco, las condiciones de un plan de celular, un reglamento — podés pegar el texto y pedir que te lo explique en palabras simples. Funciona muy bien.",
-    analogy: "Es como tener a mano a ese amigo que sabe del tema y te dice: \"tranqui, esto lo que quiere decir es...\".",
+    kicker: "Más que escribir",
+    title: "No hace falta escribir todo",
+    body: "A la IA también le podés hablar con tu voz, y le podés mostrar cosas: una foto que sacás en el momento, una imagen de tu galería, un PDF, un documento o el enlace de una página. Te responde sobre lo que le dijiste o le mostraste.",
+    analogy: "Es como pedirle ayuda a alguien en persona: le contás en voz alta y le ponés el papel adelante, en vez de escribirle todo.",
+  },
+
+  // --- Voz ---
+  {
+    type: "compare",
+    kicker: "Con tu voz",
+    title: "Dictar vs. charlar",
+    leftLabel: "Dictar (se transcribe)",
+    rightLabel: "Charlar (modo voz)",
+    left: "Tocás el micrófono, hablás y lo que decís aparece escrito en el cuadro. Lo revisás, lo corregís si hace falta y lo mandás. La respuesta llega escrita.",
+    right: "Tocás el botón de conversación y hablan como por teléfono. La IA te responde en voz alta, y la podés interrumpir o preguntarle de nuevo.",
+  },
+  {
+    type: "steps",
+    kicker: "Dónde están los botones",
+    title: "Usar la voz, paso a paso",
+    steps: [
+      "Para dictar: tocá el micrófono que está en el cuadro donde escribís, hablá y tocalo de nuevo.",
+      "Revisá el texto que apareció (a veces entiende mal una palabra) y tocá enviar.",
+      "Para charlar: tocá el botón de conversación, al lado (suele ser un ícono de ondas de sonido).",
+      "Para terminar la charla, tocá la X o el botón de cortar.",
+    ],
+    media: {
+      id: "c2-voz",
+      kind: "IMAGEN",
+      caption: "Captura del celular, en castellano: el micrófono para dictar y el botón del modo voz, señalados con flechas.",
+    },
   },
   {
     type: "content",
-    kicker: "Resumir",
-    title: "Resumir un PDF largo",
+    kicker: "Cuándo conviene cada una",
+    title: "Dictar o charlar",
     rows: [
-      { h: "Adjuntá el archivo", d: "con el clip o el \"+\" del chat: Claude, ChatGPT y Gemini aceptan PDF." },
-      { h: "Decí qué querés y cómo", d: "\"los 5 puntos principales, en una lista corta\" o \"qué tengo que hacer y para cuándo\"." },
-      { h: "Chequeá lo importante", d: "fechas y montos, en el documento original: puede equivocarse." },
+      { h: "Dictar", d: "cuando querés revisar lo que pediste o tener la respuesta escrita: un mensaje, una lista, una receta." },
+      { h: "Charlar", d: "para una consulta rápida, para practicar, o si te cuesta leer y escribir en el celular." },
+      { h: "Ojo en voz alta", d: "se escucha todo: no digas datos personales en un lugar con gente." },
+      { h: "Si no aparece el botón", d: "actualizá la app; en algunas, el modo voz tiene otro nombre (en Gemini, \"Live\")." },
+    ],
+  },
+  {
+    type: "practice",
+    title: "Tarea 3 · Probá las dos",
+    instructions:
+      "Tocá el micrófono y dictale un pedido, por ejemplo: \"Dame 5 ideas para un almuerzo de domingo en familia\". Revisá el texto antes de mandarlo.\n\nDespués tocá el botón de conversación y hacele una pregunta en voz alta. Escuchá la respuesta y probá interrumpirla.",
+  },
+
+  // --- Fotos, archivos y enlaces ---
+  {
+    type: "content",
+    kicker: "Qué le podés mostrar",
+    title: "Cuatro cosas que entiende",
+    rows: [
+      { h: "Una foto con la cámara", d: "un cartel, una etiqueta, un papel impreso, un aparato que muestra un error." },
+      { h: "Una imagen o captura", d: "algo que ya tenés guardado en la galería del celular." },
+      { h: "Un PDF o documento", d: "una nota, un reglamento, un instructivo, un presupuesto." },
+      { h: "Un enlace", d: "la dirección de una página web, para que te la explique o la resuma." },
+    ],
+  },
+  {
+    type: "steps",
+    kicker: "En el celular",
+    title: "Mandarle una foto o un archivo",
+    steps: [
+      "Abrí la app de la IA y entrá a un chat.",
+      "Tocá el \"+\" (o el clip) que está al lado del cuadro donde escribís.",
+      "Elegí \"Cámara\" para sacar una foto, \"Fotos\" para la galería o \"Archivos\" para un PDF.",
+      "Escribí (o dictá) qué querés que haga con eso y tocá enviar.",
     ],
     media: {
       id: "c2-adjuntar",
       kind: "IMAGEN",
-      caption: "Captura del celular, en castellano: el botón para adjuntar un archivo (clip o \"+\") en el chat.",
+      caption: "Captura del celular, en castellano: el botón \"+\" del chat abierto, mostrando Cámara, Fotos y Archivos.",
     },
   },
   {
+    type: "content",
+    kicker: "En la computadora",
+    title: "Tres formas de adjuntar",
+    rows: [
+      { h: "El clip o el \"+\"", d: "al lado del cuadro de texto: elegís el archivo de tu computadora." },
+      { h: "Arrastrar y soltar", d: "agarrás el archivo con el mouse y lo soltás sobre el chat." },
+      { h: "Pegar una imagen", d: "copiás una imagen o una captura y la pegás en el chat (Ctrl + V)." },
+    ],
+    media: {
+      id: "c2-adjuntar-pc",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora, en castellano: el clip o \"+\" del chat y un archivo listo para enviar.",
+    },
+  },
+  {
+    type: "content",
+    kicker: "Enlaces",
+    title: "Pasarle una página web",
+    rows: [
+      { h: "Copiá el enlace", d: "mantené apretada la dirección de la página y elegí \"Copiar\"." },
+      { h: "Pegalo en el chat", d: "y decile qué querés: \"resumime esta página en 5 puntos\"." },
+      { h: "Si no la puede abrir", d: "algunas páginas no la dejan entrar: copiá el texto y pegalo directamente." },
+    ],
+  },
+  {
     type: "quote",
-    kicker: "Ejemplo",
-    title: "Un pedido para entender",
-    quoteLabel: "LE PEDIMOS",
+    kicker: "Ejemplo y plantilla",
+    title: "Siempre decile qué querés",
+    quoteLabel: "CON LA FOTO O EL ARCHIVO, ESCRIBÍ",
     quoteText:
-      "\"Te pego la nota que me mandó el banco. Explicámela en palabras simples, como si tuviera 10 años: qué cambia para mí, si tengo que hacer algo y para cuándo.\"",
-    caption: "Ojo: antes de pegarla, borrá o tapá los datos sensibles (número de cuenta, DNI completo).",
+      "\"Te mando [una foto / un PDF / un enlace] de [qué es]. [Explicámelo en palabras simples / decime qué tengo que hacer / resumilo en 5 puntos].\"",
+    caption: "Ejemplo: \"Te mando una foto de la pantalla de mi lavarropas. ¿Qué significa este error y qué puedo revisar?\"",
+  },
+  {
+    type: "content",
+    kicker: "Para tener en cuenta",
+    title: "Error común y recomendación",
+    rows: [
+      { h: "Error común", d: "mandar la foto o el archivo sin decir nada: la IA no sabe qué querés." },
+      { h: "Cuidá tus datos", d: "antes de mandar, tapá DNI, números de tarjeta, direcciones y datos de otras personas." },
+      { h: "Que se lea bien", d: "foto con luz, derecha y sin cortar el texto: si vos no lo leés, la IA tampoco." },
+      { h: "Si te pone un límite", d: "la versión gratis tiene un tope de archivos por día: probá más tarde." },
+    ],
+  },
+  {
+    type: "practice",
+    title: "Tarea 4 · Sacale una foto",
+    instructions:
+      "Sacale una foto a algo que tengas cerca y que tenga texto: una etiqueta, un cartel, un papel, el envase de un producto.\n\nMandásela a la IA con un pedido, por ejemplo: \"Explicame qué dice esto\" o \"¿Para qué sirve esto?\"",
+  },
+  {
+    type: "practice",
+    title: "Tarea 5 · Un enlace o un archivo",
+    instructions:
+      "Elegí una de las dos.\n\nCopiá el enlace de una página que te interese (una noticia, una receta, un instructivo) y pedile un resumen en 5 puntos.\n\nO adjuntá un PDF o documento que tengas en el celular (sin datos personales) y pedile que te lo explique.",
   },
   {
     type: "quiz",
-    kind: "vf",
-    question: "Si la IA te resume un PDF, las fechas y montos que te da no hace falta chequearlos en el original.",
-    options: FALSO,
-    explanation: "Al resumir también se puede equivocar. Fechas y montos se chequean siempre en el documento original.",
+    kind: "single",
+    question: "¿Cuál es la diferencia entre dictarle a la IA y charlar con ella en modo voz?",
+    options: [
+      { text: "Al dictar, lo que decís se pasa a texto y la respuesta llega escrita; al charlar, te responde en voz alta.", correct: true },
+      { text: "Son lo mismo, con distinto nombre.", correct: false },
+      { text: "Al dictar te escucha y al charlar no.", correct: false },
+    ],
+    explanation: "Dictar = se transcribe (lo revisás y lo mandás, la respuesta es escrita). Charlar = conversación hablada, te contesta con voz.",
+  },
+  {
+    type: "quiz",
+    kind: "single",
+    question: "Antes de mandarle la foto de un papel a la IA, ¿qué revisás?",
+    options: [
+      { text: "Que se lea bien y que los datos personales estén tapados.", correct: true },
+      { text: "Que tenga un lindo filtro.", correct: false },
+      { text: "Nada: la IA lo arregla sola.", correct: false },
+    ],
+    explanation: "Si no se lee, la IA tampoco lo lee. Y el DNI, la tarjeta y las direcciones se tapan antes de mandar.",
+  },
+
+  // ===================== BLOQUE 3: ENTENDER Y COMUNICAR =====================
+  { type: "divider", badge: "BLOQUE 3 · 20 MIN", title: "Entender y comunicar", subtitle: "Lo difícil, en simple. Y tus mensajes, mejor escritos." },
+  {
+    type: "concept",
+    kicker: "Entender",
+    title: "\"Explicámelo como si tuviera 10 años\"",
+    body: "Cuando algo está escrito difícil — una nota del banco, las condiciones de un servicio, un reglamento — le sacás una foto o pegás el texto, y le pedís que te lo explique en palabras simples. Funciona muy bien.",
+    analogy: "Es como tener a mano a ese amigo que sabe del tema y te dice: \"tranqui, esto lo que quiere decir es...\".",
+  },
+  {
+    type: "quote",
+    kicker: "Plantilla",
+    title: "Para entender un texto",
+    quoteLabel: "PEGÁ EL TEXTO O ADJUNTÁ LA FOTO, Y ESCRIBÍ",
+    quoteText:
+      "\"Explicame este texto en palabras simples, como si tuviera 10 años: qué dice, si tengo que hacer algo y para cuándo.\"",
+    caption: "Fechas y montos: chequealos siempre en el papel original. La IA también se equivoca al resumir.",
   },
   {
     type: "concept",
     kicker: "Comunicar",
     title: "Los mensajes que más cuestan",
-    body: "Un mail formal, una carta de reclamo, un WhatsApp delicado a un cliente: son los mensajes que más cuesta escribir. La IA te arma un borrador en segundos; vos lo revisás, lo ajustás y lo mandás.",
+    body: "Un mail formal, una carta de reclamo, un mensaje delicado: son los que más cuesta escribir. La IA te arma un borrador en segundos; vos lo revisás, lo ajustás y lo mandás.",
     analogy: "Es como arrancar con un borrador ya escrito: no te quedás mirando la hoja en blanco.",
   },
   {
     type: "content",
-    kicker: "Tres casos",
-    title: "Qué decirle en cada caso",
+    kicker: "Qué decirle",
+    title: "Lo que necesita saber",
     rows: [
-      { h: "Mail formal", d: "a quién va, qué pedís y el tono: \"formal pero cordial, máximo 120 palabras\"." },
-      { h: "Carta de reclamo", d: "qué pasó, cuándo, qué hiciste hasta ahora y qué solución querés." },
-      { h: "WhatsApp a un cliente", d: "corto, amable y con la información justa: precio, día y hora." },
+      { h: "A quién va", d: "un cliente, el banco, la escuela, un vecino, tu jefe." },
+      { h: "Qué pasó o qué necesitás", d: "con los datos justos: qué, cuándo y qué querés lograr." },
+      { h: "El tono", d: "formal, cordial o cercano: como le hablarías vos." },
+      { h: "El largo", d: "\"máximo 50 palabras\": si no, te escribe una carta entera." },
     ],
+  },
+  {
+    type: "quote",
+    kicker: "Plantilla",
+    title: "Para escribir un mensaje",
+    quoteLabel: "COMPLETÁ LOS [ESPACIOS]",
+    quoteText:
+      "\"Escribime un [mail / WhatsApp / carta] para [a quién] sobre [qué pasó o qué necesito]. Tono [formal / cordial / cercano], máximo [cantidad] palabras.\"",
+    caption: "Ejemplo: \"Escribime un WhatsApp para confirmar un turno de mañana a las 10. Tono cercano, máximo 40 palabras.\"",
+  },
+  {
+    type: "practice",
+    title: "Tarea 6 · Tu mensaje pendiente",
+    instructions:
+      "Pensá en un mensaje que tengas que mandar esta semana: a un cliente, al banco, a la escuela, a un vecino. Pedíselo con la plantilla (escrita o dictada).\n\nSi no te gusta cómo quedó, pedile un cambio: \"más corto\" o \"más cercano\".",
   },
   {
     type: "compare",
@@ -221,7 +384,7 @@ export const clase2Slides: Slide[] = [
     title: "Reescribir todo vs. mejorar lo tuyo",
     leftLabel: "Pierde tu voz",
     rightLabel: "Mantiene tu voz",
-    left: "\"Reescribí este mensaje.\" El resultado queda prolijo, pero no suena a vos: tus clientes lo notan.",
+    left: "\"Reescribí este mensaje.\" El resultado queda prolijo, pero no suena a vos: quien lo recibe lo nota.",
     right: "\"Mejorá este mensaje: corregí la ortografía y que sea más claro, pero mantené mi forma de escribir y mis palabras.\"",
   },
   {
@@ -230,81 +393,93 @@ export const clase2Slides: Slide[] = [
     title: "Error común y recomendación",
     rows: [
       { h: "Error común", d: "pedir que \"reescriba todo\": queda perfecto pero frío, y se nota que no lo escribiste vos." },
-      { h: "Recomendación", d: "pedí \"mejorá esto, pero mantené mi forma de escribir\"." },
-      { h: "Tip extra", d: "si quedó muy formal: \"más corto y más cercano, como le hablo yo a mis clientes\"." },
+      { h: "Recomendación", d: "\"mejorá esto, pero mantené mi forma de escribir\"." },
+      { h: "Si quedó muy formal", d: "seguí la conversación: \"más corto y más cercano, como hablo yo\"." },
     ],
+  },
+  {
+    type: "practice",
+    title: "Tarea 7 · Con tu propia voz",
+    instructions:
+      "Escribí vos un mensaje corto, como lo escribirías normalmente.\n\nPegalo en el chat y pedile: \"Mejoralo y corregí la ortografía, pero mantené mi forma de escribir\". Después compará las dos versiones.",
   },
   {
     type: "quiz",
     kind: "single",
-    question: "Escribiste un WhatsApp para un cliente y querés pulirlo sin que deje de sonar a vos. ¿Qué le pedís?",
+    question: "La IA te escribió un mensaje correcto, pero muy largo y formal. ¿Cómo seguís la conversación?",
     options: [
-      { text: "\"Reescribilo entero.\"", correct: false },
-      { text: "\"Mejoralo y corregí la ortografía, pero mantené mi forma de escribir.\"", correct: true },
-      { text: "\"Hacelo más largo y más formal.\"", correct: false },
+      { text: "Le pido: \"más corto y más cercano, como hablo yo\".", correct: true },
+      { text: "Borro el chat y empiezo de cero.", correct: false },
+      { text: "Lo mando igual: lo escribió la IA.", correct: false },
     ],
-    explanation: "Pedir que mantenga tu forma de escribir mejora el mensaje sin perder tu voz.",
+    explanation: "No hace falta empezar de cero: decile qué cambiar y lo ajusta en el mismo chat.",
   },
   {
     type: "quiz",
-    kind: "multi",
-    question: "¿Qué le contás a la IA para tu carta de reclamo?",
+    kind: "single",
+    question: "\"Escribime una carta de reclamo.\" ¿Qué le falta a este pedido?",
     options: [
-      { text: "Qué pasó y cuándo.", correct: true },
-      { text: "Qué solución querés.", correct: true },
-      { text: "Qué hiciste hasta ahora (por ejemplo, que ya llamaste).", correct: true },
-      { text: "La clave de tu home banking.", correct: false },
+      { text: "Qué pasó, cuándo y qué solución querés.", correct: true },
+      { text: "Que sea más larga.", correct: false },
+      { text: "Nada: la IA lo adivina.", correct: false },
     ],
-    explanation: "Qué pasó, cuándo, qué hiciste y qué solución querés. Las claves, nunca: es regla de oro.",
+    explanation: "Sin esos datos, la IA inventa un reclamo genérico. Con ellos, escribe el tuyo.",
   },
 
-  // ===================== BLOQUE 3: TU TRABAJO O EMPRENDIMIENTO =====================
-  { type: "divider", badge: "BLOQUE 3 · 25 MIN", title: "Aplicarlo a tu trabajo o emprendimiento", subtitle: "Clientes, productos y reclamos" },
+  // ===================== BLOQUE 4: TU TRABAJO O EMPRENDIMIENTO =====================
+  { type: "divider", badge: "BLOQUE 4 · 20 MIN", title: "Aplicarlo a tu trabajo o emprendimiento", subtitle: "Clientes, productos y reclamos" },
   {
     type: "concept",
     kicker: "Tu trabajo",
-    title: "Una ayudante para tu negocio",
-    body: "No importa si vendés tortas, hacés arreglos de electricidad o das clases particulares: todos los días hay mensajes que escribir, productos que describir y clientes que atender. Ahí la IA te ahorra tiempo.",
-    analogy: "Es como sumar una ayudante que escribe rápido: vos ponés lo que sabés de tu negocio y ella te lo deja prolijo.",
-  },
-  {
-    type: "quote",
-    kicker: "Mensaje a un cliente",
-    title: "Avisar una demora sin perder al cliente",
-    quoteLabel: "LE PEDIMOS",
-    quoteText:
-      "\"Soy electricista. Tenía que ir hoy a las 17 a la casa de un cliente y se me complicó con otro trabajo. Escribime un WhatsApp corto para avisarle, pedirle disculpas y ofrecerle mañana a las 10 o a las 16. Tono cercano.\"",
-    caption: "Le diste la situación, lo que ofrecés y el tono: no tiene que adivinar nada.",
+    title: "Una ayudante para tu trabajo",
+    body: "Vendas lo que vendas o hagas el trabajo que hagas, todos los días hay mensajes para clientes, cosas que describir y reclamos que responder. Ahí la IA te ahorra tiempo: vos ponés lo que sabés y ella lo deja prolijo.",
+    analogy: "Es como sumar una ayudante que escribe rápido: vos le contás, ella lo pasa en limpio.",
   },
   {
     type: "content",
-    kicker: "Describir un producto",
+    kicker: "Para qué sirve",
+    title: "Cuatro usos para tu trabajo",
+    rows: [
+      { h: "Mensajes a clientes", d: "avisar, confirmar, recordar o pedir disculpas." },
+      { h: "Describir lo que ofrecés", d: "un producto o un servicio, para redes o para WhatsApp." },
+      { h: "Responder reclamos", d: "con respeto y con la solución que decidís vos." },
+      { h: "Ideas para vender", d: "promociones, fechas especiales y respuestas a las preguntas de siempre." },
+    ],
+  },
+  {
+    type: "quote",
+    kicker: "Plantilla",
+    title: "Un mensaje a un cliente",
+    quoteLabel: "COMPLETÁ LOS [ESPACIOS]",
+    quoteText:
+      "\"Trabajo de [tu trabajo]. Escribime un WhatsApp para un cliente para [avisar / confirmar / recordar / pedir disculpas por] [qué pasó]. Ofrecé [tu propuesta]. Tono cercano y corto.\"",
+    caption: "Ejemplo: avisar que vas a llegar más tarde y ofrecer dos horarios nuevos para el mismo día.",
+  },
+  {
+    type: "practice",
+    title: "Tarea 8 · Un mensaje a un cliente",
+    instructions:
+      "Usá la plantilla con una situación real de tu trabajo: un aviso, una confirmación, un recordatorio. Si no tenés clientes, hacelo para alguien a quien le tengas que escribir por un trámite.\n\nAntes de darlo por bueno, leelo como si lo recibieras vos.",
+  },
+  {
+    type: "content",
+    kicker: "Describir lo que ofrecés",
     title: "Una descripción que vende",
     rows: [
-      { h: "Qué es", d: "\"torta de chocolate de 20 cm, rinde 12 porciones\"." },
-      { h: "Qué la hace especial", d: "\"con dulce de leche casero, se hace a pedido\"." },
-      { h: "Dónde va", d: "Instagram, Marketplace o el catálogo de WhatsApp." },
+      { h: "Qué es", d: "el producto o servicio, en pocas palabras." },
+      { h: "Qué lo hace distinto", d: "lo que vos sabés que lo hace bueno." },
+      { h: "Dónde va", d: "redes, Marketplace o el catálogo de WhatsApp." },
       { h: "Cuánto texto", d: "\"3 líneas, sin exagerar\": si no, todo le sale \"¡increíble!\"." },
     ],
   },
   {
-    type: "quote",
-    kicker: "Responder un reclamo",
-    title: "Un reclamo, bien respondido",
-    quoteLabel: "LE PEDIMOS",
-    quoteText:
-      "\"Una clienta se queja porque el pedido llegó una hora tarde y frío. Tiene razón. Ayudame a responderle: pedir disculpas sin excusas largas y ofrecerle un 15% de descuento en su próxima compra.\"",
-    caption: "La solución (el descuento) la decidís vos; la IA te ayuda a decirlo bien.",
-  },
-  {
     type: "content",
-    kicker: "Vender más",
-    title: "Ideas para vender más",
+    kicker: "Reclamos",
+    title: "Responder un reclamo",
     rows: [
-      { h: "Promociones", d: "\"dame 5 ideas de promo para los días de poco movimiento\"." },
-      { h: "Fechas especiales", d: "Día de la Madre, Día del Niño, fin de año: qué ofrecer y cómo contarlo." },
-      { h: "Clientes de siempre", d: "un recordatorio amable para volver a comprar, sin sonar a spam." },
-      { h: "Preguntas frecuentes", d: "respuestas listas para lo que te preguntan siempre: precios, envíos, horarios." },
+      { h: "Primero decidís vos", d: "qué solución ofrecés: un cambio, una devolución, un descuento." },
+      { h: "Después la IA te ayuda", d: "\"ayudame a responder este reclamo: disculpas sin excusas largas y ofrecé [tu solución]\"." },
+      { h: "Antes de mandar", d: "leelo entero como si fueras el cliente." },
     ],
   },
   {
@@ -312,40 +487,39 @@ export const clase2Slides: Slide[] = [
     kicker: "Para tener en cuenta",
     title: "Error común y recomendación",
     rows: [
-      { h: "Error común", d: "mandar un mensaje con algo que la IA inventó: un precio, un plazo o una garantía." },
-      { h: "Recomendación", d: "los datos de tu negocio los ponés vos: precio, horario, condiciones." },
-      { h: "Antes de mandar", d: "leé el mensaje entero como si fueras el cliente." },
+      { h: "Error común", d: "mandar algo que la IA inventó: un precio, un plazo, un envío o una garantía." },
+      { h: "Recomendación", d: "los datos de tu trabajo los ponés vos: precios, horarios y condiciones." },
+      { h: "Antes de publicar", d: "revisá que no haya agregado nada que no sea cierto." },
     ],
+  },
+  {
+    type: "practice",
+    title: "Tarea 9 · Describí lo que ofrecés",
+    instructions:
+      "Pedile la descripción de un producto o servicio tuyo, en 3 líneas. Si no vendés nada, pedile la descripción de algo que te gustaría ofrecer.\n\nRevisala: ¿agregó algo que no es cierto (un precio, un envío, una garantía)? Si es así, pedile que lo saque.",
   },
   {
     type: "quiz",
     kind: "single",
-    question: "La IA te armó la descripción de un producto y le agregó \"envío gratis a todo el país\", que vos no ofrecés. ¿Qué hacés?",
+    question: "La IA armó la descripción de tu producto y le agregó \"envío gratis\", que no ofrecés. ¿Qué hacés antes de publicar?",
     options: [
       { text: "Lo dejo: queda lindo y vende más.", correct: false },
-      { text: "Lo corrijo antes de publicar: los datos de mi negocio los pongo yo.", correct: true },
+      { text: "Lo saco: los datos de mi trabajo los pongo yo.", correct: true },
       { text: "Le creo: la IA sabe más de ventas que yo.", correct: false },
     ],
-    explanation: "Lo que promete el mensaje lo tenés que cumplir vos. Precios, plazos y condiciones los ponés vos.",
-  },
-  {
-    type: "quiz",
-    kind: "vf",
-    question: "Para responder un reclamo, conviene que la solución (descuento, cambio, devolución) la decidas vos y que la IA te ayude a escribirla.",
-    options: VERDADERO,
-    explanation: "Vos conocés tu negocio y tu cliente: decidís la solución. La IA te ayuda a decirlo bien.",
+    explanation: "Lo que promete el mensaje lo tenés que cumplir vos. Precios, envíos y condiciones los ponés vos.",
   },
 
-  // ===================== BLOQUE 4: PRÁCTICA INTEGRADORA =====================
-  { type: "divider", badge: "BLOQUE 4 · 20 MIN", title: "Práctica integradora", subtitle: "Tu caso, resuelto en el momento" },
+  // ===================== BLOQUE 5: PRÁCTICA INTEGRADORA =====================
+  { type: "divider", badge: "BLOQUE 5 · 15 MIN", title: "Práctica integradora", subtitle: "Tu caso, resuelto en el momento" },
   {
     type: "steps",
     kicker: "Cómo la hacemos",
     title: "Tu caso real, en cuatro pasos",
     steps: [
-      "Elegí un caso tuyo (o inventalo): un mensaje pendiente, un producto para describir, un texto que no entendés.",
-      "Escribí el pedido con la fórmula: qué quiero, para qué es, en qué tono o formato.",
-      "Leé la respuesta y pedile al menos un ajuste: \"más corto\", \"más cercano\", \"mantené mis palabras\".",
+      "Elegí un caso tuyo: un mensaje pendiente, algo para describir, un papel que no entendés.",
+      "Pedilo con una plantilla de hoy, escrita o dictada. Si sirve, sumale una foto o un archivo.",
+      "Leé la respuesta y pedile al menos un ajuste: \"más corto\", \"más simple\", \"mantené mis palabras\".",
       "Revisá los datos (precios, fechas, nombres) y quedate con tu versión final.",
     ],
   },
@@ -354,17 +528,17 @@ export const clase2Slides: Slide[] = [
     kicker: "Si no se te ocurre nada",
     title: "Casos para elegir",
     rows: [
-      { h: "Trabajo", d: "avisar a tus clientes de siempre que aumentás el precio." },
-      { h: "Emprendimiento", d: "10 nombres para un producto nuevo y la descripción del que elijas." },
-      { h: "Vida diaria", d: "entender en simple una carta del banco o de la obra social (sin tus datos)." },
-      { h: "Reclamo", d: "una carta porque un producto que compraste llegó roto." },
+      { h: "Tu trabajo", d: "ideas para promocionar algo que ofrecés y la descripción del que elijas." },
+      { h: "Un papel difícil", d: "una foto a una carta o un instructivo (con los datos tapados) para que te lo explique." },
+      { h: "Un mensaje", d: "el que venís postergando: un reclamo, un aviso, un pedido." },
+      { h: "Algo nuevo", d: "ideas para algo que quieras empezar: un emprendimiento, un curso, un viaje." },
     ],
   },
   {
     type: "practice",
-    title: "Manos a la obra",
+    title: "Tarea 10 · Manos a la obra",
     instructions:
-      "Tenés 15 minutos para resolver tu caso con la IA. Pedí al menos un ajuste a la primera respuesta.\n\nAl final, quien quiera comparte el antes y el después: cómo fue el primer pedido y cómo quedó el resultado.",
+      "Tenés 10 minutos para resolver tu caso con la IA, usando lo que vimos hoy: plantillas, la voz, fotos o archivos, y pedir ajustes.\n\nCuando termines, guardá el resultado: copialo en tus notas o dejá el chat guardado para usarlo después.",
   },
 
   // ===================== CIERRE =====================
@@ -374,31 +548,31 @@ export const clase2Slides: Slide[] = [
     kicker: "Para recordar",
     title: "Las claves de hoy",
     rows: [
-      { h: "Para ideas", d: "cantidad + criterios. Elegir y mejorar es tu parte." },
-      { h: "Para entender", d: "\"explicámelo en simple\", y fechas y montos en el original." },
-      { h: "Para comunicar", d: "\"mejorá esto, pero mantené mi forma de escribir\"." },
-      { h: "Para tu negocio", d: "los datos los ponés vos; la IA te ayuda a decirlos bien." },
+      { h: "Para ideas", d: "cantidad + para quién + condiciones. Elegir es tu parte." },
+      { h: "Con tu voz", d: "el micrófono dicta (respuesta escrita); el modo voz conversa (respuesta hablada)." },
+      { h: "Para mostrarle cosas", d: "el \"+\" o el clip: foto, archivo o enlace, siempre con un pedido." },
+      { h: "Para escribir y tu trabajo", d: "\"mantené mi forma de escribir\"; los datos los ponés vos." },
     ],
   },
   {
     type: "quiz",
     kind: "single",
-    question: "Querés entender una carta larga de tu obra social. ¿Qué pedido es mejor?",
+    question: "Le pediste que te resuma un PDF y te dio un texto muy largo. ¿Cómo seguís la conversación?",
     options: [
-      { text: "\"Resumila.\"", correct: false },
-      { text: "\"Explicame en palabras simples qué cambia para mí y si tengo que hacer algo, en 5 puntos.\"", correct: true },
-      { text: "\"¿Está bien esta carta?\"", correct: false },
+      { text: "Le pido: \"resumilo en 5 puntos cortos\".", correct: true },
+      { text: "Subo el PDF de nuevo en otro chat.", correct: false },
+      { text: "Lo dejo así: no se puede achicar.", correct: false },
     ],
-    explanation: "Dice qué querés entender (qué cambia y qué hacer), cómo (en simple) y en qué formato (5 puntos).",
+    explanation: "Seguí en el mismo chat y decile el formato que querés: ya tiene el PDF y el contexto.",
   },
   {
     type: "checkpoint",
     title: "Hoy te llevás...",
     items: [
-      "Una forma de pedir ideas que da resultados.",
-      "Cómo entender un texto difícil en minutos.",
-      "Mensajes y reclamos mejor escritos, con tu propia voz.",
-      "Al menos un caso de tu trabajo resuelto con la IA.",
+      "Ideas para tu trabajo, pedidas con criterios.",
+      "Cómo hablarle a la IA: dictar o charlar con la voz.",
+      "Cómo mandarle fotos, archivos y enlaces.",
+      "Mensajes mejor escritos, con tu propia voz, y plantillas para reusar.",
     ],
   },
   {

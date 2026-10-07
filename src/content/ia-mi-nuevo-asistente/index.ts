@@ -39,14 +39,16 @@ export const iaMiNuevoAsistente: Course = {
     {
       num: 2,
       title: "Crear, entender y comunicarte",
-      summary: "Ideas, textos y mensajes — también para tu trabajo",
+      summary: "Ideas, voz, fotos, archivos y mensajes — también para tu trabajo",
       accent: "#FF6A3D",
       blocks: [
-        { name: "Apertura: repaso y presentación del día", min: 15 },
-        { name: "Creativa: generar ideas", min: 25 },
-        { name: "Entender y comunicar", min: 25 },
-        { name: "Aplicarlo a tu trabajo o emprendimiento", min: 25 },
-        { name: "Práctica integradora", min: 20 },
+        // v2 (2026-10-07): se suma el bloque de voz, fotos, archivos y enlaces; se redistribuyen los minutos.
+        { name: "Apertura: repaso y presentación del día", min: 10 },
+        { name: "Creativa: generar ideas", min: 20 },
+        { name: "Hablarle y mostrarle cosas: voz, fotos, archivos y enlaces", min: 25 },
+        { name: "Entender y comunicar", min: 20 },
+        { name: "Aplicarlo a tu trabajo o emprendimiento", min: 20 },
+        { name: "Práctica integradora", min: 15 },
         { name: "Cierre", min: 10 },
       ],
       slides: clase2Slides,
