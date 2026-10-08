@@ -579,6 +579,6 @@ export const clase2Slides: Slide[] = [
     type: "divider",
     badge: "LA PRÓXIMA CLASE",
     title: "Clase 3: Organización de la vida diaria",
-    subtitle: "Listas, planes, presupuestos y comparar opciones",
+    subtitle: "Buscar, armar tablas y archivos, recordar y crear imágenes",
   },
 ];

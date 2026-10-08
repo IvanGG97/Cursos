@@ -57,14 +57,17 @@ export const iaMiNuevoAsistente: Course = {
     {
       num: 3,
       title: "Organización de la vida diaria",
-      summary: "Listas, planes, presupuestos y comparar opciones",
+      summary: "Buscar, armar tablas y archivos, recordar y crear imágenes",
       accent: "#7C5CFF",
       blocks: [
+        // v2 (2026-10-08): rearmada por funciones de las tres IA.
         { name: "Apertura: repaso y presentación del día", min: 10 },
-        { name: "Armar listas y planes", min: 30 },
-        { name: "Presupuestos básicos", min: 30 },
-        { name: "Comparar opciones con criterios", min: 35 },
-        { name: "Cierre", min: 15 },
+        { name: "Los botones de cada respuesta", min: 15 },
+        { name: "Buscar en internet, con fuentes", min: 20 },
+        { name: "Tablas y archivos (de Word a PDF)", min: 20 },
+        { name: "Memoria e instrucciones", min: 15 },
+        { name: "Crear imágenes: tu caricatura o tu logo", min: 30 },
+        { name: "Cierre", min: 10 },
       ],
       slides: clase3Slides,
       evaluation: clase3Evaluacion,

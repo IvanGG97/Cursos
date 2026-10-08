@@ -1,7 +1,8 @@
 import type { Evaluation } from "@/content/types";
 
-// Evaluación de la Clase 3. Cada pregunta sale de algo explicado en la clase (en el comentario,
-// la diapositiva de donde sale). No repite las preguntas de los quizzes de las diapositivas.
+// Evaluación de la Clase 3 (v2: acompaña la clase rearmada por funciones).
+// Cada pregunta sale de algo explicado en la clase (en el comentario, la diapositiva de donde sale).
+// No repite las preguntas de los quizzes de las diapositivas.
 
 const VF = (verdadero: boolean) => [
   { text: "Verdadero", correct: verdadero },
@@ -9,119 +10,124 @@ const VF = (verdadero: boolean) => [
 ];
 
 export const clase3Evaluacion: Evaluation = {
-  id: "clase-3-v1",
+  id: "clase-3-v2",
   title: "Evaluación de la Clase 3",
   intro:
     "10 preguntas sobre lo que vimos en la clase. Necesitás 6 bien para aprobar. Podés hacerla las veces que quieras: queda tu mejor nota.",
   passPercent: 60,
   questions: [
     {
-      // "Tus datos entran, un plan sale"
+      // "Copiar, otra respuesta y escuchar"
       id: "q1",
       kind: "single",
-      question: "¿Qué hace que un plan armado por la IA (un menú, una lista) te sirva de verdad?",
+      question: "Te cuesta leer la respuesta en la pantalla del celular. ¿Qué botón te ayuda?",
       options: [
-        { text: "Que le cuentes tu realidad: cuántos son, cuánto tiempo tenés, qué les gusta y qué no.", correct: true },
-        { text: "Que uses palabras difíciles.", correct: false },
-        { text: "Que se lo pidas varias veces igual.", correct: false },
+        { text: "El parlante: te lee la respuesta en voz alta.", correct: true },
+        { text: "Copiar.", correct: false },
+        { text: "Compartir.", correct: false },
       ],
-      explanation: "Sin tus datos, la IA arma un plan para nadie.",
+      explanation: "El parlante (escuchar) lee la respuesta en voz alta.",
     },
     {
-      // "Del menú a la lista de compras"
+      // "Error común y recomendación" — botones (ojo al compartir)
       id: "q2",
       kind: "vf",
-      question: "Para pasar del menú a la lista de compras, conviene pedirlo en el mismo chat, porque ya tiene el contexto.",
+      question: "Al compartir un chat con el enlace, la otra persona ve toda la conversación.",
       options: VF(true),
-      explanation: "En el mismo chat ya sabe el menú, para cuántos es y lo que no va.",
+      explanation: "Por eso, antes de compartir, revisá que no haya datos personales.",
     },
     {
-      // "Del menú a la lista de compras"
+      // "Para que busque de verdad"
       id: "q3",
       kind: "single",
-      question: "Ya tenés arroz, fideos y aceite en casa. ¿Qué le decís al pedir la lista de compras?",
+      question: "Querés que la IA te dé el horario de hoy de un lugar, actualizado. ¿Cómo se lo pedís?",
       options: [
-        { text: "Nada: compro de más por las dudas.", correct: false },
-        { text: "\"Ya tengo arroz, fideos y aceite: sacalos de la lista\".", correct: true },
-        { text: "Que me arme otro menú.", correct: false },
+        { text: "\"Buscá en internet el horario de hoy de [lugar] y mostrame el enlace.\"", correct: true },
+        { text: "\"¿A qué hora abren?\"", correct: false },
+        { text: "\"Inventá un horario probable.\"", correct: false },
       ],
-      explanation: "Contarle lo que ya tenés hace que la lista sea más corta y real.",
+      explanation: "Pedile que busque en internet y que te muestre la fuente, así lo podés chequear.",
     },
     {
-      // "Los precios los ponés vos"
+      // "Error común y recomendación" — buscar
       id: "q4",
-      kind: "single",
-      question: "Al armar un presupuesto con la IA, ¿en qué es muy buena y qué conviene que pongas vos?",
-      options: [
-        { text: "Es buena para listar los gastos a tener en cuenta; los precios reales los ponés vos.", correct: true },
-        { text: "Es buena para saber los precios de hoy en tu ciudad; la lista la hacés vos.", correct: false },
-        { text: "No sirve para presupuestos.", correct: false },
-      ],
-      explanation: "Pedile los rubros y que ordene y sume; los precios que averiguaste los ponés vos.",
-    },
-    {
-      // "Error común y recomendación" — cuentas
-      id: "q5",
       kind: "vf",
-      question: "La IA nunca se equivoca al sumar.",
+      question: "Si la IA busca en internet, ya no hace falta chequear nada: siempre tiene razón.",
       options: VF(false),
-      explanation: "A veces se equivoca, sobre todo con muchos números: pedí la cuenta paso a paso y revisá con la calculadora.",
+      explanation: "La búsqueda también se equivoca. Lo importante, y sobre todo trámites, salud y plata, en la fuente oficial.",
     },
     {
-      // "Error común y recomendación" — cuentas
+      // "Tres formas de quedarte con la tabla"
+      id: "q5",
+      kind: "multi",
+      question: "La IA te armó una tabla con tus gastos del mes. ¿Cómo te la podés llevar? Marcá todas las correctas.",
+      options: [
+        { text: "Copiarla y pegarla en una planilla o en tus notas.", correct: true },
+        { text: "Pedirle el archivo para descargar (Excel o PDF).", correct: true },
+        { text: "No se puede: queda solo en el chat.", correct: false },
+      ],
+      explanation: "La copiás, pedís el archivo, o en Gemini la exportás a una planilla de Google.",
+    },
+    {
+      // "Convertir un documento con la IA" + "Si la IA no puede hacer el PDF"
       id: "q6",
       kind: "single",
-      question: "Tus gastos son $40.000, $25.000 y $35.000, y tenés $120.000. ¿Cuánto te sobra?",
+      question: "Le pediste a la IA que convierta tu documento de Word a PDF, pero no te da el archivo. ¿Qué hacés?",
       options: [
-        { text: "$20.000", correct: true },
-        { text: "$30.000", correct: false },
-        { text: "No te alcanza.", correct: false },
+        { text: "Lo convierto yo: en Word, Guardar como PDF (o Imprimir → Guardar como PDF en el celular).", correct: true },
+        { text: "Me olvido del PDF.", correct: false },
+        { text: "Le saco una foto a la pantalla.", correct: false },
       ],
-      explanation: "40.000 + 25.000 + 35.000 = 100.000. De 120.000, sobran 20.000.",
+      explanation: "Siempre hay un plan B: Word, el celular o Google Docs guardan como PDF.",
     },
     {
-      // "Antes de comprar una heladera"
+      // "Decírselo una sola vez"
       id: "q7",
-      kind: "multi",
-      question: "Antes de comprar una heladera, ¿qué gastos que se suelen olvidar te puede recordar la IA? Marcá todas las correctas.",
+      kind: "single",
+      question: "¿Para qué sirven las instrucciones o la memoria de la IA?",
       options: [
-        { text: "El envío.", correct: true },
-        { text: "La instalación.", correct: true },
-        { text: "El color de la heladera.", correct: false },
+        { text: "Para que recuerde quién sos y cómo querés que te hable, sin repetírselo en cada chat.", correct: true },
+        { text: "Para guardar tus claves.", correct: false },
+        { text: "Para que la IA trabaje sin internet.", correct: false },
       ],
-      explanation: "Envío, instalación y flete son gastos que se olvidan. La tasa y el precio final se confirman en la tienda o el banco.",
+      explanation: "Le contás una vez quién sos y cómo hablarte, y lo tiene en cuenta en los chats nuevos.",
     },
     {
-      // "Error común y recomendación" — comparar
+      // "Qué no contarle"
       id: "q8",
       kind: "single",
-      question: "¿Cuál es el error más común al pedirle a la IA que compare opciones?",
+      question: "Querés hacer una consulta sin que la IA la recuerde después. ¿Qué usás?",
       options: [
-        { text: "Preguntar \"¿cuál me conviene?\" sin darle tus criterios.", correct: true },
-        { text: "Pedirle una tabla.", correct: false },
-        { text: "Pasarle los datos de cada opción.", correct: false },
+        { text: "Un chat temporal o incógnito (o desactivo la memoria).", correct: true },
+        { text: "Un chat común y le pido que se olvide.", correct: false },
+        { text: "Otra cuenta de mail.", correct: false },
       ],
-      explanation: "Sin tus criterios te contesta lo que le convendría a cualquiera.",
+      explanation: "El chat temporal o incógnito no queda guardado en la memoria.",
     },
     {
-      // "Error común y recomendación" — comparar
+      // "El mismo dibujo, cuatro estilos"
       id: "q9",
-      kind: "vf",
-      question: "Si la IA menciona características de un producto que vos no le pasaste, pueden ser inventadas.",
-      options: VF(true),
-      explanation: "Usá las características de la publicación o del folleto, y pasáselas vos.",
+      kind: "single",
+      question: "Pedís una imagen \"minimalista\". ¿Cómo va a ser?",
+      options: [
+        { text: "Pocas formas y pocos colores, con mucho espacio libre.", correct: true },
+        { text: "Con luces de neón y brillos de ciencia ficción.", correct: false },
+        { text: "Pintada a mano, con manchas suaves.", correct: false },
+      ],
+      explanation: "Minimalista es simple: pocas formas y pocos colores. Las otras son futurista y acuarela.",
     },
     {
-      // "Tu semana, organizada"
+      // "Cuidados y límites" — imágenes
       id: "q10",
-      kind: "single",
-      question: "Para organizar tu semana con la IA, ¿por dónde conviene empezar?",
+      kind: "multi",
+      question: "¿Qué conviene tener en cuenta al crear una imagen con tu foto? Marcá todas las correctas.",
       options: [
-        { text: "Contarle tus horarios fijos y lo que tenés pendiente.", correct: true },
-        { text: "Pedirle que adivine qué tenés que hacer.", correct: false },
-        { text: "Pedirle el plan sin ningún dato y no ajustarlo.", correct: false },
+        { text: "Usar solo tu foto, o la de alguien que te dio permiso.", correct: true },
+        { text: "Revisar que los textos estén bien escritos.", correct: true },
+        { text: "Que la versión gratis tiene un límite de imágenes por día.", correct: true },
+        { text: "Usar fotos de chicos sin pedir permiso a su familia.", correct: false },
       ],
-      explanation: "Horarios fijos y pendientes primero; después, el plan día por día y los ajustes.",
+      explanation: "Tu foto (o con permiso), revisar las letras y saber que hay un límite diario. Fotos de chicos, nunca sin permiso.",
     },
   ],
 };
