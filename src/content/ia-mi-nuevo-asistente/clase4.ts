@@ -605,9 +605,9 @@ export const clase4Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "¿Estafa o no? En la app oficial de tu banco, que abriste vos, aparece: \"Recordá: nunca te vamos a pedir tu clave por teléfono ni por mensaje.\"",
+    question: "¿Estafa? En la app oficial de tu banco, que abriste vos, aparece: \"Recordá: nunca te vamos a pedir tu clave por teléfono ni por mensaje.\"",
     options: LEGITIMO,
-    explanation: "No te pide nada, no te apura y lo ves en la app que abriste vos: es un aviso legítimo (y un buen consejo).",
+    explanation: "No te pide nada, no te apura y lo ves en la app que abriste vos: es un aviso legítimo (y buen consejo).",
   },
   {
     type: "quiz",
