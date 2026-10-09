@@ -569,3 +569,32 @@ a.alist-main:hover strong { color: var(--accent-text); }
 .media-slot { scroll-margin-top: 16px; }
 .media-slot:target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
 .ced-media-link { align-self: flex-start; }
+
+/* Imágenes: una clase por vez */
+.media-classes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 10px; margin-bottom: 20px; }
+.media-class {
+  display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; min-height: 44px;
+  border: 1px solid var(--line); border-top: 3px solid var(--accent); background: var(--panel);
+  color: var(--text); text-decoration: none;
+}
+.media-class:hover { border-color: var(--accent); }
+.media-class.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel)); box-shadow: inset 0 0 0 1px var(--accent); }
+.media-class.off { opacity: 0.5; border-top-color: var(--line); }
+.media-class-n { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); }
+.media-class-t { font-family: var(--f-title); font-size: 17px; line-height: 1.2; }
+.media-class-c { font-size: 13px; color: var(--text-2); }
+.media-class.has-missing .media-class-c { color: var(--warn-text); }
+.media-class-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 14px; }
+.media-class-head h2 { margin: 0; font-family: var(--f-title); font-size: 22px; }
+.media-class-head .btn-row { margin-top: 0; }
+.media-slot-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .media-classes { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .media-class { padding: 10px; }
+  .media-class-t { font-size: 15px; }
+  .media-class-head .btn-row { width: 100%; }
+  .media-class-head .btn-row > * { flex: 1 1 auto; justify-content: center; }
+}
+.media-intro { margin-bottom: 14px; }
+.media-intro > p { margin: 0 0 6px; }
+.media-intro details p { margin: 8px 0 0; font-size: 14px; line-height: 1.5; }

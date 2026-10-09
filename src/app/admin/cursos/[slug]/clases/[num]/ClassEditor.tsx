@@ -1087,7 +1087,7 @@ function MediaField({ value, onChange, classNum, media }: { value?: Media; onCha
             Lugar: <span className="mono">{value.id}</span>
           </p>
           {live && (
-            <a href={`${imagesHref}#${value.id}`} target="_blank" rel="noreferrer" className="btn btn-sm ced-media-link">
+            <a href={`${imagesHref}?clase=${classNum}#${value.id}`} target="_blank" rel="noreferrer" className="btn btn-sm ced-media-link">
               {uploaded ? "Cambiar la imagen →" : "Subir la imagen →"}
             </a>
           )}
