@@ -51,7 +51,7 @@ export default async function CourseMedia({ params }: Props) {
             const clase = course.classes.find((c) => c.num === s.classNum)!;
             const up = uploaded.get(s.media.id);
             return (
-              <section key={s.media.id} className="panel media-slot" style={{ "--accent": clase.accent } as CSSProperties}>
+              <section key={s.media.id} id={s.media.id} className="panel media-slot" style={{ "--accent": clase.accent } as CSSProperties}>
                 <div className="kicker-sm">
                   Clase {s.classNum} · diapositiva {s.slide} · {s.media.kind === "GIF" ? "GIF o video" : "Imagen"}
                 </div>

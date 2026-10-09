@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type TextareaHTMLAttributes } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type TextareaHTMLAttributes } from "react";
 import type { Media, QuizOption, Row, Slide } from "@/content/types";
 import { typeset } from "@/content/typeset";
 import { SlideMirror } from "@/components/deck/SlideMirror";
@@ -40,6 +40,9 @@ type Props = {
   liveOpen: boolean;
   classHref: string;
 };
+
+/** Para el campo de imagen: adónde se sube y qué lugares ya existen en la clase publicada. */
+const MediaCtx = createContext<{ imagesHref: string; publishedIds: Set<string> }>({ imagesHref: "", publishedIds: new Set() });
 
 type Sheet = null | { kind: "add"; at: number } | { kind: "publish" } | { kind: "history" } | { kind: "big" };
 type Msg = { ok?: string; error?: string };
@@ -335,6 +338,13 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
       : "Igual a lo publicado";
 
   const style = { "--accent": clase.accent } as CSSProperties;
+  const mediaCtx = useMemo(
+    () => ({
+      imagesHref: `/admin/cursos/${slug}/imagenes`,
+      publishedIds: new Set(published.flatMap((s) => ("media" in s && s.media ? [s.media.id] : []))),
+    }),
+    [slug, published],
+  );
 
   return (
     <div className={`ced${sel !== null ? " has-sel" : ""}`} ref={top} style={style}>
@@ -382,8 +392,8 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
               {confirm === "discard" ? "¿Seguro? Tocá de nuevo" : hasDraft ? "Descartar borrador" : "Descartar cambios"}
             </button>
           )}
-          <a href={classHref} target="_blank" rel="noreferrer" className="btn btn-sm">
-            Ver la clase publicada
+          <a href={sel !== null ? `${classHref}#${sel + 1}` : classHref} target="_blank" rel="noreferrer" className="btn btn-sm">
+            {sel !== null ? `Ver la diapositiva ${sel + 1} publicada` : "Ver la clase publicada"}
           </a>
         </div>
       </div>
@@ -535,7 +545,9 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
                     ))}
                   </ul>
                 )}
-                <SlideForm slide={current} onChange={(s) => setSlide(sel, s)} classNum={clase.num} media={media} />
+                <MediaCtx.Provider value={mediaCtx}>
+                  <SlideForm slide={current} onChange={(s) => setSlide(sel, s)} classNum={clase.num} media={media} />
+                </MediaCtx.Provider>
               </div>
 
               <div className="ced-preview">
@@ -1044,6 +1056,8 @@ function RowsField({ rows, onChange, fits }: { rows: Row[]; onChange: (v: Row[])
 
 function MediaField({ value, onChange, classNum, media }: { value?: Media; onChange: (m: Media | undefined) => void; classNum: number; media: MediaMap }) {
   const uploaded = value ? Boolean(media[value.id]) || Boolean(value.src) : false;
+  const { imagesHref, publishedIds } = useContext(MediaCtx);
+  const live = value ? publishedIds.has(value.id) : false;
   return (
     <fieldset className="ced-list-field ced-media">
       <legend>Imagen</legend>
@@ -1065,13 +1079,18 @@ function MediaField({ value, onChange, classNum, media }: { value?: Media; onCha
             hint="Se ve como aviso en la diapositiva mientras no subas la imagen."
           />
           <p className="hint">
-            {uploaded ? (
-              <>Ya tiene imagen cargada. Se cambia desde la pestaña Imágenes.</>
-            ) : (
-              <>Todavía sin imagen: subila desde la pestaña Imágenes después de publicar.</>
-            )}{" "}
+            {live
+              ? uploaded
+                ? "Ya tiene imagen cargada."
+                : "Todavía sin imagen."
+              : "Lugar nuevo: publicá la clase y después subí la imagen desde la pestaña Imágenes."}{" "}
             Lugar: <span className="mono">{value.id}</span>
           </p>
+          {live && (
+            <a href={`${imagesHref}#${value.id}`} target="_blank" rel="noreferrer" className="btn btn-sm ced-media-link">
+              {uploaded ? "Cambiar la imagen →" : "Subir la imagen →"}
+            </a>
+          )}
         </>
       )}
     </fieldset>

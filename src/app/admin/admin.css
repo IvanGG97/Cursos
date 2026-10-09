@@ -566,3 +566,6 @@ a.alist-main:hover strong { color: var(--accent-text); }
   .ced-sheet { border-bottom: 1px solid var(--line); padding-bottom: 20px; }
   .ced-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
+.media-slot { scroll-margin-top: 16px; }
+.media-slot:target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.ced-media-link { align-self: flex-start; }

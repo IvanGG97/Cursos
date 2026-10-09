@@ -245,8 +245,15 @@ function useSlideHash(total: number, startAt?: number) {
       setIndexState(i);
     } else read();
     setReady(true);
+    // Al llegar desde un enlace dentro del sitio, la dirección (con el #) puede quedar puesta un
+    // instante después de montar el visor: se vuelve a leer, así no arranca en la 1 por error.
+    const again = [requestAnimationFrame(read), window.setTimeout(read, 300)];
     window.addEventListener("hashchange", read);
-    return () => window.removeEventListener("hashchange", read);
+    return () => {
+      cancelAnimationFrame(again[0]);
+      clearTimeout(again[1]);
+      window.removeEventListener("hashchange", read);
+    };
   }, [total]);
 
   const setIndex = (i: number) => {
