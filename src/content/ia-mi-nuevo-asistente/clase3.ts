@@ -567,7 +567,7 @@ export const clase3Slides: Slide[] = [
   {
     type: "divider",
     badge: "LA PRÓXIMA CLASE",
-    title: "Clase 4: Decisiones y cuidado digital",
-    subtitle: "Trámites, casa y bolsillo, y sentido crítico",
+    title: "Clase 4: Automatizar y cuidarte",
+    subtitle: "Tu agenda, tu Drive y tus recordatorios con IA, sin caer en estafas",
   },
 ];
