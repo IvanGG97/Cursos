@@ -110,7 +110,6 @@ export const clase4Slides: Slide[] = [
     rows: [
       { h: "Sí", d: "lo repetitivo (los pagos del mes), lo que se te olvida (cumpleaños) y lo que tiene fecha (turnos, trámites)." },
       { h: "No", d: "lo que necesita tu decisión: pagar, transferir plata, mandar un correo importante sin leerlo." },
-      { h: "Con hora exacta, no", d: "la medicación va con la alarma del celular." },
       { h: "Regla de oro", d: "automatizar no es desentenderse: revisás lo que hizo, como el resumen del débito." },
     ],
   },
