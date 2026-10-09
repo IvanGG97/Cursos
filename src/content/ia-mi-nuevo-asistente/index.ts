@@ -80,11 +80,11 @@ export const iaMiNuevoAsistente: Course = {
       blocks: [
         // v2 (2026-10-09): rearmada alrededor de la automatización y las estafas.
         { name: "Apertura: repaso y qué es automatizar", min: 15 },
-        { name: "Conectar la IA con tus apps", min: 15 },
+        { name: "Conectar la IA con tus apps (paso a paso)", min: 25 },
         { name: "Tu agenda desde el chat", min: 15 },
-        { name: "Archivos que van solos a tu Drive", min: 15 },
+        { name: "Archivos que van solos a tu Drive", min: 10 },
         { name: "Recordatorios que te avisan", min: 10 },
-        { name: "Menú de automatizaciones", min: 20 },
+        { name: "Menú de automatizaciones", min: 15 },
         { name: "Cuidarte: estafas y permisos", min: 20 },
         { name: "Cierre del curso", min: 10 },
       ],

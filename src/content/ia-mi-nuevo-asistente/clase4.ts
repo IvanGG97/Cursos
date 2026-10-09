@@ -127,41 +127,143 @@ export const clase4Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 1: CONECTAR LA IA CON TUS APPS =====================
-  { type: "divider", badge: "BLOQUE 1 · 15 MIN", title: "Conectar la IA con tus apps", subtitle: "Darle permiso para usar tu agenda, tu Drive y tu correo" },
+  // Muy paso a paso (pedido de Ivan). Rutas verificadas el 2026-10-09 en las ayudas oficiales:
+  // Claude: "+" del chat → Conectores (el conector se activa en cada chat); Personalizar → Conectores
+  // para administrar/desconectar; guardar en Drive requiere "Ejecución de código y creación de
+  // archivos". Gemini: Menú → foto de perfil → Apps conectadas (en iPhone a veces dentro de
+  // "Inteligencia personalizada"); en la computadora, Configuración y ayuda → Apps conectadas;
+  // requisito: "Conservar la actividad" activado; en el chat se llama a una app con "@".
+  { type: "divider", badge: "BLOQUE 1 · 25 MIN", title: "Conectar la IA con tus apps", subtitle: "Paso a paso, en Claude y en Gemini" },
   {
     type: "concept",
     kicker: "Conectar",
     title: "Darle una llave, no la casa",
-    body: "Claude y Gemini se pueden conectar con tus apps de Google: el Calendario, el Drive y el Gmail. Al conectarlas, le das permiso para usarlas cuando vos se lo pidas en el chat. También en la versión gratis. ChatGPT gratis no se conecta con Google, pero te avisa con recordatorios.",
+    body: "Claude y Gemini se pueden conectar con tus apps de Google: el Calendario, el Drive y el Gmail. Al conectarlas, le das permiso para usarlas cuando vos se lo pidas en el chat. ChatGPT gratis no se conecta con Google, pero te avisa con recordatorios.",
     analogy: "Es como dejarle la llave del depósito a un ayudante de confianza: puede guardar y buscar cosas cuando le pedís, y la llave se la podés sacar cuando quieras.",
   },
   {
+    type: "content",
+    kicker: "Antes de empezar",
+    title: "Tené esto a mano",
+    rows: [
+      { h: "Tu cuenta de Google", d: "el mail de Gmail y su contraseña: te los va a pedir." },
+      { h: "La misma cuenta en todo", d: "la IA, el Calendario y el Drive tienen que ser de la misma cuenta de Google." },
+      { h: "La app actualizada", d: "Play Store o App Store → buscá Claude o Gemini → \"Actualizar\"." },
+      { h: "Internet estable", d: "wifi o datos: si se corta en el medio, se empieza de nuevo." },
+    ],
+  },
+
+  // --- Claude ---
+  {
     type: "steps",
-    kicker: "En Claude",
-    title: "Conectar tus apps de Google",
+    kicker: "Claude · Paso 1",
+    title: "Abrir los conectores",
     steps: [
-      "Entrá a Configuración y buscá \"Conectores\" (también aparece en el \"+\" del chat).",
-      "Elegí Google Calendar, Google Drive o Gmail y tocá \"Conectar\".",
-      "Elegí tu cuenta de Google y tocá \"Permitir\".",
-      "Volvé al chat y probá: \"¿Qué tengo en mi calendario esta semana?\".",
+      "Abrí Claude y empezá un chat nuevo.",
+      "Tocá el \"+\" que está abajo a la izquierda del cuadro donde escribís.",
+      "Elegí \"Conectores\": se abre la lista de apps que se pueden conectar.",
+      "Buscá Google Calendar, Google Drive y Gmail en esa lista.",
     ],
     media: {
       id: "c4-conectar",
       kind: "IMAGEN",
-      caption: "Captura del celular, en castellano: la pantalla de Conectores de Claude, con Google Calendar, Drive y Gmail.",
+      caption: "Captura, en castellano: el \"+\" del chat de Claude abierto, con \"Conectores\" y la lista (Google Calendar, Drive, Gmail).",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Claude · Paso 2",
+    title: "Conectar tu cuenta de Google",
+    steps: [
+      "Activá el interruptor de Google Calendar (después, si querés, el de Drive y el de Gmail).",
+      "Se abre una pantalla de Google: elegí tu cuenta, o escribí tu mail y tu contraseña.",
+      "Google te muestra qué va a poder hacer Claude: leelo, marcá las casillas y tocá \"Continuar\".",
+      "Volvés a Claude solo, con el interruptor encendido: ya está conectado.",
+    ],
+    media: {
+      id: "c4-claude-permisos",
+      kind: "IMAGEN",
+      caption: "Captura: la pantalla de permisos de Google al conectar Claude (elegir la cuenta, las casillas y \"Continuar\").",
     },
   },
   {
     type: "content",
-    kicker: "En Gemini",
-    title: "Las apps conectadas",
+    kicker: "Claude · Detalles importantes",
+    title: "Lo que casi nadie sabe",
     rows: [
-      { h: "Dónde", d: "Configuración → Apps (o \"Apps conectadas\")." },
-      { h: "Qué activar", d: "Google Calendar, Drive, Gmail y Keep (para notas y listas)." },
-      { h: "Cómo probar", d: "\"¿Qué tengo en mi calendario el viernes?\". Si no responde, revisá que esté activada." },
-      { h: "Si no aparece", d: "depende del país, del idioma y del celular: actualizá la app." },
+      { h: "Se activa en cada chat", d: "en un chat nuevo, revisá en el \"+\" → Conectores que el interruptor esté encendido." },
+      { h: "Para guardar en tu Drive", d: "en Configuración → Funciones (o Capacidades), activá \"Ejecución de código y creación de archivos\"." },
+      { h: "Si en el celular no lo ves", d: "conectalo una vez desde claude.ai en el navegador: queda conectado también en la app." },
+      { h: "Plan B en el celular", d: "la app de Claude puede agendar en el calendario del teléfono: te pide permiso y vos confirmás." },
     ],
   },
+  {
+    type: "content",
+    kicker: "Claude · ¿Funcionó?",
+    title: "Cómo saber que quedó conectado",
+    rows: [
+      { h: "Probá", d: "\"¿Qué tengo en mi calendario esta semana?\"" },
+      { h: "Si funcionó", d: "te responde con tus eventos y muestra de cuáles sacó la información." },
+      { h: "Si dice que no tiene acceso", d: "revisá el \"+\" → Conectores en ese chat, o volvé a conectar tu cuenta." },
+    ],
+  },
+
+  // --- Gemini ---
+  {
+    type: "steps",
+    kicker: "Gemini · Paso 1",
+    title: "Un requisito que casi nadie sabe",
+    steps: [
+      "Abrí Gemini y tocá el Menú (arriba a la izquierda).",
+      "Tocá tu foto de perfil o tu inicial, y buscá \"Actividad en las Apps de Gemini\".",
+      "Fijate que \"Conservar la actividad\" esté activado. Si está apagado, activalo.",
+      "Sin esto, las apps conectadas no funcionan: es el error más común.",
+    ],
+    media: {
+      id: "c4-gemini-actividad",
+      kind: "IMAGEN",
+      caption: "Captura del celular, en castellano: la opción \"Conservar la actividad\" activada en Gemini.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Gemini · Paso 2 (celular)",
+    title: "Conectar tus apps de Google",
+    steps: [
+      "Tocá el Menú (arriba a la izquierda) y después tu foto de perfil o tu inicial.",
+      "Elegí \"Apps conectadas\" (en iPhone, a veces está dentro de \"Inteligencia personalizada\").",
+      "Activá Google Calendar, Drive, Gmail, Keep y Tasks.",
+      "Si te pide permiso, tocá \"Conectar\" o \"Permitir\".",
+    ],
+    media: {
+      id: "c4-gemini-apps",
+      kind: "IMAGEN",
+      caption: "Captura del celular, en castellano: la pantalla \"Apps conectadas\" de Gemini con los interruptores de Calendar, Drive, Gmail, Keep y Tasks.",
+    },
+  },
+  {
+    type: "content",
+    kicker: "Gemini · En la computadora",
+    title: "Desde gemini.google.com",
+    rows: [
+      { h: "Entrá con tu cuenta", d: "fijate arriba a la derecha que sea la cuenta de Google correcta." },
+      { h: "Configuración y ayuda", d: "abajo a la izquierda → \"Apps conectadas\"." },
+      { h: "Activá", d: "Google Calendar, Drive, Gmail, Keep y Tasks." },
+    ],
+  },
+  {
+    type: "content",
+    kicker: "Gemini · En el chat",
+    title: "Cómo usar las apps conectadas",
+    rows: [
+      { h: "Con \"@\"", d: "escribí @ y elegí la app: \"@Google Calendar agendá...\"." },
+      { h: "Sin \"@\"", d: "también las usa sola si tu pedido lo necesita." },
+      { h: "Si no funciona", d: "revisá \"Conservar la actividad\" y que el interruptor de la app esté encendido." },
+      { h: "Si no aparece la app", d: "depende del país, del idioma y del celular: actualizá Gemini y probá de nuevo." },
+    ],
+  },
+
+  // --- Cuidados y práctica ---
   {
     type: "content",
     kicker: "Para tener en cuenta",
@@ -169,14 +271,15 @@ export const clase4Slides: Slide[] = [
     rows: [
       { h: "Leé qué permiso das", d: "la pantalla de Google te dice qué va a poder ver y hacer." },
       { h: "Siempre con tu aprobación", d: "para mandar un correo o borrar algo, la IA te pide confirmación: leelo antes de aceptar." },
-      { h: "Se puede desconectar", d: "desde la misma configuración, cuando quieras." },
+      { h: "Para desconectar", d: "Claude: Personalizar → Conectores → \"Desconectar\". Gemini: Apps conectadas → apagá el interruptor." },
+      { h: "Desde tu cuenta de Google", d: "myaccount.google.com → Seguridad → conexiones con apps de terceros: ves y quitás todo." },
     ],
   },
   {
     type: "practice",
     title: "Tarea 1 · Conectá tu agenda",
     instructions:
-      "En Claude o en Gemini, conectá tu Google Calendar (y si querés, tu Drive). Después preguntale: \"¿Qué tengo en mi calendario esta semana?\".\n\nSi no tenés cuenta de Google, mirá cómo se hace: tu parte es con ChatGPT, en el bloque de recordatorios.",
+      "Elegí Claude o Gemini y seguí los pasos, uno por uno, para conectar tu Google Calendar (y si querés, tu Drive). Después preguntale: \"¿Qué tengo en mi calendario esta semana?\".\n\nSi no tenés cuenta de Google, mirá cómo se hace: tu parte es con ChatGPT, en el bloque de recordatorios.",
   },
   {
     type: "quiz",
@@ -238,7 +341,7 @@ export const clase4Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 3: ARCHIVOS QUE VAN SOLOS A TU DRIVE =====================
-  { type: "divider", badge: "BLOQUE 3 · 15 MIN", title: "Archivos que van solos a tu Drive", subtitle: "Pedís el documento o la planilla, y queda guardado" },
+  { type: "divider", badge: "BLOQUE 3 · 10 MIN", title: "Archivos que van solos a tu Drive", subtitle: "Pedís el documento o la planilla, y queda guardado" },
   {
     type: "concept",
     kicker: "Tu Drive",
@@ -333,7 +436,7 @@ export const clase4Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 5: MENÚ DE AUTOMATIZACIONES =====================
-  { type: "divider", badge: "BLOQUE 5 · 20 MIN", title: "Menú de automatizaciones", subtitle: "Elegí 3 y armalas para tu vida" },
+  { type: "divider", badge: "BLOQUE 5 · 15 MIN", title: "Menú de automatizaciones", subtitle: "Elegí 3 y armalas para tu vida" },
   {
     type: "content",
     kicker: "Menú · Agenda y trámites",
