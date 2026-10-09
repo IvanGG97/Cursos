@@ -391,7 +391,7 @@ export const clase4Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 4: RECORDATORIOS QUE TE AVISAN =====================
-  { type: "divider", badge: "BLOQUE 4 · 10 MIN", title: "Recordatorios que te avisan", subtitle: "El nivel 3: llega solo, el día que elegiste" },
+  { type: "divider", badge: "BLOQUE 4 · 15 MIN", title: "Recordatorios que te avisan", subtitle: "El nivel 3: llega solo, el día que elegiste" },
   {
     type: "content",
     kicker: "Recordatorios",
@@ -407,6 +407,57 @@ export const clase4Slides: Slide[] = [
       caption: "Captura del celular: la notificación de un recordatorio de ChatGPT en la pantalla.",
     },
   },
+
+  // --- ChatGPT: tareas programadas (no necesita Google) ---
+  {
+    type: "steps",
+    kicker: "ChatGPT · Paso 1",
+    title: "Pedirle el recordatorio",
+    steps: [
+      "Abrí ChatGPT con tu cuenta. Mejor en la app del celular: ahí te llega el aviso.",
+      "En un chat nuevo, escribí o dictá: \"Recordame mañana a la mañana pagar la luz\".",
+      "ChatGPT te muestra un recuadro con la tarea: qué te va a recordar y cuándo.",
+      "Si el celular pregunta si ChatGPT puede mandarte notificaciones, tocá \"Permitir\".",
+    ],
+    media: {
+      id: "c4-chatgpt-tarea",
+      kind: "IMAGEN",
+      caption: "Captura del celular, en castellano: el recuadro que muestra ChatGPT al crear un recordatorio (qué y cuándo).",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "ChatGPT · Paso 2",
+    title: "Revisar que quedó bien",
+    steps: [
+      "Leé el recuadro: qué te va a recordar, qué día y en qué momento (mañana, tarde o noche).",
+      "Si algo está mal, decíselo en el mismo chat: \"No, que sea el jueves a la tarde\".",
+      "Para que se repita, pedilo así: \"todos los lunes\" o \"todos los meses el día 10\".",
+      "Escribí o dictá: en el modo de voz (la charla hablada) no se crean recordatorios.",
+    ],
+  },
+  {
+    type: "steps",
+    kicker: "ChatGPT · Paso 3",
+    title: "Que el aviso te llegue",
+    steps: [
+      "Abrí el menú (arriba a la izquierda), tocá tu nombre, abajo de todo, y entrá a \"Configuración\".",
+      "Entrá a \"Notificaciones\" y, en tareas, activá el aviso al celular, al mail o los dos.",
+      "En el celular, revisá también Ajustes → Notificaciones → ChatGPT: que esté permitido.",
+      "Sin permiso, el recordatorio se cumple igual, pero no te enterás.",
+    ],
+  },
+  {
+    type: "content",
+    kicker: "ChatGPT · Tus recordatorios",
+    title: "Ver, cambiar o borrar",
+    rows: [
+      { h: "Dónde están", d: "en el menú, en \"Programadas\" (en inglés, Scheduled). Si no lo ves, buscá \"Tareas\"." },
+      { h: "Cambiar o pausar", d: "tocá el recordatorio: lo podés editar, pausar o eliminar." },
+      { h: "No borres ese chat", d: "si borrás el chat donde lo creaste, el recordatorio se pausa." },
+      { h: "En la versión gratis", d: "hasta 3 activos, uno por día como mucho, a la mañana, a la tarde o a la noche." },
+    ],
+  },
   {
     type: "quote",
     kicker: "Plantilla",
@@ -420,7 +471,7 @@ export const clase4Slides: Slide[] = [
     type: "practice",
     title: "Tarea 4 · Tu primer recordatorio",
     instructions:
-      "Pedile a ChatGPT (o a Gemini) un recordatorio real con la plantilla: un pago del mes, una idea para publicar cada lunes, regar las plantas.\n\nRevisá que tengas activadas las notificaciones de la app, para que el aviso te llegue.",
+      "Pedile a ChatGPT (o a Gemini) un recordatorio real con la plantilla: un pago del mes, una idea para publicar cada lunes, regar las plantas.\n\nEn ChatGPT, seguí los 3 pasos: pedilo, revisá el recuadro y activá las notificaciones. Al final, fijate en \"Programadas\" que esté.",
   },
   {
     type: "quiz",
@@ -433,9 +484,19 @@ export const clase4Slides: Slide[] = [
     ],
     explanation: "En la versión gratis el horario es aproximado. Lo que necesita hora exacta, con la alarma del celular.",
   },
+  {
+    type: "quiz",
+    kind: "vf",
+    question: "Si borrás el chat donde creaste el recordatorio, el aviso te llega igual.",
+    options: [
+      { text: "Verdadero", correct: false },
+      { text: "Falso", correct: true },
+    ],
+    explanation: "Al borrar ese chat, el recordatorio se pausa. Dejá ese chat: lo encontrás en \"Programadas\".",
+  },
 
   // ===================== BLOQUE 5: MENÚ DE AUTOMATIZACIONES =====================
-  { type: "divider", badge: "BLOQUE 5 · 15 MIN", title: "Menú de automatizaciones", subtitle: "Elegí 3 y armalas para tu vida" },
+  { type: "divider", badge: "BLOQUE 5 · 10 MIN", title: "Menú de automatizaciones", subtitle: "Elegí 3 y armalas para tu vida" },
   {
     type: "content",
     kicker: "Menú · Agenda y trámites",
