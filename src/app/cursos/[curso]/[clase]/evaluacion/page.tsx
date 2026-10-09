@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { getClass, getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { canManage, classStatus, getCourseState, getViewer } from "@/lib/access";
 import { getCourseEvaluations, publicQuestions } from "@/lib/evaluations";
 import { formatDateTime } from "@/lib/site";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EvaluationPage({ params }: Props) {
   const { curso, clase: classSlug } = await params;
-  const course = getCourse(curso);
+  const course = await getLiveCourse(curso);
   const clase = course && getClass(course, classSlug);
   if (!course || !clase) notFound();
   // La vigente: la del repo o la editada en el panel.

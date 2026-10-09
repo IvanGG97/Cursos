@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
 import { getCourseEvaluations } from "@/lib/evaluations";
@@ -18,7 +18,7 @@ const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0);
 
 export default async function CourseTracking({ params }: Props) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getLiveCourse(slug);
   if (!course) notFound();
   const ctx = await requireAdmin(`/admin/cursos/${slug}/seguimiento`);
   if (!ctx) return null;

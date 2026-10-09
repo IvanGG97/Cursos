@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { courses } from "@/content/registry";
+import { getLiveCourses } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 
 export const metadata: Metadata = { title: "Cursos" };
@@ -18,6 +18,7 @@ export default async function AdminCourses() {
     supabase.from("enrollments").select("course_slug, status"),
     supabase.from("enrollment_invites").select("course_slug"),
   ]);
+  const courses = await getLiveCourses();
 
   const published = new Map((rows.data ?? []).map((r) => [r.slug as string, r.published as boolean]));
   const isPublic = new Set((rows.data ?? []).filter((r) => r.access === "public").map((r) => r.slug as string));

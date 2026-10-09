@@ -20,9 +20,13 @@ type Props = {
   slide: Slide;
   index: number;
   total: number;
+  /** "auto" (por el ancho, como en la clase en vivo) o forzado: "canvas" = proyector, "flow" = celular. */
+  mode?: "auto" | "canvas" | "flow";
+  /** Para la vista previa del editor: mostrar la respuesta de una pregunta. */
+  revealed?: boolean;
 };
 
-export function SlideMirror({ course, clase, slide, index, total }: Props) {
+export function SlideMirror({ course, clase, slide, index, total, mode = "auto", revealed = false }: Props) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
@@ -36,9 +40,9 @@ export function SlideMirror({ course, clase, slide, index, total }: Props) {
   }, []);
 
   const scale = width / W;
-  const flow = scale > 0 && scale < FLOW_BELOW;
+  const flow = mode === "flow" || (mode === "auto" && scale > 0 && scale < FLOW_BELOW);
   const style = { "--accent": clase.accent } as CSSProperties;
-  const view = <SlideView key={index} course={course} clase={clase} slide={slide} index={index} total={total} revealed={false} onReveal={() => {}} />;
+  const view = <SlideView key={index} course={course} clase={clase} slide={slide} index={index} total={total} revealed={revealed} onReveal={() => {}} />;
 
   return (
     <div ref={box} className="mirror-box">

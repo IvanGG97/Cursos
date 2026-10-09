@@ -1,6 +1,6 @@
 "use server";
 
-import { getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { classStatus, getCourseState, getViewer } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,7 +12,7 @@ export async function saveProgress(slug: string, num: number, slide: number) {
   const viewer = await getViewer();
   if (viewer.kind !== "user") return;
 
-  const course = getCourse(slug);
+  const course = await getLiveCourse(slug);
   const clase = course?.classes.find((c) => c.num === num);
   if (!course || !clase) return;
   const total = clase.slides.length;

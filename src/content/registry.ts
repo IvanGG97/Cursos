@@ -1,6 +1,7 @@
 import "server-only";
 import type { ClassDef, Course } from "./types";
 import { iaMiNuevoAsistente } from "./ia-mi-nuevo-asistente";
+import { typeset } from "./typeset";
 
 // Registro de todos los cursos de la plataforma.
 // Para sumar un curso: crear src/content/<slug>/index.ts y agregarlo a esta lista.
@@ -8,15 +9,8 @@ import { iaMiNuevoAsistente } from "./ia-mi-nuevo-asistente";
 
 const RAW: Course[] = [iaMiNuevoAsistente];
 
-/** Convierte "comillas rectas" en “comillas tipográficas” (Space Grotesk dibuja mal las rectas). */
-export function typeset<T>(value: T): T {
-  if (typeof value === "string") return value.replace(/"([^"\n]*)"/g, "“$1”") as T;
-  if (Array.isArray(value)) return value.map(typeset) as T;
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, typeset(v)])) as T;
-  }
-  return value;
-}
+// Vive aparte para poder usarla también en el navegador (vista previa del editor de clases).
+export { typeset };
 
 export const courses: Course[] = RAW.map(typeset);
 

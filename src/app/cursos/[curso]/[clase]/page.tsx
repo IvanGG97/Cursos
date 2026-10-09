@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { Deck } from "@/components/deck/Deck";
-import { getClass, getCourse } from "@/content/registry";
+import { getClass } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { classStatus, getCourseState, getViewer } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { getOrigin } from "@/lib/urls";
@@ -12,7 +13,7 @@ type Params = { params: Promise<{ curso: string; clase: string }> };
 
 async function load(params: Params["params"]) {
   const { curso, clase: slug } = await params;
-  const course = getCourse(curso);
+  const course = await getLiveCourse(curso);
   const clase = course && getClass(course, slug);
   if (!course || !clase) notFound();
   return { course, clase, slug };

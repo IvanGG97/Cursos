@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { adminCtx, audit, parseEmails, randomCode, type ActionResult, type AdminCtx } from "@/lib/admin";
 import { fromLocalInput } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/admin";
@@ -82,7 +83,7 @@ export const setCourseMode = action(async (ctx, f) => {
 
 /** Libera de una vez todas las clases que tienen contenido. */
 export const releaseAllClasses = action(async (ctx, f) => {
-  const course = courseFrom(f);
+  const course = (await getLiveCourse(courseFrom(f).slug))!;
   const ready = course.classes.filter((c) => c.slides.length > 0);
   if (ready.length === 0) throw new Error("Este curso todavía no tiene clases con contenido.");
   await ensureCourseRow(ctx, course.slug);

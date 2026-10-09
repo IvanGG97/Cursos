@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import type { AnnotShape, Annotations } from "@/content/types";
 import { adminCtx, audit, type AdminCtx } from "@/lib/admin";
 import { isExternal, MAX_GALLERY, MEDIA_BUCKET, mediaSlots } from "@/lib/media";
@@ -12,8 +12,8 @@ import { isExternal, MAX_GALLERY, MEDIA_BUCKET, mediaSlots } from "@/lib/media";
 
 type Result = { error?: string };
 
-function checkSlot(slug: string, mediaId: string) {
-  const course = getCourse(slug);
+async function checkSlot(slug: string, mediaId: string) {
+  const course = await getLiveCourse(slug);
   return Boolean(course && mediaSlots(course).some((s) => s.media.id === mediaId));
 }
 
@@ -34,7 +34,7 @@ async function renumber(ctx: AdminCtx, ids: string[]) {
 }
 
 async function add(ctx: AdminCtx, slug: string, mediaId: string, path: string, mime: string, kind: "upload" | "link"): Promise<Result> {
-  if (!checkSlot(slug, mediaId)) return { error: "Lugar de imagen inexistente." };
+  if (!(await checkSlot(slug, mediaId))) return { error: "Lugar de imagen inexistente." };
   const current = await items(ctx, slug, mediaId);
   if (current.length >= MAX_GALLERY) return { error: `Máximo ${MAX_GALLERY} imágenes por lugar.` };
 

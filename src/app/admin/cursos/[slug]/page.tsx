@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { classSlug, getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { getCourseState, isSurveyOpen } from "@/lib/access";
 import { formatDateTime, toLocalInput } from "@/lib/site";
@@ -53,7 +54,7 @@ const MODES = {
 export default async function AdminCourse({ params, searchParams }: Props) {
   const { slug } = await params;
   const { q = "" } = await searchParams;
-  const course = getCourse(slug);
+  const course = await getLiveCourse(slug);
   if (!course) notFound();
   const ctx = await requireAdmin(`/admin/cursos/${slug}`);
   if (!ctx) return null;
@@ -235,6 +236,7 @@ export default async function AdminCourse({ params, searchParams }: Props) {
                     <Submit small>Ocultar</Submit>
                   </ActionForm>
                 )}
+                <Link href={`/admin/cursos/${slug}/clases/${clase.num}`} className="btn btn-sm">Editar diapositivas</Link>
                 {clase.slides.length > 0 && (
                   <>
                     <Link href={`/cursos/${slug}/${classSlug(clase)}`} className="btn btn-sm">Presentar</Link>

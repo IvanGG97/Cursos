@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
 import { adminCtx, audit } from "@/lib/admin";
+import { currentVersionId } from "@/lib/class-content";
 import { formatDateTime } from "@/lib/site";
 
 /** `current_slide` / `revealed`: dónde estaba la clase (para retomarla si el presentador se fue y volvió). */
@@ -29,13 +30,16 @@ export async function startLive(slug: string, num: number, title?: string): Prom
     if (open) return open;
 
     const name = (title ?? "").trim().slice(0, 80) || `Clase ${num} · ${formatDateTime(new Date().toISOString())}`;
+    // Con qué versión de la clase se da (si se editó desde el panel): los resultados se guardan por
+    // número de diapositiva y tienen que seguir apuntando a estas preguntas.
+    const version = await currentVersionId(slug, num);
 
     // Código de 4 números que no choque con otra sesión abierta.
     for (let i = 0; i < 8; i++) {
       const code = String(Math.floor(1000 + Math.random() * 9000));
       const { data, error } = await ctx.supabase
         .from("live_sessions")
-        .insert({ code, title: name, course_slug: slug, class_num: num, created_by: ctx.viewer.id })
+        .insert({ code, title: name, course_slug: slug, class_num: num, created_by: ctx.viewer.id, ...(version !== null ? { content_version: version } : {}) })
         .select(SESSION_COLS)
         .single();
       if (!error && data) {

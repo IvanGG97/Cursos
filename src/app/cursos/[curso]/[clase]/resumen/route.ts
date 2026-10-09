@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { classSlug, getClass, getCourse } from "@/content/registry";
+import { classSlug, getClass } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { classStatus, getCourseState, getViewer } from "@/lib/access";
 import { buildResumen } from "@/lib/pdf/resumen";
 import { ResumenDocument } from "@/lib/pdf/ResumenDocument";
@@ -13,7 +14,7 @@ type Ctx = { params: Promise<{ curso: string; clase: string }> };
 // Resumen en PDF de una clase. Mismas reglas de acceso que la clase.
 export async function GET(request: NextRequest, { params }: Ctx) {
   const { curso, clase: slug } = await params;
-  const course = getCourse(curso);
+  const course = await getLiveCourse(curso);
   const clase = course && getClass(course, slug);
   if (!course || !clase) return new NextResponse("No encontrado", { status: 404 });
 

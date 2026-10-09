@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
 import { classSlug, getCourse } from "@/content/registry";
+import { getSessionClass } from "@/lib/class-content";
 import { getViewer } from "@/lib/access";
 import { getCourseMedia, withMedia } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
@@ -41,7 +42,7 @@ export default async function LiveSessionPage({ params, searchParams }: Props) {
   }
 
   const course = s && getCourse(s.course_slug);
-  const clase = course?.classes.find((c) => c.num === s?.class_num);
+  const clase = s && course ? await getSessionClass(s.id, course.slug, s.class_num) : undefined;
   if (!s || !course || !clase || s.status !== "open") {
     return (
       <SiteShell>

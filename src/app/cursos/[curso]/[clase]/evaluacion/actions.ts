@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCourse } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { canManage, classStatus, getCourseState, getViewer } from "@/lib/access";
 import { getCourseEvaluations, grade, type GradeResult } from "@/lib/evaluations";
 import { createServiceClient, isServiceConfigured } from "@/lib/supabase/admin";
@@ -13,7 +13,7 @@ export async function submitEvaluation(slug: string, num: number, answers: Recor
   const viewer = await getViewer();
   if (viewer.kind !== "user") return { error: "Tenés que iniciar sesión para guardar tu evaluación." };
 
-  const course = getCourse(slug);
+  const course = await getLiveCourse(slug);
   const clase = course?.classes.find((c) => c.num === num);
   const ce = clase ? (await getCourseEvaluations(slug)).get(num) : undefined;
   if (!course || !clase || !ce) return { error: "Evaluación inexistente." };

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { courses } from "@/content/registry";
+import { getLiveCourses } from "@/lib/class-content";
 import { AUDIT_LABELS, requireAdmin } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
 import { enrollUser, removeEnrollment, setEnrollmentStatus, setGrant, setRole, setUserStatus } from "../../actions";
@@ -41,6 +41,7 @@ export default async function AdminPerson({ params }: Props) {
     supabase.from("evaluation_attempts").select("course_slug, class_num, score, total, passed").eq("user_id", id),
     supabase.from("live_attendance").select("session_id", { count: "exact", head: true }).eq("user_id", id),
   ]);
+  const courses = await getLiveCourses();
   const publishedSet = new Set((publishedRows.data ?? []).map((c) => c.slug as string));
   const progBy = new Map((progRows.data ?? []).map((p) => [`${p.course_slug}/${p.class_num}`, p]));
   const bestBy = new Map<string, { score: number; total: number; passed: boolean; n: number }>();

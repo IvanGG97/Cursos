@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getCourse } from "@/content/registry";
+import { getSessionClass } from "@/lib/class-content";
 import { getViewer } from "@/lib/access";
 import { loadLiveResults } from "@/lib/live-results";
 import { formatDateTime } from "@/lib/site";
@@ -23,7 +24,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
     .maybeSingle();
   if (!s || !course) return new NextResponse("No encontrada", { status: 404 });
 
-  const clase = course.classes.find((c) => c.num === s.class_num);
+  const clase = await getSessionClass(id, slug, s.class_num);
   const { ranking } = await loadLiveResults(id, clase);
 
   const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;

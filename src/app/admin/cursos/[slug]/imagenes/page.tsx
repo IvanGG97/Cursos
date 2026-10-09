@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { classSlug, getCourse } from "@/content/registry";
+import { classSlug } from "@/content/registry";
+import { getLiveCourse } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { getCourseMedia, mediaSlots } from "@/lib/media";
 import { CourseTabs } from "../tabs";
@@ -14,7 +15,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 export default async function CourseMedia({ params }: Props) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getLiveCourse(slug);
   if (!course) notFound();
   const ctx = await requireAdmin(`/admin/cursos/${slug}/imagenes`);
   if (!ctx) return null;

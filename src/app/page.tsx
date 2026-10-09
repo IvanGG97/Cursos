@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { SiteShell } from "@/components/SiteShell";
-import { courses } from "@/content/registry";
+import { getLiveCourses } from "@/lib/class-content";
 import { getPublicCourseSlugs, getVisibleCourseSlugs } from "@/lib/access";
 
 export default async function CatalogPage() {
-  const [published, open] = await Promise.all([getVisibleCourseSlugs(), getPublicCourseSlugs()]);
+  const [published, open, courses] = await Promise.all([getVisibleCourseSlugs(), getPublicCourseSlugs(), getLiveCourses()]);
   const visible = courses.filter((c) => published === "all" || published.has(c.slug));
 
   return (

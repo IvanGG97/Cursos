@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { getCourse } from "@/content/registry";
+import { getSessionClass } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
 import { loadLiveResults } from "@/lib/live-results";
@@ -31,7 +32,7 @@ export default async function LiveSessionAdmin({ params }: Props) {
   ]);
   if (!s.data) notFound();
   const classNum = s.data.class_num;
-  const clase = course.classes.find((c) => c.num === classNum);
+  const clase = await getSessionClass(id, slug, classNum);
   const { answers, ranking } = await loadLiveResults(id, clase);
   const quizCount = clase ? clase.slides.filter((x) => x.type === "quiz").length : 0;
 
