@@ -2,6 +2,7 @@ import Link from "next/link";
 import { canManage, getViewer } from "@/lib/access";
 import { SITE_NAME } from "@/lib/site";
 import { ThemeToggle } from "./ThemeToggle";
+import { UserBadge } from "./UserBadge";
 
 /** Cabecera + pie de las páginas del sitio (no se usa en el visor de diapositivas). */
 export async function SiteShell({ children }: { children: React.ReactNode }) {
@@ -30,7 +31,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             {canManage(viewer) && <Link href="/admin" className="btn btn-sm">Admin</Link>}
             {viewer.kind === "user" && (
               <>
-                <span className="who">{viewer.email}</span>
+                <UserBadge name={viewer.name || viewer.email.split("@")[0] || "Mi cuenta"} avatar={viewer.avatar} />
                 <form action="/auth/signout" method="post">
                   <button type="submit" className="btn btn-sm">Salir</button>
                 </form>

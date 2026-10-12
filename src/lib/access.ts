@@ -11,7 +11,16 @@ import { createClient } from "./supabase/server";
 export type Viewer =
   | { kind: "local" } // sin Supabase configurado (solo desarrollo): acceso total
   | { kind: "anon" }
-  | { kind: "user"; id: string; email: string; name: string | null; isAdmin: boolean; blocked: boolean };
+  | {
+      kind: "user";
+      id: string;
+      email: string;
+      name: string | null;
+      /** Foto de perfil de Google (si entró con Google y tiene foto). */
+      avatar: string | null;
+      isAdmin: boolean;
+      blocked: boolean;
+    };
 
 export const getViewer = cache(async (): Promise<Viewer> => {
   // Todo lo que depende del visitante se resuelve por request, nunca en el build.
@@ -29,11 +38,16 @@ export const getViewer = cache(async (): Promise<Viewer> => {
     .eq("id", claims.sub)
     .maybeSingle();
   const blocked = profile?.status === "blocked";
+  // Datos de la cuenta de Google (vienen en la sesión): nombre y foto de perfil.
+  const meta = (claims.user_metadata ?? {}) as Record<string, unknown>;
+  const text = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+  const picture = text(meta.avatar_url) ?? text(meta.picture);
   return {
     kind: "user",
     id: claims.sub,
     email: typeof claims.email === "string" ? claims.email : "",
-    name: profile?.full_name ?? null,
+    name: profile?.full_name ?? text(meta.full_name) ?? text(meta.name),
+    avatar: picture && /^https:\/\//.test(picture) ? picture : null,
     isAdmin: profile?.role === "admin" && !blocked,
     blocked,
   };

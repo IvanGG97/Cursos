@@ -118,7 +118,10 @@ kbd {
   text-decoration: none;
 }
 .nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 14px; }
-.nav .who { color: var(--muted); font-family: var(--f-mono); font-size: 12px; }
+.nav .who { display: inline-flex; align-items: center; gap: 8px; min-width: 0; color: var(--text-2); font-size: 14px; }
+.who-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who-pic { width: 30px; height: 30px; border-radius: 50%; flex: none; object-fit: cover; border: 1px solid var(--line); background: var(--panel); }
+.who-initial { display: inline-flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 13px; font-weight: 600; color: var(--accent-text); border-color: var(--accent); }
 .nav form { margin: 0; }
 
 main.page { padding-block: 48px 72px; }
@@ -296,7 +299,7 @@ h2.section {
   .class-row .actions .tag { flex-basis: 100%; text-align: center; }
   main.page { padding-block: 28px 48px; }
   .page-head { padding-bottom: 20px; margin-bottom: 24px; }
-  .nav .who { display: none; } /* el mail largo no entra en la cabecera */
+  .who-name { display: none; } /* en el celular, solo la foto (el nombre no entra) */
 
   /* Cabecera en una sola fila: el nombre se apila en dos líneas (como un logo) y los botones
      quedan a la derecha. Antes el nombre quedaba solo arriba, pegado al borde. */
@@ -377,3 +380,12 @@ table.admin .input { padding: 6px 8px; font-size: 14px; }
   transition: opacity 0.2s;
 }
 .annot-layer.off { opacity: 0; }
+
+/* Celulares chicos (admin: tema + Admin + foto + Salir): botones y foto un poco más chicos, así el
+   nombre del sitio sigue en dos líneas. */
+@media (max-width: 360px) {
+  .nav { gap: 4px; }
+  .nav .btn-sm { padding: 6px 6px; letter-spacing: 0.02em; }
+  .btn.theme-toggle { padding: 6px 6px; min-width: 32px; }
+  .who-pic { width: 26px; height: 26px; }
+}
