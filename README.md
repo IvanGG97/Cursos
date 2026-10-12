@@ -16,6 +16,7 @@ src/
     ia-mi-nuevo-asistente/
       index.ts                  datos del curso y sus clases
       clase1.ts                 diapositivas de la clase 1
+    herramientas-de-google/     curso "Herramientas de Google" (mismo formato)
   components/deck/              motor de diapositivas (lienzo 1920×1080)
   app/
     page.tsx                    catálogo

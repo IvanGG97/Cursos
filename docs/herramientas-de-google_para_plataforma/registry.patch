@@ -1,0 +1,19 @@
+diff --git a/src/content/registry.ts b/src/content/registry.ts
+index ac4c570..ecc18f4 100644
+--- a/src/content/registry.ts
++++ b/src/content/registry.ts
+@@ -1,12 +1,13 @@
+ import "server-only";
+ import type { ClassDef, Course } from "./types";
+ import { iaMiNuevoAsistente } from "./ia-mi-nuevo-asistente";
++import { herramientasDeGoogle } from "./herramientas-de-google";
+ 
+ // Registro de todos los cursos de la plataforma.
+ // Para sumar un curso: crear src/content/<slug>/index.ts y agregarlo a esta lista.
+ // Solo se importa desde el servidor: al navegador viaja únicamente la clase que se abre.
+ 
+-const RAW: Course[] = [iaMiNuevoAsistente];
++const RAW: Course[] = [iaMiNuevoAsistente, herramientasDeGoogle];
+ 
+ /** Convierte "comillas rectas" en “comillas tipográficas” (Space Grotesk dibuja mal las rectas). */
+ export function typeset<T>(value: T): T {
