@@ -945,6 +945,23 @@
   min-height: 44px;
 }
 
+/* QR de la clase (fuera de la clase en vivo) */
+.join-url { font-family: var(--f-mono); font-size: clamp(13px, 1.3vw, 20px); color: var(--text-2); margin: 16px 0 0; overflow-wrap: anywhere; }
+.join-url strong { color: var(--text); font-weight: 600; }
+.join-warn {
+  margin: 18px 0 0; padding: 12px 14px; border: 1px solid var(--warn-text);
+  color: var(--warn-text); font-size: clamp(14px, 1.3vw, 18px); line-height: 1.4;
+}
+.join-warn p { margin: 0 0 10px; }
+.join-ok { margin: 14px 0 0; color: var(--ok-text); font-size: clamp(14px, 1.3vw, 18px); }
+.join-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.join-btn {
+  background: transparent; border: 1px solid var(--line); color: var(--text);
+  padding: 12px 20px; min-height: 44px; font-family: var(--f-mono); font-size: 14px;
+}
+.join-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.join-btn:disabled { opacity: 0.6; }
+
 /* ---------- Espejo de la diapositiva en vivo (celular del alumno) ---------- */
 .mirror-box { width: 100%; }
 .deck.live-mirror { position: relative; inset: auto; border: 1px solid var(--line); }

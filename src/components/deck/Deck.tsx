@@ -7,6 +7,7 @@ import { deckLook } from "@/content/styles";
 import { SlideView } from "./SlideView";
 import { ThemeToggle } from "../ThemeToggle";
 import { JoinOverlay, RankingOverlay, StartDialog, useLivePresenter, type LiveConfig } from "./LivePresenter";
+import { ClassQrOverlay, type ClassQrConfig } from "./ClassQr";
 import { saveProgress } from "@/app/cursos/[curso]/[clase]/actions";
 import "./deck.css";
 import "./style-fonts";
@@ -26,9 +27,11 @@ export type DeckProps = {
   trackProgress?: { slug: string; num: number };
   /** Solo admin: controles de la clase en vivo (código + QR, quiz desde el celular). */
   live?: LiveConfig;
+  /** Solo admin: QR para que los alumnos abran la clase en el celular (tecla Q). */
+  qr?: ClassQrConfig;
 };
 
-export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: DeckProps) {
+export function Deck({ course, clase, backHref, pdfHref, trackProgress, live, qr }: DeckProps) {
   const total = clase.slides.length;
   // Clase en vivo abierta: se retoma en la diapositiva (y con la respuesta revelada o no) donde estaba.
   const resume = useRef(live?.initial ? { slide: live.initial.current_slide ?? 1, revealed: Boolean(live.initial.revealed) } : null);
@@ -74,6 +77,13 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
   const [showJoin, setShowJoin] = useState(false);
   const [showStart, setShowStart] = useState(false);
   const [showRank, setShowRank] = useState(false);
+  const [showQr, setShowQr] = useState(false);
+  // Desde el panel ("QR" en la lista de clases): la clase se abre con el QR a la vista.
+  useEffect(() => {
+    if (!qr || new URLSearchParams(location.search).get("qr") !== "1") return;
+    setShowQr(true);
+    history.replaceState(history.state, "", location.pathname + location.hash);
+  }, [qr]);
 
   const next = () => index < total - 1 && setIndex(index + 1);
   const prev = () => index > 0 && setIndex(index - 1);
@@ -96,16 +106,23 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
       else if (k === "f" || k === "F") toggleFullscreen();
       else if (k === "r" || k === "R") setRevealed(true);
       else if (k === "i" || k === "I") back.current?.click();
-      else if ((k === "c" || k === "C") && liveState.session) {
+      else if ((k === "q" || k === "Q") && qr) {
+        setShowJoin(false);
         setShowRank(false);
+        setShowQr((v) => !v);
+      } else if ((k === "c" || k === "C") && liveState.session) {
+        setShowRank(false);
+        setShowQr(false);
         setShowJoin((v) => !v);
       } else if ((k === "t" || k === "T") && liveState.session) {
         setShowJoin(false);
+        setShowQr(false);
         setShowRank((v) => !v);
-      } else if (k === "Escape" && (showJoin || showRank || showStart)) {
+      } else if (k === "Escape" && (showJoin || showRank || showStart || showQr)) {
         setShowJoin(false);
         setShowRank(false);
         setShowStart(false);
+        setShowQr(false);
       }
       else handled = false;
       if (handled) e.preventDefault();
@@ -175,6 +192,11 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
         {/* En el celular, esto va en una segunda fila (en la compu, todo en una sola). */}
         <div className="controls-extra">
         {pdfHref && <a href={pdfHref} title="Descargar resumen en PDF">PDF</a>}
+        {qr && (
+          <button type="button" onClick={() => setShowQr(true)} title="Código QR para que los alumnos abran la clase en el celular (Q)">
+            QR
+          </button>
+        )}
         {liveState.enabled &&
           (liveState.session ? (
             <>
@@ -220,6 +242,7 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
           onClose={() => setShowJoin(false)}
         />
       )}
+      {showQr && qr && <ClassQrOverlay qr={qr} title={`Clase ${clase.num}`} onClose={() => setShowQr(false)} />}
       {showRank && liveState.session && (
         <RankingOverlay title={liveState.session.title} ranking={liveState.ranking} onClose={() => setShowRank(false)} />
       )}

@@ -240,6 +240,9 @@ export default async function AdminCourse({ params, searchParams }: Props) {
                 {clase.slides.length > 0 && (
                   <>
                     <Link href={`/cursos/${slug}/${classSlug(clase)}`} className="btn btn-sm">Presentar</Link>
+                    <Link href={`/cursos/${slug}/${classSlug(clase)}?qr=1`} className="btn btn-sm" title="Código QR para que los alumnos abran la clase en el celular">
+                      QR
+                    </Link>
                     <a href={`/cursos/${slug}/${classSlug(clase)}/resumen`} className="btn btn-sm">PDF</a>
                   </>
                 )}
