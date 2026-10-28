@@ -436,10 +436,10 @@ export const cdClase1Slides: Slide[] = [
     kicker: "Gemini · Con cuenta de Google",
     title: "Pedirle el archivo en Word o PDF",
     steps: [
-      "En el mismo chat: \"Creá un archivo de Word (.docx) con esta nota, para descargarlo\" (o \"un PDF\").",
-      "Gemini muestra el archivo en el chat: tocá \"Abrir\".",
-      "Tocá la flecha de descargar (arriba a la derecha): queda en la carpeta Descargas.",
-      "Si te dice que no puede, repetí el pedido con la palabra \"archivo\".",
+      "Pedile: \"Creá un archivo de Word con esta nota, para descargarlo\" (o un PDF).",
+      "Gemini muestra el archivo: tocá \"Abrir\".",
+      "Tocá la flecha de descargar (arriba a la derecha).",
+      "Si dice que no puede, repetí el pedido así.",
     ],
     media: {
       id: "cd-descargar",
