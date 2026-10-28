@@ -77,8 +77,8 @@ export const cdClase1Slides: Slide[] = [
     steps: [
       "En la ventana de incógnito, entrá a claude.ai.",
       "Escribí tu mail (Hotmail, Outlook, el del trabajo) y tocá \"Continuar con correo electrónico\".",
-      "Abrí tu mail y copiá el código que te llega.",
-      "Pegalo en Claude: la primera vez, completá tu nombre.",
+      "Abrí tu mail y tocá el enlace que te llega.",
+      "Si te muestra un código, pegalo en Claude. La primera vez, completá tu nombre.",
     ],
     media: {
       id: "cd-claude-registro",
@@ -454,7 +454,7 @@ export const cdClase1Slides: Slide[] = [
     steps: [
       "Debajo de la respuesta, tocá los tres puntos.",
       "Elegí \"Exportar a Documentos\".",
-      "Se abre un documento nuevo en tu Drive.",
+      "Tocá \"Abrir Documentos\": es un documento nuevo en tu Drive.",
       "Desde ahí: Archivo → Descargar → Word o PDF.",
     ],
     media: {
