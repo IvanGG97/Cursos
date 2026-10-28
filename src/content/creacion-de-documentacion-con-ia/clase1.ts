@@ -355,12 +355,12 @@ export const cdClase1Slides: Slide[] = [
     rows: [
       { h: "La tabla", d: "ordena tus datos en filas y columnas." },
       { h: "Las cuentas", d: "si suma o saca porcentajes, revisalos con la calculadora." },
-      { h: "A Hojas de cálculo", d: "con cuenta: \"Exportar a Hojas de cálculo\", abajo de la tabla." },
+      { h: "A Hojas de cálculo", d: "con cuenta: tocá los tres puntos de abajo de la tabla → \"Exportar a Hojas de cálculo\"." },
     ],
     media: {
       id: "cd-informe-tabla",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: un informe de Gemini con una tabla, y el botón \"Exportar a Hojas de cálculo\" debajo de la tabla señalado.",
+      caption: "Captura de la computadora: un informe de Gemini con una tabla, y el menú de los tres puntos de abajo de la tabla abierto, con \"Exportar a Hojas de cálculo\" señalado.",
     },
   },
   {
