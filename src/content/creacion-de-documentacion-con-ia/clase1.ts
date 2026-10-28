@@ -33,8 +33,7 @@ export const cdClase1Slides: Slide[] = [
       "Entrar: Gemini con Google, o Claude con tu mail",
       "La receta de un buen pedido",
       "La nota formal",
-      "Memorando y acta",
-      "Informe o proyecto",
+      "Memorando, acta, informe y proyecto",
       "Del chat al archivo: crear y modificar Word y PDF",
       "Cuidados y cierre",
     ],
@@ -570,7 +569,7 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "multi",
-    question: "¿Qué reemplazás por [corchetes]?",
+    question: "¿Qué información reemplazás por [corchetes]?",
     options: [
       { text: "El DNI de un vecino.", correct: true },
       { text: "El domicilio de un vecino.", correct: true },
@@ -602,11 +601,9 @@ export const cdClase1Slides: Slide[] = [
     title: "Reglas de oro",
     items: [
       "Dale contexto: qué documento, para quién, con qué datos y cómo.",
-      "Corregí en el mismo chat, de a un cambio.",
-      "Pedile que no invente y que marque [completar].",
+      "Corregí en el mismo chat; pedile que no invente y que marque [completar].",
       "Nunca pegues datos personales de vecinos.",
-      "Revisá datos, cuentas y normas antes de firmar.",
-      "Abrí el archivo antes de enviarlo.",
+      "Revisá datos, cuentas y normas, y abrí el archivo antes de enviarlo.",
     ],
   },
   {
