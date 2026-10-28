@@ -76,14 +76,14 @@ export const cdClase1Slides: Slide[] = [
     title: "Entrar a Claude con tu mail",
     steps: [
       "En la ventana de incógnito, entrá a claude.ai.",
-      "Elegí \"Continuar con correo\" y escribí tu mail (Hotmail, Outlook, el del trabajo).",
+      "Escribí tu mail (Hotmail, Outlook, el del trabajo) y tocá \"Continuar con correo electrónico\".",
       "Abrí tu mail y copiá el código que te llega.",
       "Pegalo en Claude: la primera vez, completá tu nombre.",
     ],
     media: {
       id: "cd-claude-registro",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: la pantalla de ingreso de claude.ai, con el campo para el mail y \"Continuar con correo\" señalado.",
+      caption: "Captura de la computadora: la pantalla de ingreso de claude.ai, con el campo para el mail y \"Continuar con correo electrónico\" señalados.",
     },
   },
   {
@@ -92,13 +92,13 @@ export const cdClase1Slides: Slide[] = [
     title: "Que Claude pueda crear archivos",
     rows: [
       { h: "Dónde", d: "tu nombre (abajo a la izquierda) → Configuración → Capacidades." },
-      { h: "Qué activar", d: "\"Crear y editar archivos\" (en el plan gratis ya viene activado)." },
-      { h: "Si no lo encontrás", d: "buscá \"Ejecución de código y creación de archivos\": cambia el nombre con las actualizaciones." },
+      { h: "Qué activar", d: "\"Ejecutar código en la nube\", dentro de \"Ejecución de código y creación de archivos\" (suele venir activado)." },
+      { h: "Si no lo encontrás", d: "escribí \"archivos\" en el buscador de Configuración: el nombre cambia con las actualizaciones." },
     ],
     media: {
       id: "cd-claude-capacidades",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: Configuración → Capacidades de Claude, con el interruptor \"Crear y editar archivos\" activado y señalado.",
+      caption: "Captura de la computadora: Configuración → Capacidades de Claude, con el interruptor \"Ejecutar código en la nube\" activado y señalado.",
     },
   },
   {
@@ -423,12 +423,12 @@ export const cdClase1Slides: Slide[] = [
     type: "concept",
     kicker: "Lo nuevo",
     title: "La IA te arma el archivo",
-    body: "Gemini (con tu cuenta de Google) y Claude (con tu mail) pueden crear el archivo terminado: un Word (.docx) o un PDF. Se lo pedís como cualquier otra cosa y te lo deja para descargar. También pueden recibir un Word tuyo y devolvértelo modificado.",
+    body: "Gemini (con tu cuenta de Google) y Claude (con tu mail) pueden crear el archivo terminado: un Word (.docx) o un PDF. Se lo pedís nombrando el archivo (\"Creá un archivo de Word con esta nota\") y te lo deja para descargar. También pueden recibir un Word tuyo y devolvértelo modificado.",
     analogy: "Ya no copiás y pegás: te entrega el documento en la mano.",
     media: {
       id: "cd-archivo-creado",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: en Gemini, el archivo de Word creado dentro del chat, con las opciones para descargarlo o exportarlo a Drive.",
+      caption: "Captura de la computadora: en Gemini, el archivo de Word creado dentro del chat, con el botón \"Abrir\".",
     },
   },
   {
@@ -436,15 +436,15 @@ export const cdClase1Slides: Slide[] = [
     kicker: "Gemini · Con cuenta de Google",
     title: "Pedirle el archivo en Word o PDF",
     steps: [
-      "En el mismo chat: \"Pasá la nota a un archivo de Word\" (o \"a PDF\").",
-      "Gemini muestra el archivo dentro del chat.",
-      "Tocá descargar: queda en la carpeta Descargas.",
-      "O exportalo a Drive para tenerlo en tu cuenta.",
+      "En el mismo chat: \"Creá un archivo de Word (.docx) con esta nota, para descargarlo\" (o \"un PDF\").",
+      "Gemini muestra el archivo en el chat: tocá \"Abrir\".",
+      "Tocá la flecha de descargar (arriba a la derecha): queda en la carpeta Descargas.",
+      "Si te dice que no puede, repetí el pedido con la palabra \"archivo\".",
     ],
     media: {
       id: "cd-descargar",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: el archivo que creó Gemini, con el botón de descargar señalado (y la opción de exportar a Drive).",
+      caption: "Captura de la computadora: el archivo que creó Gemini abierto, con la flecha de descargar (arriba a la derecha) señalada.",
     },
   },
   {
@@ -452,7 +452,7 @@ export const cdClase1Slides: Slide[] = [
     kicker: "Gemini · Con cuenta de Google",
     title: "Exportar a Documentos de Google",
     steps: [
-      "Debajo de la respuesta, tocá \"Compartir y exportar\".",
+      "Debajo de la respuesta, tocá los tres puntos.",
       "Elegí \"Exportar a Documentos\".",
       "Se abre un documento nuevo en tu Drive.",
       "Desde ahí: Archivo → Descargar → Word o PDF.",
@@ -460,7 +460,7 @@ export const cdClase1Slides: Slide[] = [
     media: {
       id: "cd-exportar-docs",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: debajo de una respuesta de Gemini, el menú \"Compartir y exportar\" abierto con \"Exportar a Documentos\" señalado.",
+      caption: "Captura de la computadora: debajo de una respuesta de Gemini, el menú de los tres puntos abierto con \"Exportar a Documentos\" señalado.",
     },
   },
   {
@@ -470,13 +470,13 @@ export const cdClase1Slides: Slide[] = [
     steps: [
       "Pedile: \"Armá esta nota en un archivo de Word\" (o \"en PDF\").",
       "Claude crea el archivo y lo muestra en el chat.",
-      "Tocá \"Descargar\": queda en la carpeta Descargas.",
+      "Tocá la flecha de descargar (arriba a la derecha del archivo): queda en Descargas.",
       "Abrilo en Word y revisalo antes de usarlo.",
     ],
     media: {
       id: "cd-claude-archivo",
       kind: "IMAGEN",
-      caption: "Captura de la computadora: en Claude, el archivo de Word creado dentro del chat, con el botón \"Descargar\" señalado.",
+      caption: "Captura de la computadora: en Claude, el archivo de Word creado dentro del chat, con la flecha de descargar señalada.",
     },
   },
   {
@@ -514,7 +514,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 4 · Tu documento terminado",
     instructions:
-      "Elegí uno de los documentos que hiciste hoy (nota, acta o informe) y pedile el archivo en Word. Descargalo y abrilo.\n\nDespués subilo de nuevo al chat y pedí un cambio: \"pasalo a PDF\", \"acortalo\" o \"agregá una tabla\". Descargá la versión nueva y compará las dos.",
+      "Elegí uno de los documentos que hiciste hoy (nota, acta o informe) y pedile el archivo: \"Creá un archivo de Word con esta nota, para descargarlo\". Descargalo y abrilo.\n\nDespués subilo de nuevo al chat y pedí un cambio: \"pasalo a PDF\", \"acortalo\" o \"agregá una tabla\". Descargá la versión nueva y compará las dos.",
   },
   {
     type: "content",
