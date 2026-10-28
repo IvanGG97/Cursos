@@ -19,7 +19,8 @@ import {
   typeLabel,
   type SlideType,
 } from "@/lib/slide-rules";
-import { discardClassDraft, publishClass, restoreClassVersion, saveClassDraft } from "@/app/admin/content-actions";
+import { CLASS_STYLES, DEFAULT_STYLE, deckLook, getStyle } from "@/content/styles";
+import { discardClassDraft, publishClass, restoreClassVersion, saveClassDraft, setClassStyle } from "@/app/admin/content-actions";
 
 // Editor de las diapositivas de una clase. Se edita en el navegador; "Guardar borrador" lo deja en el
 // servidor (los alumnos no lo ven) y "Publicar" lo convierte en la versión vigente. En el celular se
@@ -31,7 +32,7 @@ type MediaMap = Record<string, Pick<Media, "src" | "mime" | "annot" | "gallery">
 type Props = {
   slug: string;
   course: { title: string; org: string };
-  clase: { num: number; title: string; accent: string };
+  clase: { num: number; title: string; accent: string; style?: string };
   published: Slide[];
   draft: Slide[] | null;
   draftWhen: string | null;
@@ -39,12 +40,14 @@ type Props = {
   media: MediaMap;
   liveOpen: boolean;
   classHref: string;
+  /** false: falta la migración de los estilos (se pueden mirar, pero no guardar). */
+  stylesReady: boolean;
 };
 
 /** Para el campo de imagen: adónde se sube y qué lugares ya existen en la clase publicada. */
 const MediaCtx = createContext<{ imagesHref: string; publishedIds: Set<string> }>({ imagesHref: "", publishedIds: new Set() });
 
-type Sheet = null | { kind: "add"; at: number } | { kind: "publish" } | { kind: "history" } | { kind: "big" };
+type Sheet = null | { kind: "add"; at: number } | { kind: "publish" } | { kind: "history" } | { kind: "big" } | { kind: "style" };
 type Msg = { ok?: string; error?: string };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -58,7 +61,7 @@ function forPreview(s: Slide, media: MediaMap): Slide {
   return typeset(withMedia);
 }
 
-export function ClassEditor({ slug, course, clase, published, draft, draftWhen, versions, media, liveOpen, classHref }: Props) {
+export function ClassEditor({ slug, course, clase: claseProp, published, draft, draftWhen, versions, media, liveOpen, classHref, stylesReady }: Props) {
   const router = useRouter();
   const serverSlides = draft ?? published;
   const serverKey = useMemo(() => json(serverSlides), [serverSlides]);
@@ -83,6 +86,11 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
   const undo = useRef<{ stack: Slide[][]; last: number }>({ stack: [], last: 0 });
   const [undoN, setUndoN] = useState(0);
   const top = useRef<HTMLDivElement>(null);
+  // Estilo de las diapositivas: el guardado y el que se está mirando en la ventana de estilos.
+  const [styleId, setStyleId] = useState(claseProp.style ?? DEFAULT_STYLE);
+  const [pick, setPick] = useState(styleId);
+  const [sample, setSample] = useState(0);
+  const clase = useMemo(() => ({ ...claseProp, style: styleId }), [claseProp, styleId]);
 
   const dirty = json(slides) !== baseline;
   const storeKey = `ced:${slug}:${clase.num}`;
@@ -297,6 +305,27 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
     router.refresh();
   };
 
+  const openStyles = () => {
+    setPick(styleId);
+    setSample(sel ?? 0);
+    setConfirm(null);
+    setMsg({});
+    setSheet({ kind: "style" });
+  };
+
+  const applyStyle = async (all: boolean) => {
+    if (all && confirm !== "style-all") return setConfirm("style-all");
+    setConfirm(null);
+    setBusy(true);
+    const res = await setClassStyle(slug, clase.num, pick, all);
+    setBusy(false);
+    if (res.error) return setMsg({ error: res.error });
+    setStyleId(pick);
+    setSheet(null);
+    setMsg({ ok: res.ok });
+    router.refresh();
+  };
+
   const restore = async (id: number | null) => {
     const k = `restore-${id ?? "orig"}`;
     if (confirm !== k) return setConfirm(k);
@@ -384,6 +413,9 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
         <span className="tag">{slides.length} diapositivas</span>
         {problems.length > 0 && <span className="tag bad">{problems.length} para corregir</span>}
         <div className="ced-top-actions">
+          <button type="button" className="btn btn-sm" onClick={openStyles}>
+            Estilo: {getStyle(styleId).name}
+          </button>
           <button type="button" className="btn btn-sm" onClick={() => setSheet({ kind: "history" })}>
             Historial
           </button>
@@ -652,10 +684,16 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
               </div>
             </div>
           ) : (
-            <div className="ced-sheet" role="dialog" aria-modal="true" aria-labelledby="ced-sheet-title">
+            <div className={`ced-sheet${sheet.kind === "style" ? " wide" : ""}`} role="dialog" aria-modal="true" aria-labelledby="ced-sheet-title">
               <div className="ced-sheet-head">
                 <h2 id="ced-sheet-title">
-                  {sheet.kind === "add" ? "Agregar diapositiva" : sheet.kind === "publish" ? "Publicar la clase" : "Historial de versiones"}
+                  {sheet.kind === "add"
+                    ? "Agregar diapositiva"
+                    : sheet.kind === "publish"
+                      ? "Publicar la clase"
+                      : sheet.kind === "style"
+                        ? "Estilo de las diapositivas"
+                        : "Historial de versiones"}
                 </h2>
                 <button type="button" className="ced-close" onClick={() => setSheet(null)} aria-label="Cerrar">
                   ✕
@@ -743,6 +781,29 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
                 </>
               )}
 
+              {sheet.kind === "style" && (
+                <StylePicker
+                  course={course}
+                  clase={clase}
+                  slides={slides}
+                  media={media}
+                  current={styleId}
+                  pick={pick}
+                  onPick={(id) => {
+                    setPick(id);
+                    setConfirm(null);
+                  }}
+                  sample={Math.min(sample, Math.max(slides.length - 1, 0))}
+                  onSample={setSample}
+                  busy={busy}
+                  confirmAll={confirm === "style-all"}
+                  ready={stylesReady}
+                  error={msg.error}
+                  onApply={applyStyle}
+                  onCancel={() => setSheet(null)}
+                />
+              )}
+
               {sheet.kind === "history" && (
                 <>
                   <p className="muted">
@@ -802,7 +863,7 @@ export function ClassEditor({ slug, course, clase, published, draft, draftWhen, 
 type ProbeProps = {
   slide: Slide;
   course: { title: string; org: string };
-  clase: { num: number; title: string; accent: string };
+  clase: { num: number; title: string; accent: string; style?: string };
   index: number;
   total: number;
   onResult: (issues: string[]) => void;
@@ -846,6 +907,8 @@ function OverflowProbe({ slide, course, clase, index, total, onResult }: ProbePr
       report.current(issues);
     };
     const timers = [setTimeout(measure, 150), setTimeout(measure, 700)];
+    // Con otro estilo, la fuente puede tardar en llegar: se vuelve a medir cuando está.
+    document.fonts?.ready.then(() => timers.push(setTimeout(measure, 50)));
     const imgs = [...(box.current?.querySelectorAll("img") ?? [])];
     imgs.forEach((i) => i.addEventListener("load", measure));
     return () => {
@@ -853,7 +916,7 @@ function OverflowProbe({ slide, course, clase, index, total, onResult }: ProbePr
       timers.forEach(clearTimeout);
       imgs.forEach((i) => i.removeEventListener("load", measure));
     };
-  }, [slide]);
+  }, [slide, clase.style]);
 
   const states = slide.type === "quiz" ? [false, true] : [false];
   return (
@@ -864,6 +927,113 @@ function OverflowProbe({ slide, course, clase, index, total, onResult }: ProbePr
         </div>
       ))}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Estilo de las diapositivas (fuentes y colores)
+// ---------------------------------------------------------------------------
+
+type StylePickerProps = {
+  course: { title: string; org: string };
+  clase: { num: number; title: string; accent: string };
+  slides: Slide[];
+  media: MediaMap;
+  current: string;
+  pick: string;
+  onPick: (id: string) => void;
+  sample: number;
+  onSample: (i: number) => void;
+  busy: boolean;
+  confirmAll: boolean;
+  ready: boolean;
+  error?: string;
+  onApply: (all: boolean) => void;
+  onCancel: () => void;
+};
+
+/** Muestrario de estilos, con una diapositiva de la clase en el estilo que se está mirando. */
+function StylePicker({ course, clase, slides, media, current, pick, onPick, sample, onSample, busy, confirmAll, ready, error, onApply, onCancel }: StylePickerProps) {
+  const chosen = getStyle(pick);
+  const shown = slides[sample] ? forPreview(slides[sample], media) : null;
+  return (
+    <>
+      <p className="muted">
+        Cambia las fuentes y los colores de toda la clase. Se aplica al instante (no hace falta publicar) y no toca textos ni
+        preguntas. Cada estilo tiene versión oscura y clara: el botón sol/luna sigue funcionando.
+      </p>
+      {!ready && (
+        <p className="notice warn">
+          Podés mirar los estilos, pero para guardarlos falta correr la migración{" "}
+          <span className="mono">20261028000000_class_styles.sql</span> en Supabase.
+        </p>
+      )}
+      <div className="ced-style-grid">
+        <div className="ced-style-side">
+          <div className="ced-style-preview">
+            {shown && (
+              <div className="ced-frame canvas">
+                <SlideMirror key={`style-${pick}-${sample}`} course={course} clase={{ ...clase, style: pick }} slide={shown} index={sample} total={slides.length} mode="canvas" />
+              </div>
+            )}
+            <div className="ced-style-now">
+              <span>
+                <strong>{chosen.name}</strong> · diapositiva {sample + 1} de {slides.length}
+              </span>
+              <div className="ced-nav">
+                <button type="button" onClick={() => onSample(sample - 1)} disabled={sample === 0} aria-label="Ver la diapositiva anterior">
+                  ‹
+                </button>
+                <button type="button" onClick={() => onSample(sample + 1)} disabled={sample >= slides.length - 1} aria-label="Ver la diapositiva siguiente">
+                  ›
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="ced-style-actions">
+            {error && <p className="aform-msg err">{error}</p>}
+            <div className="btn-row">
+              <button type="button" className="btn btn-sm btn-primary" onClick={() => onApply(false)} disabled={busy || pick === current}>
+                {busy ? "Guardando…" : pick === current ? "Es el estilo actual" : "Usar en esta clase"}
+              </button>
+              <button type="button" className="btn btn-sm" onClick={() => onApply(true)} disabled={busy}>
+                {confirmAll ? "¿Seguro? Tocá de nuevo" : "Usar en todas las clases"}
+              </button>
+              <button type="button" className="btn btn-sm ced-style-cancel" onClick={onCancel}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="ced-styles" role="radiogroup" aria-label="Estilos">
+          {CLASS_STYLES.map((s) => {
+            const look = deckLook(s.id, clase.accent);
+            return (
+              <button
+                key={s.id}
+                type="button"
+                role="radio"
+                aria-checked={s.id === pick}
+                className={`ced-style${s.id === pick ? " on" : ""}`}
+                onClick={() => onPick(s.id)}
+              >
+                <span className="ced-swatch" style={look.style} aria-hidden="true">
+                  <span className="ced-sw-k">Clase {pad(clase.num)}</span>
+                  <span className="ced-sw-t">Títulos así</span>
+                  <span className="ced-sw-b">Y el texto de la clase, así.</span>
+                  <span className="ced-sw-bar" />
+                </span>
+                <span className="ced-style-name">
+                  {s.name}
+                  {s.id === current && <span className="tag ok">Actual</span>}
+                </span>
+                <span className="ced-style-about">{s.about}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
   );
 }
 

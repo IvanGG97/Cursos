@@ -2,12 +2,14 @@ import "server-only";
 import { cache } from "react";
 import type { ClassDef, Course, Slide } from "@/content/types";
 import { courses as REPO, getCourse, typeset } from "@/content/registry";
+import { isStyleId } from "@/content/styles";
 import { normalizeSlides } from "./slide-rules";
 import { createServiceClient, isServiceConfigured } from "./supabase/admin";
 
 // Contenido VIGENTE de las clases: lo del repo, salvo que la clase se haya editado y publicado desde
 // el panel (tabla class_versions: la última versión de cada clase manda; slides = null = volver al
 // repo). Todo lo que muestra diapositivas (la clase, el PDF, la clase en vivo, el panel) lee de acá.
+// El estilo de las diapositivas elegido desde el panel (tabla class_styles) también se suma acá.
 // Sin la migración o sin la clave del servidor, queda todo como antes: el repo.
 
 type VersionRow = { id: number; class_num: number; slides: unknown };
@@ -26,6 +28,22 @@ const latestVersions = cache(async (slug: string): Promise<Map<number, VersionRo
   return out;
 });
 
+/** Estilo elegido desde el panel para cada clase de un curso. ready = false: falta la migración. */
+export const getClassStyles = cache(async (slug: string): Promise<{ ready: boolean; byClass: Map<number, string> }> => {
+  const byClass = new Map<number, string>();
+  if (!isServiceConfigured) return { ready: false, byClass };
+  const { data, error } = await createServiceClient().from("class_styles").select("class_num, style").eq("course_slug", slug);
+  if (error || !data) return { ready: false, byClass };
+  for (const r of data) if (isStyleId(r.style)) byClass.set(r.class_num as number, r.style);
+  return { ready: true, byClass };
+});
+
+/** La clase con el estilo elegido desde el panel, si hay uno. */
+async function withStyle(slug: string, clase: ClassDef | undefined): Promise<ClassDef | undefined> {
+  const style = clase && (await getClassStyles(slug)).byClass.get(clase.num);
+  return clase && style ? { ...clase, style } : clase;
+}
+
 /** Diapositivas guardadas en la base, listas para mostrar (o null si no sirven). */
 function fromDb(raw: unknown): Slide[] | null {
   const slides = normalizeSlides(raw);
@@ -36,14 +54,15 @@ function fromDb(raw: unknown): Slide[] | null {
 export const getLiveCourse = cache(async (slug: string): Promise<Course | undefined> => {
   const course = getCourse(slug);
   if (!course) return undefined;
-  const versions = await latestVersions(slug);
-  if (versions.size === 0) return course;
+  const [versions, styles] = await Promise.all([latestVersions(slug), getClassStyles(slug)]);
+  if (versions.size === 0 && styles.byClass.size === 0) return course;
   return {
     ...course,
     classes: course.classes.map((c): ClassDef => {
       const v = versions.get(c.num);
       const slides = v?.slides ? fromDb(v.slides) : null;
-      return slides ? { ...c, slides } : c;
+      const style = styles.byClass.get(c.num);
+      return { ...c, ...(slides ? { slides } : {}), ...(style ? { style } : {}) };
     }),
   };
 });
@@ -78,15 +97,16 @@ export async function getClassAtVersion(slug: string, num: number, versionId: nu
 
 /**
  * La clase tal como se dio en una clase en vivo (la versión vigente al iniciarla). Así los resultados
- * y el ranking siguen apuntando a las preguntas correctas aunque después la clase se edite.
+ * y el ranking siguen apuntando a las preguntas correctas aunque después la clase se edite. El estilo
+ * es el de ahora (no cambia preguntas ni resultados).
  */
 export async function getSessionClass(sessionId: string, slug: string, num: number): Promise<ClassDef | undefined> {
   const repo = getCourse(slug)?.classes.find((c) => c.num === num);
   if (!repo || !isServiceConfigured) return repo;
   const { data, error } = await createServiceClient().from("live_sessions").select("content_version").eq("id", sessionId).maybeSingle();
   // Sin la migración (no existe la columna): todas las clases en vivo se dieron con la del repo.
-  if (error) return repo;
-  return getClassAtVersion(slug, num, (data?.content_version as number | null | undefined) ?? null);
+  if (error) return withStyle(slug, repo);
+  return withStyle(slug, await getClassAtVersion(slug, num, (data?.content_version as number | null | undefined) ?? null));
 }
 
 // ---------------------------------------------------------------------------

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import { getStyle } from "@/content/styles";
 import { getContentStatus, getLiveCourse } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { formatDateTime } from "@/lib/site";
@@ -32,7 +33,8 @@ export default async function CourseContent({ params }: Props) {
         <p className="muted">
           Cambiá textos, preguntas y el orden de las diapositivas, o agregá y quitá diapositivas. Lo que edites queda como{" "}
           <strong>borrador</strong> (los alumnos no lo ven) hasta que lo <strong>publiques</strong>. Cada publicación queda en el
-          historial y se puede volver atrás, incluso a la versión original.
+          historial y se puede volver atrás, incluso a la versión original. Con el botón <strong>Estilo</strong> del editor
+          elegís las fuentes y los colores de cada clase.
         </p>
         {!ready && (
           <p className="notice warn" style={{ margin: 0 }}>
@@ -60,6 +62,7 @@ export default async function CourseContent({ params }: Props) {
                     <span className="tag">Versión original</span>
                   )}
                   {st?.draftAt && <span className="tag warn">Borrador sin publicar</span>}
+                  <span className="tag">Estilo: {getStyle(c.style).name}</span>
                 </div>
               </div>
               <div className="btn-row">

@@ -77,6 +77,7 @@ export const AUDIT_LABELS: Record<string, string> = {
   "content.publish": "Publicó una versión nueva de una clase",
   "content.discard": "Descartó el borrador de una clase",
   "content.restore": "Cargó una versión anterior de una clase en el borrador",
+  "content.style": "Cambió el estilo (fuentes y colores) de las diapositivas",
   "access.approve": "Aprobó una solicitud de admisión",
   "access.reject": "Rechazó una solicitud de admisión",
   "evaluation.open": "Habilitó la evaluación de una clase",

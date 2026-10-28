@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Slide } from "@/content/types";
+import { deckLook } from "@/content/styles";
 import { SlideView } from "./SlideView";
 import "./deck.css";
+import "./style-fonts";
 
 // La diapositiva que está proyectando el docente, dentro de otra página (clase en vivo, celular
 // del alumno). Por si el proyector no se ve bien: se lee en la propia pantalla.
@@ -16,7 +18,7 @@ const FLOW_BELOW = 0.45; // mismo criterio que el visor
 
 type Props = {
   course: { title: string; org: string };
-  clase: { num: number; title: string; accent: string };
+  clase: { num: number; title: string; accent: string; style?: string };
   slide: Slide;
   index: number;
   total: number;
@@ -41,18 +43,18 @@ export function SlideMirror({ course, clase, slide, index, total, mode = "auto",
 
   const scale = width / W;
   const flow = mode === "flow" || (mode === "auto" && scale > 0 && scale < FLOW_BELOW);
-  const style = { "--accent": clase.accent } as CSSProperties;
+  const look = deckLook(clase.style, clase.accent);
   const view = <SlideView key={index} course={course} clase={clase} slide={slide} index={index} total={total} revealed={revealed} onReveal={() => {}} />;
 
   return (
     <div ref={box} className="mirror-box">
       {width > 0 &&
         (flow ? (
-          <div className="deck flow live-mirror" style={style}>
+          <div className={`deck${look.className} flow live-mirror`} style={look.style}>
             {view}
           </div>
         ) : (
-          <div className="deck live-mirror canvas" style={style}>
+          <div className={`deck${look.className} live-mirror canvas`} style={look.style}>
             <div className="stage" style={{ width: W, height: H, transform: `translate(-50%, -50%) scale(${scale})` }}>
               {view}
             </div>

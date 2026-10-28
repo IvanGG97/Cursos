@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCourse } from "@/content/registry";
+import { getStyle, isStyleId } from "@/content/styles";
 import { adminCtx, audit } from "@/lib/admin";
 import { currentVersionId, getClassAtVersion } from "@/lib/class-content";
 import { classProblems, normalizeSlides } from "@/lib/slide-rules";
@@ -92,6 +93,37 @@ export async function discardClassDraft(slug: string, num: number): Promise<Resu
     if (error) return { error: missing(error) ? MISSING : error.message };
     await audit(ctx, "content.discard", `${slug}/clase-${num}`);
     return { ok: "Borrador descartado." };
+  });
+}
+
+const MISSING_STYLES = "Falta correr la migración 20261028000000_class_styles.sql en Supabase.";
+
+/**
+ * Cambia el estilo de las diapositivas (fuentes y colores) de una clase, o de todas las del curso.
+ * Se aplica al instante: no toca textos ni preguntas, así que no pasa por borrador.
+ */
+export async function setClassStyle(slug: string, num: number, style: string, allClasses = false): Promise<Result> {
+  return run(async () => {
+    const ctx = await adminCtx();
+    const { course } = target(slug, num);
+    if (!isStyleId(style)) return { error: "Ese estilo no existe." };
+    const nums = allClasses ? course.classes.map((c) => c.num) : [num];
+    await ctx.supabase.from("courses").upsert({ slug: course.slug }, { onConflict: "slug", ignoreDuplicates: true });
+    const now = new Date().toISOString();
+    const { error } = await createServiceClient()
+      .from("class_styles")
+      .upsert(
+        nums.map((n) => ({ course_slug: slug, class_num: n, style, updated_at: now, updated_by: ctx.viewer.id })),
+        { onConflict: "course_slug,class_num" },
+      );
+    if (error) {
+      const noTable = /class_styles/.test(error.message) || error.code === "42P01" || error.code === "PGRST205";
+      return { error: noTable ? MISSING_STYLES : error.message };
+    }
+    await audit(ctx, "content.style", allClasses ? slug : `${slug}/clase-${num}`, { style, classes: nums.length });
+    revalidatePath("/", "layout");
+    const name = getStyle(style).name;
+    return { ok: allClasses ? `Listo: todas las clases del curso se ven con el estilo "${name}".` : `Listo: la clase ya se ve con el estilo "${name}".` };
   });
 }
 

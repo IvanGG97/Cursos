@@ -107,6 +107,7 @@ export default async function LiveSessionPage({ params, searchParams }: Props) {
         defaultName={viewer.kind === "user" ? (viewer.name ?? "") : ""}
         classTitle={`Clase ${clase.num}: ${clase.title}`}
         accent={clase.accent}
+        slideStyle={clase.style}
         courseHref={`/cursos/${course.slug}`}
       />
     </SiteShell>

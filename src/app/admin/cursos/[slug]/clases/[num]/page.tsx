@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import type { Media } from "@/content/types";
 import { classSlug } from "@/content/registry";
-import { getEditorData, getLiveCourse } from "@/lib/class-content";
+import { getClassStyles, getEditorData, getLiveCourse } from "@/lib/class-content";
 import { requireAdmin } from "@/lib/admin";
 import { getCourseMedia } from "@/lib/media";
 import { formatDateTime } from "@/lib/site";
@@ -24,10 +24,11 @@ export default async function EditClass({ params }: Props) {
   const ctx = await requireAdmin(`/admin/cursos/${slug}/clases/${num}`);
   if (!ctx) return null;
 
-  const [data, uploaded, open] = await Promise.all([
+  const [data, uploaded, open, styles] = await Promise.all([
     getEditorData(slug, num),
     getCourseMedia(slug),
     ctx.supabase.from("live_sessions").select("id").eq("course_slug", slug).eq("class_num", num).eq("status", "open").limit(1),
+    getClassStyles(slug),
   ]);
 
   // Lo subido desde "Imágenes", para que la vista previa muestre la imagen real.
@@ -68,7 +69,7 @@ export default async function EditClass({ params }: Props) {
       <ClassEditor
         slug={slug}
         course={{ title: course.title, org: course.org }}
-        clase={{ num: clase.num, title: clase.title, accent: clase.accent }}
+        clase={{ num: clase.num, title: clase.title, accent: clase.accent, style: clase.style }}
         published={clase.slides}
         draft={data.draft}
         draftWhen={data.draftUpdatedAt ? formatDateTime(data.draftUpdatedAt) : null}
@@ -76,6 +77,7 @@ export default async function EditClass({ params }: Props) {
         media={media}
         liveOpen={Boolean(open.data?.length)}
         classHref={`/cursos/${slug}/${classSlug(clase)}`}
+        stylesReady={styles.ready}
       />
     </div>
   );

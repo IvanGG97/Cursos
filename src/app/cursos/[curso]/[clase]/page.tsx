@@ -58,6 +58,7 @@ export default async function ClassPage({ params }: Params) {
         num: clase.num,
         title: clase.title,
         accent: clase.accent,
+        style: clase.style,
         slides: withMedia(clase.slides, await getCourseMedia(course.slug)),
       }}
       backHref={base}

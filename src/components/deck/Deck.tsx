@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import Link from "next/link";
 import type { Slide } from "@/content/types";
+import { deckLook } from "@/content/styles";
 import { SlideView } from "./SlideView";
 import { ThemeToggle } from "../ThemeToggle";
 import { JoinOverlay, RankingOverlay, StartDialog, useLivePresenter, type LiveConfig } from "./LivePresenter";
 import { saveProgress } from "@/app/cursos/[curso]/[clase]/actions";
 import "./deck.css";
+import "./style-fonts";
 
 const W = 1920;
 const H = 1080;
@@ -16,7 +18,7 @@ const FLOW_BELOW = 0.45;
 
 export type DeckProps = {
   course: { title: string; org: string };
-  clase: { num: number; title: string; accent: string; slides: Slide[] };
+  clase: { num: number; title: string; accent: string; style?: string; slides: Slide[] };
   /** Adónde vuelve el botón "Índice" (y la tecla I). */
   backHref: string;
   pdfHref?: string;
@@ -125,7 +127,7 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
     else prev();
   };
 
-  const style = { "--accent": clase.accent } as CSSProperties;
+  const look = deckLook(clase.style, clase.accent);
   const progress = <div className="progress" style={{ width: `${((index + 1) / total) * 100}%` }} />;
   const slide = (
     <SlideView
@@ -142,12 +144,12 @@ export function Deck({ course, clase, backHref, pdfHref, trackProgress, live }: 
   );
 
   // Hasta medir la pantalla no sabemos qué modo usar: evitamos el parpadeo.
-  if (scale === 0) return <div className="deck" style={style} />;
+  if (scale === 0) return <div className={`deck${look.className}`} style={look.style} />;
 
   return (
     <div
-      className={`deck${flow ? " flow" : ""}${idle ? " idle" : ""}`}
-      style={style}
+      className={`deck${look.className}${flow ? " flow" : ""}${idle ? " idle" : ""}`}
+      style={look.style}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >

@@ -24,6 +24,8 @@ type Props = {
   defaultName: string;
   classTitle: string;
   accent: string;
+  /** Estilo de las diapositivas de la clase (fuentes y colores). */
+  slideStyle?: string;
   courseHref: string;
   /** Diapositivas de la clase: se muestra la que está proyectando el docente. */
   slides: Slide[];
@@ -218,7 +220,7 @@ export function LiveStudent(p: Props) {
           <div className="live-mirror-wrap">
             <SlideMirror
               course={p.course}
-              clase={{ num: p.classNum, title: p.classShortTitle, accent: p.accent }}
+              clase={{ num: p.classNum, title: p.classShortTitle, accent: p.accent, style: p.slideStyle }}
               slide={current}
               index={slide - 1}
               total={p.total}

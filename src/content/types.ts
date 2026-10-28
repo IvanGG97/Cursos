@@ -78,6 +78,11 @@ export type ClassDef = {
   summary: string;
   /** Color de acento de la clase (hex). */
   accent: string;
+  /**
+   * Estilo de las diapositivas (id de src/content/styles.ts). Sin esto: "original". Lo que se elija
+   * desde el editor del panel (tabla class_styles) manda sobre lo que diga acá.
+   */
+  style?: string;
   /** Bloques con tiempos. */
   blocks: { name: string; min: number }[];
   /** Vacío = clase todavía no escrita ("En preparación"). */
