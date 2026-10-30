@@ -7,6 +7,7 @@ import type { Slide } from "@/content/types";
 // Sin cuenta de Google: Claude gratis con cualquier mail (crea y modifica archivos de Word/PDF).
 // Último recurso, sin ninguna cuenta: Gemini sin iniciar sesión solo escribe texto (no sube archivos
 // ni exporta): se pega en Word y se guarda como Word o PDF.
+// Con cuenta de Google, Gemini y Claude también se conectan con Google Drive (Bloque 6).
 // Criterio de los otros cursos: ejemplo resuelto + plantilla con [espacios] + tarea corta por tema,
 // preguntas solo después del contenido, error común y recomendación en cada bloque.
 // Clase muy visual: casi todos los pasos tienen un lugar de captura (sacarlas desde la compu, en castellano).
@@ -32,9 +33,9 @@ export const cdClase1Slides: Slide[] = [
     items: [
       "Entrar: Gemini con Google, o Claude con tu mail",
       "La receta de un buen pedido",
-      "La nota formal",
-      "Memorando, acta, informe y proyecto",
+      "Nota, memorando, acta, informe y proyecto",
       "Del chat al archivo: crear y modificar Word y PDF",
+      "Conectar con Google Drive, paso a paso",
       "Cuidados y cierre",
     ],
   },
@@ -123,7 +124,7 @@ export const cdClase1Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 1: LA RECETA =====================
-  { type: "divider", badge: "BLOQUE 1 · 15 MIN", title: "La receta de un buen pedido", subtitle: "Lo que la IA necesita saber para escribir bien" },
+  { type: "divider", badge: "BLOQUE 1 · 10 MIN", title: "La receta de un buen pedido", subtitle: "Lo que la IA necesita saber para escribir bien" },
   {
     type: "concept",
     kicker: "La clave",
@@ -260,7 +261,7 @@ export const cdClase1Slides: Slide[] = [
   },
 
   // ===================== BLOQUE 3: MEMORANDO Y ACTA =====================
-  { type: "divider", badge: "BLOQUE 3 · 20 MIN", title: "Memorando y acta", subtitle: "De una instrucción o de apuntes desordenados" },
+  { type: "divider", badge: "BLOQUE 3 · 15 MIN", title: "Memorando y acta", subtitle: "De una instrucción o de apuntes desordenados" },
   {
     type: "quote",
     kicker: "Plantilla",
@@ -544,8 +545,201 @@ export const cdClase1Slides: Slide[] = [
     explanation: "Se sube el archivo con el \"+\", se pide el cambio y se descarga la versión nueva.",
   },
 
-  // ===================== BLOQUE 6: CUIDADOS Y CIERRE =====================
-  { type: "divider", badge: "BLOQUE 6 · 15 MIN", title: "Cuidados y cierre", subtitle: "Lo que nunca le pasás a la IA, y lo que siempre revisás" },
+  // ===================== BLOQUE 6: CONECTAR CON GOOGLE DRIVE =====================
+  // Va después de la diapositiva 51: las respuestas de la clase en vivo del 28/10 (diapositivas 9 a 32)
+  // siguen apuntando a las mismas preguntas. Menús verificados el 2026-10-30 en las dos apps.
+  { type: "divider", badge: "BLOQUE 6 · 15 MIN", title: "Conectar con Google Drive", subtitle: "Que la IA lea tus documentos y guarde los nuevos en tu Drive" },
+  {
+    type: "concept",
+    kicker: "Para qué sirve",
+    title: "Tu Drive, adentro del chat",
+    body: "Hasta acá subías y descargabas cada archivo a mano. Si conectás tu Google Drive, la IA busca y lee tus documentos sin que los subas, y podés usarlos de modelo para uno nuevo. Con Claude, además, el archivo que crea queda guardado en tu Drive.",
+    analogy: "Es como darle la llave de tu archivero: busca lo que le pedís, y se la podés sacar cuando quieras.",
+  },
+  {
+    type: "content",
+    kicker: "Antes de conectar",
+    title: "Qué hace falta y qué hace cada una",
+    rows: [
+      { h: "Hace falta", d: "una cuenta de Google: la misma donde tenés tus documentos." },
+      { h: "Gemini", d: "busca y lee tu Drive. Para guardar, \"Exportar a Documentos\"." },
+      { h: "Claude", d: "busca y lee tu Drive, y guarda ahí los archivos que crea (con \"Ejecutar código en la nube\" activado)." },
+      { h: "Sin cuenta de Google", d: "no hay Drive para conectar: seguí subiendo y descargando archivos." },
+    ],
+  },
+  {
+    type: "steps",
+    kicker: "Gemini · Conectar",
+    title: "Conectar tu Drive con Gemini",
+    steps: [
+      "En la barra de la izquierda, tocá \"Más\" → \"Personalizar\".",
+      "Arriba, tocá la pestaña \"Conectores\".",
+      "Buscá \"Google Workspace\" (trae Drive, Documentos y Gmail), tocá el \"+\" y seguí lo que te pide.",
+      "Si ya figura en \"Instalado\", está conectado.",
+    ],
+    media: {
+      id: "cd-drive-gemini-conectar",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: en Gemini, el menú Más → Personalizar, y la pestaña Conectores con Google Workspace señalado.",
+    },
+  },
+  {
+    type: "content",
+    kicker: "Gemini · Si no aparece",
+    title: "Lo primero que hay que revisar",
+    rows: [
+      { h: "Conservar la actividad", d: "tiene que estar en \"Sí\": ruedita (abajo a la izquierda) → Actividad. Sin eso, Gemini no usa apps conectadas." },
+      { h: "Cuenta del trabajo", d: "puede estar bloqueado por quien la administra: probá con tu cuenta personal." },
+      { h: "Atajo", d: "escribí @ en el cuadro y elegí \"Google Drive\": si falta conectarlo, Gemini te lo pide." },
+    ],
+    media: {
+      id: "cd-drive-gemini-actividad",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: la página \"Actividad en las Apps con Gemini\", con \"Conservar la actividad\" en \"Sí\" señalado.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Gemini · Usar",
+    title: "Traer un documento de tu Drive",
+    steps: [
+      "Tocá el \"+\" y elegí \"Agregar desde Drive\".",
+      "Buscá el documento, tocalo y tocá \"Insertar\".",
+      "Pedí lo que necesitás: \"Usá este documento como modelo y redactá una nota igual, pidiendo [qué]\".",
+      "Enviá y revisá lo que armó.",
+    ],
+    media: {
+      id: "cd-drive-gemini-traer",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: el menú del \"+\" de Gemini con \"Agregar desde Drive\" señalado.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Gemini · Usar",
+    title: "Buscar sin saber dónde está",
+    steps: [
+      "En el cuadro, escribí @ y elegí \"Google Drive\".",
+      "Pedí qué buscar y qué hacer: \"Buscá la nota del pedido de sillas y resumila en 3 puntos\".",
+      "Enviá: al lado de cada dato te muestra de qué documento salió.",
+      "Abrí ese documento y comprobá lo que dice.",
+    ],
+    media: {
+      id: "cd-drive-gemini-buscar",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: en el cuadro de Gemini, la @ escrita y la lista de conectores con Google Drive señalado.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Claude · Conectar",
+    title: "Conectar tu Drive con Claude",
+    steps: [
+      "En la barra de la izquierda, tocá \"Personalización\" → \"Conectores\".",
+      "Buscá \"Google Drive\", tocá el \"+\" y después \"Conectar\".",
+      "Elegí tu cuenta de Google, revisá los permisos y tocá \"Continuar\".",
+      "Listo: el conector dice \"Conectado\".",
+    ],
+    media: {
+      id: "cd-drive-claude-conectar",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: en Claude, Personalización → Conectores, con Google Drive señalado.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Claude · Usar",
+    title: "Traer un documento de tu Drive",
+    steps: [
+      "Tocá el \"+\" → \"Conectores\" → \"Agregar desde Google Drive\".",
+      "Buscá el documento, tildalo y tocá \"Agregar al chat\".",
+      "Pedí qué hacer: \"Usalo de modelo y redactá una nota igual, pidiendo [qué]\".",
+      "¿Un Word o un PDF? No salen en esa lista: pedí \"Buscá en mi Drive [nombre]\".",
+    ],
+    media: {
+      id: "cd-drive-claude-traer",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: el menú del \"+\" de Claude, con Conectores abierto y \"Agregar desde Google Drive\" señalado.",
+    },
+  },
+  {
+    type: "steps",
+    kicker: "Claude · Usar",
+    title: "Guardar el archivo en tu Drive",
+    steps: [
+      "Pedí el archivo y dónde va: \"Hacé un archivo de Word con esta nota y guardalo en mi Drive con el nombre [nombre]\".",
+      "Claude te muestra qué va a guardar: leelo y tocá \"Permitir una vez\".",
+      "Esperá: puede tardar unos minutos.",
+      "Abrí el archivo con el enlace que te deja y revisá lo que agregó por su cuenta.",
+    ],
+    media: {
+      id: "cd-drive-claude-guardar",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: en Claude, el pedido de guardar el archivo en Drive y la respuesta con el archivo ya guardado.",
+    },
+  },
+  {
+    type: "quote",
+    kicker: "Plantilla",
+    title: "Un documento nuevo a partir de otro",
+    quoteLabel: "COPIÁ Y COMPLETÁ",
+    quoteText:
+      "\"Buscá en mi Drive [nombre o tema del documento]. Usalo como modelo y armá [una nota / un informe] sobre [tema], con estos datos: [datos]. No inventes nada; si falta un dato, poné [completar].\"",
+    caption: "Si la cuenta de Google tiene varios documentos parecidos, decile cuál: el nombre o la fecha.",
+  },
+  {
+    type: "practice",
+    title: "Tarea 5 · Tu Drive en el chat",
+    instructions:
+      "Conectá tu Drive con Gemini o con Claude (si ya está conectado, seguí).\n\nTraé un documento tuyo que no tenga datos de vecinos y pedile un resumen en 3 puntos, o una nota nueva usándolo de modelo. Después compará lo que armó con el original.",
+  },
+  {
+    type: "content",
+    kicker: "Para tener en cuenta",
+    title: "Error común y recomendación",
+    rows: [
+      { h: "Error común", d: "creer que, por estar conectado, ya se le puede pedir cualquier documento." },
+      { h: "Recomendación", d: "pedile documentos puntuales, y ninguno con datos de vecinos o expedientes." },
+      { h: "En la compu de la sala", d: "la conexión queda en tu cuenta, no en la compu: al cerrar incógnito, nadie más la usa." },
+    ],
+  },
+  {
+    type: "steps",
+    kicker: "Cuando no lo uses más",
+    title: "Cómo desconectarlo",
+    steps: [
+      "Gemini: Más → Personalizar → Conectores.",
+      "Tocá los tres puntos de \"Google Workspace\" → \"Desconectar\".",
+      "Claude: Personalización → Conectores → Google Drive.",
+      "Tocá los tres puntos, al lado de \"Conectado\" → \"Desconectar\".",
+    ],
+    media: {
+      id: "cd-drive-desconectar",
+      kind: "IMAGEN",
+      caption: "Captura de la computadora: el menú de los tres puntos con \"Desconectar\", en Gemini y en Claude.",
+    },
+  },
+  {
+    type: "quiz",
+    kind: "single",
+    question: "En Gemini no te funcionan las apps conectadas. ¿Qué revisás primero?",
+    options: [
+      { text: "Que \"Conservar la actividad\" esté en \"Sí\".", correct: true },
+      { text: "Que el archivo esté en PDF.", correct: false },
+      { text: "Que no estés en una ventana de incógnito.", correct: false },
+    ],
+    explanation: "Con \"Conservar la actividad\" desactivado, Gemini no puede usar las apps conectadas en la web.",
+  },
+  {
+    type: "quiz",
+    kind: "vf",
+    question: "Con el Drive conectado, ya se le puede pedir un documento con datos de vecinos.",
+    options: FALSO,
+    explanation: "Conectar no cambia la regla: los datos personales de terceros no se le pasan a la IA.",
+  },
+
+  // ===================== BLOQUE 7: CUIDADOS Y CIERRE =====================
+  { type: "divider", badge: "BLOQUE 7 · 10 MIN", title: "Cuidados y cierre", subtitle: "Lo que nunca le pasás a la IA, y lo que siempre revisás" },
   {
     type: "content",
     kicker: "Datos sensibles",
@@ -610,6 +804,6 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Antes de irte",
     instructions:
-      "Guardá en tus notas (o en un documento) las plantillas de hoy para usarlas en tu trabajo.\n\nCerrá la ventana de incógnito para salir de tu cuenta en esta compu.",
+      "Guardá en tus notas (o en un documento) las plantillas de hoy para usarlas en tu trabajo.\n\nCerrá la ventana de incógnito para salir de tu cuenta en esta compu. Si conectaste tu Drive y no lo vas a usar más, desconectalo antes.",
   },
 ];
