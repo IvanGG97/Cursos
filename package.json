@@ -10,7 +10,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sin-internet:preparar": "node scripts/sin-internet-preparar.mjs",
+    "sin-internet": "node scripts/sin-internet.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

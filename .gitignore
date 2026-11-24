@@ -1,5 +1,8 @@
 node_modules
 .next
+.next-sin-internet
+# Copias para dar la clase sin internet (npm run sin-internet:preparar)
+public/sin-internet/
 out
 dist
 *.tsbuildinfo

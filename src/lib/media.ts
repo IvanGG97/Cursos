@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import type { Annotations, Course, Media, Slide } from "@/content/types";
+import { offlineManifest } from "./offline";
 import { SUPABASE_URL, isLocalMode } from "./supabase/config";
 import { createClient } from "./supabase/server";
 
@@ -35,7 +36,16 @@ function readAnnot(v: unknown): Annotations | undefined {
 
 /** Por lugar (media_id): sus imágenes en orden. */
 export const getCourseMedia = cache(async (slug: string): Promise<Map<string, Uploaded[]>> => {
-  if (isLocalMode()) return new Map();
+  if (isLocalMode()) {
+    // Sin internet: las copias de public/sin-internet (si se prepararon).
+    const offline = offlineManifest()?.media[slug] ?? {};
+    return new Map(
+      Object.entries(offline).map(([id, items]) => [
+        id,
+        items.map((i) => ({ id: i.src, url: i.src, mime: i.mime, path: i.src, position: i.position, external: false, annot: readAnnot(i.annot) })),
+      ]),
+    );
+  }
   const supabase = await createClient();
   // "*": si la migración de galerías todavía no corrió (sin id/position), sigue funcionando.
   const { data } = await supabase.from("slide_media").select("*").eq("course_slug", slug);

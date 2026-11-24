@@ -1,5 +1,12 @@
-export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-export const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
+/**
+ * "Sin internet" (`npm run sin-internet`, ver SIN-INTERNET.md): para proyectar en una sala sin
+ * conexión. Ignora Supabase (queda en modo local) y usa las copias de `public/sin-internet/`. Solo en
+ * desarrollo: en producción no tiene efecto.
+ */
+export const isOffline = process.env.NEXT_PUBLIC_SIN_INTERNET === "1" && process.env.NODE_ENV !== "production";
+
+export const SUPABASE_URL = isOffline ? "" : (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
+export const SUPABASE_KEY = isOffline ? "" : (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "");
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_KEY);
 

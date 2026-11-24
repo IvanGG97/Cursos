@@ -3,6 +3,7 @@ import { cache } from "react";
 import type { ClassDef, Course, Slide } from "@/content/types";
 import { courses as REPO, getCourse, typeset } from "@/content/registry";
 import { isStyleId } from "@/content/styles";
+import { offlineManifest } from "./offline";
 import { normalizeSlides } from "./slide-rules";
 import { createServiceClient, isServiceConfigured } from "./supabase/admin";
 
@@ -17,7 +18,11 @@ type VersionRow = { id: number; class_num: number; slides: unknown };
 /** Última versión publicada de cada clase de un curso (por número de clase). */
 const latestVersions = cache(async (slug: string): Promise<Map<number, VersionRow>> => {
   const out = new Map<number, VersionRow>();
-  if (!isServiceConfigured) return out;
+  if (!isServiceConfigured) {
+    // Sin internet: la copia de lo publicado desde el editor (si se preparó).
+    for (const [num, slides] of Object.entries(offlineManifest()?.versiones[slug] ?? {})) out.set(Number(num), { id: 0, class_num: Number(num), slides });
+    return out;
+  }
   const { data, error } = await createServiceClient()
     .from("class_versions")
     .select("id, class_num, slides")
@@ -31,7 +36,10 @@ const latestVersions = cache(async (slug: string): Promise<Map<number, VersionRo
 /** Estilo elegido desde el panel para cada clase de un curso. ready = false: falta la migración. */
 export const getClassStyles = cache(async (slug: string): Promise<{ ready: boolean; byClass: Map<number, string> }> => {
   const byClass = new Map<number, string>();
-  if (!isServiceConfigured) return { ready: false, byClass };
+  if (!isServiceConfigured) {
+    for (const [num, style] of Object.entries(offlineManifest()?.estilos[slug] ?? {})) if (isStyleId(style)) byClass.set(Number(num), style);
+    return { ready: false, byClass };
+  }
   const { data, error } = await createServiceClient().from("class_styles").select("class_num, style").eq("course_slug", slug);
   if (error || !data) return { ready: false, byClass };
   for (const r of data) if (isStyleId(r.style)) byClass.set(r.class_num as number, r.style);

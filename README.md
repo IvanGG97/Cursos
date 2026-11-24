@@ -136,4 +136,6 @@ Las acciones delicadas piden confirmación con un segundo toque. Nadie puede qui
 | `npm run dev` | servidor de desarrollo |
 | `npm run build` | build de producción (incluye chequeo de tipos) |
 | `npm run typecheck` | solo chequeo de tipos |
+| `npm run sin-internet:preparar` | con internet: baja imágenes, versiones del editor y estilos a `public/sin-internet/` (ver [SIN-INTERNET.md](SIN-INTERNET.md)) |
+| `npm run sin-internet` | en la sala, sin internet: arranca la plataforma en `http://localhost:3000` con esas copias |
 | `node scripts/woff-to-ttf.mjs <archivos>` | convierte fuentes WOFF a TTF (las del PDF ya están convertidas en `src/lib/pdf/fonts`) |
