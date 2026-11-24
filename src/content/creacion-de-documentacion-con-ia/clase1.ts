@@ -16,6 +16,10 @@ const FALSO = [
   { text: "Verdadero", correct: false },
   { text: "Falso", correct: true },
 ];
+const VERDADERO = [
+  { text: "Verdadero", correct: true },
+  { text: "Falso", correct: false },
+];
 
 export const cdClase1Slides: Slide[] = [
   // ---------- PORTADA ----------
@@ -97,13 +101,14 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "Vas a entrar a tu cuenta en una compu de la sala. ¿Qué conviene?",
+    question: "Al terminar en la sala, ¿qué te saca de tu cuenta?",
     options: [
-      { text: "Abrir una ventana de incógnito y cerrarla al terminar.", correct: true },
-      { text: "Guardar la contraseña para la próxima.", correct: false },
-      { text: "Dejar la sesión abierta para el que sigue.", correct: false },
+      { text: "Cerrar solo la pestaña de Gemini o de Claude.", correct: false },
+      { text: "Nada: la sesión de incógnito se cierra sola al rato.", correct: false },
+      { text: "Cerrar la ventana de incógnito.", correct: true },
+      { text: "Borrar el chat que usaste.", correct: false },
     ],
-    explanation: "La ventana de incógnito no guarda tu sesión: al cerrarla, tu cuenta queda fuera de esa compu.",
+    explanation: "La sesión se borra al cerrar la ventana de incógnito entera: con solo una pestaña cerrada, tu cuenta sigue abierta.",
   },
 
   // ===================== BLOQUE 1: LA RECETA Y LO QUE NO SE PEGA =====================
@@ -148,19 +153,19 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "\"Haceme un informe.\" ¿Qué le falta a este pedido?",
+    question: "\"Redactá una nota formal al Director de Compras pidiendo 10 sillas, porque se rompieron.\" ¿Qué le falta?",
     options: [
-      { text: "Para quién es, sobre qué, con qué datos y qué largo.", correct: true },
-      { text: "Nada, la IA ya sabe lo que necesito.", correct: false },
-      { text: "Que lo escriba en mayúsculas.", correct: false },
+      { text: "Para quién es y para qué.", correct: false },
+      { text: "De quién es (tu área) y qué largo tiene que tener.", correct: true },
+      { text: "Qué tipo de documento es.", correct: false },
     ],
-    explanation: "Sin contexto, la IA inventa. Los datos los ponés vos: tema, destinatario, números y formato.",
+    explanation: "Ya dice qué (nota formal), para quién (Director de Compras) y para qué (10 sillas rotas). Falta de quién es y cuánto tiene que medir.",
   },
   {
     type: "practice",
     title: "Tarea 1 · Arreglá un pedido flojo",
     instructions:
-      "Este pedido está flojo: \"Haceme un memo por el horario.\"\n\nReescribilo con los cinco datos (qué documento, de quién y para quién, para qué y con qué datos, y cómo) con un caso de tu área. Mandá los dos y compará las respuestas.",
+      "Este pedido está flojo: \"Haceme un memo por el horario.\"\n\nReescribilo con los cinco datos (qué documento, de quién y para quién, para qué y con qué datos, y cómo) con un caso de tu área. Mandá los dos y compará las respuestas.\n\nDesafío: pedile a la IA que te diga qué datos le faltaban al pedido flojo, y compará con lo que pensaste vos.",
   },
   {
     type: "content",
@@ -175,14 +180,14 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "multi",
-    question: "¿Qué información reemplazás por [corchetes]?",
+    question: "¿Qué va entre [corchetes] al pegarlo?",
     options: [
-      { text: "El DNI de un vecino.", correct: true },
-      { text: "El domicilio de un vecino.", correct: true },
       { text: "El nombre de tu área.", correct: false },
-      { text: "El tema de la reunión.", correct: false },
+      { text: "El teléfono de un vecino.", correct: true },
+      { text: "El nombre completo de quien reclamó.", correct: true },
+      { text: "La fecha de la reunión.", correct: false },
     ],
-    explanation: "Los datos de terceros van entre corchetes y se completan en Word.",
+    explanation: "Los datos de terceros van entre [corchetes]; los de tu área, no.",
   },
 
   // ===================== BLOQUE 2: LA NOTA FORMAL =====================
@@ -246,7 +251,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 2 · Tu nota",
     instructions:
-      "Con la plantilla, pedile a Gemini una nota real de tu trabajo (por ejemplo: pedir materiales, informar un cambio de horario o solicitar una reunión).\n\nDespués pedile al menos un cambio en el mismo chat: más corta, más formal o con un dato que falte.",
+      "Con la plantilla, pedile a Gemini una nota real de tu trabajo (por ejemplo: pedir materiales, informar un cambio de horario o solicitar una reunión).\n\nDespués pedile al menos un cambio en el mismo chat: más corta, más formal o con un dato que falte.\n\nDesafío: pedile dos versiones (una formal y una breve), elegí la que mandarías y explicá por qué en una línea.",
   },
   {
     type: "content",
@@ -261,13 +266,13 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "La nota salió muy larga. ¿Cómo seguís?",
+    question: "La nota salió con el destinatario equivocado y muy larga. ¿Qué conviene?",
     options: [
-      { text: "En el mismo chat: \"dejala en 6 líneas, sin perder los datos\".", correct: true },
-      { text: "Abro un chat nuevo y empiezo de cero.", correct: false },
-      { text: "La mando igual.", correct: false },
+      { text: "En el mismo chat: primero corregir el destinatario, después el largo.", correct: true },
+      { text: "Abrir un chat nuevo con el pedido corregido.", correct: false },
+      { text: "Pedir las dos cosas juntas y, de paso, que la haga más formal.", correct: false },
     ],
-    explanation: "En el mismo chat, Gemini ya tiene tus datos: solo le decís qué cambiar.",
+    explanation: "En el mismo chat ya tiene tus datos; de a un cambio por vez, ves qué cambió en cada paso.",
   },
 
   // ===================== BLOQUE 3: MEMORANDO Y ACTA =====================
@@ -285,7 +290,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 3 · Tu memorando",
     instructions:
-      "Con la plantilla, pedile un memorando real de tu área: un cambio de horario, un pedido a otra área o un recordatorio.\n\nDespués pedile un cambio en el mismo chat: más corto, o con otro plazo.",
+      "Con la plantilla, pedile un memorando real de tu área: un cambio de horario, un pedido a otra área o un recordatorio.\n\nDespués pedile un cambio en el mismo chat: más corto, o con otro plazo.\n\nDesafío: pedile que lo convierta en un mensaje corto para el grupo de WhatsApp del área, sin perder el plazo.",
   },
   {
     type: "concept",
@@ -322,7 +327,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 4 · Tu acta",
     instructions:
-      "Escribí 4 o 5 apuntes sueltos de una reunión (real o inventada): quiénes estaban, qué se habló y qué se acordó.\n\nPedile el acta con la plantilla. Revisá: ¿inventó algo? ¿Dejó [completar] donde faltaba un dato?",
+      "Escribí 4 o 5 apuntes sueltos de una reunión (real o inventada): quiénes estaban, qué se habló y qué se acordó.\n\nPedile el acta con la plantilla. Revisá: ¿inventó algo? ¿Dejó [completar] donde faltaba un dato?\n\nDesafío: agregá a tus apuntes un dato contradictorio (dos horarios distintos para lo mismo) y fijate si la IA lo marca o elige uno sin avisar.",
   },
   {
     type: "content",
@@ -337,20 +342,21 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "¿Qué frase evita que Gemini invente datos en el acta?",
+    question: "Falta el responsable. ¿Qué pone el acta?",
     options: [
-      { text: "\"No inventes nada; si falta un dato, poné [completar]\".", correct: true },
-      { text: "\"Hacelo rápido\".", correct: false },
-      { text: "\"Usá muchas palabras\".", correct: false },
+      { text: "Un responsable que la IA elija entre los presentes.", correct: false },
+      { text: "Tu nombre, porque escribiste los apuntes.", correct: false },
+      { text: "Nada: ese acuerdo se saca del acta.", correct: false },
+      { text: "[completar] donde va el responsable.", correct: true },
     ],
-    explanation: "Si le avisás qué hacer cuando falta un dato, deja el espacio marcado en vez de inventar.",
+    explanation: "Lo que falta queda marcado como [completar] para que lo pongas vos.",
   },
   {
     type: "quiz",
     kind: "vf",
-    question: "Si los apuntes no dicen el lugar de la reunión, está bien que la IA lo invente.",
+    question: "Si le pedís \"no inventes nada\", ya no hace falta comparar el acta con tus apuntes.",
     options: FALSO,
-    explanation: "Un acta es un documento formal: lo que falta se completa con el dato real, no con uno inventado.",
+    explanation: "Igual puede agregar acuerdos que nadie tomó: el acta se compara con los apuntes, punto por punto.",
   },
 
   // ===================== BLOQUE 4: INFORME O PROYECTO =====================
@@ -393,7 +399,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 5 · Tu informe",
     instructions:
-      "Pedile un informe con la plantilla y estos datos de ejemplo (o los tuyos): atenciones al público por mes — julio 420, agosto 515, septiembre 610.\n\nPedí una tabla y una conclusión. Revisá las cuentas: ¿cuánto creció de julio a septiembre?",
+      "Pedile un informe con la plantilla y estos datos de ejemplo (o los tuyos): atenciones al público por mes — julio 420, agosto 515, septiembre 610.\n\nPedí una tabla y una conclusión. Revisá las cuentas: ¿cuánto creció de julio a septiembre?\n\nDesafío: pedile también el promedio por mes y verificalo con la calculadora.",
   },
   {
     type: "content",
@@ -408,13 +414,14 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "El informe dice que la atención creció 45%. ¿Qué hacés?",
+    question: "De 420 a 610 atenciones: ¿cuánto creció?",
     options: [
-      { text: "Lo reviso con la calculadora antes de usarlo.", correct: true },
-      { text: "Lo dejo: la IA no se equivoca en cuentas.", correct: false },
-      { text: "Le saco la tabla al informe.", correct: false },
+      { text: "190%.", correct: false },
+      { text: "31%.", correct: false },
+      { text: "45%.", correct: true },
+      { text: "No se puede saber sin la IA.", correct: false },
     ],
-    explanation: "Con 420 y 610 el crecimiento es de 45%. Esta vez acertó, pero las cuentas se revisan siempre.",
+    explanation: "(610 − 420) ÷ 420 = 0,45: creció 45%. El 190 es la diferencia.",
   },
 
   // ===================== BLOQUE 5: TU DOCUMENTO DE LA SEMANA Y CIERRE =====================
@@ -423,7 +430,7 @@ export const cdClase1Slides: Slide[] = [
     type: "practice",
     title: "Tarea 6 · Tu documento de la semana",
     instructions:
-      "Pensá un documento que tengas que escribir esta semana: una nota, un memorando, un acta o un informe.\n\n1. Armá el pedido con los cinco datos (los datos de vecinos, entre [corchetes]).\n2. Pedile dos mejoras en el mismo chat.\n3. Revisalo como si lo fueras a firmar.\n\nMañana lo convertimos en un archivo.",
+      "Pensá un documento que tengas que escribir esta semana: una nota, un memorando, un acta o un informe.\n\n1. Armá el pedido con los cinco datos (los datos de vecinos, entre [corchetes]).\n2. Pedile dos mejoras en el mismo chat.\n3. Revisalo como si lo fueras a firmar: mañana lo convertimos en un archivo.\n\nDesafío: pedile que te marque qué conviene revisar antes de firmar.",
   },
   {
     type: "content",
@@ -438,9 +445,9 @@ export const cdClase1Slides: Slide[] = [
   {
     type: "quiz",
     kind: "vf",
-    question: "Si la IA escribió la nota, la responsabilidad de lo que dice es de la IA.",
-    options: FALSO,
-    explanation: "La IA arma el borrador; quien lo revisa y lo firma es responsable del contenido.",
+    question: "Si la nota firmada tiene un error que puso la IA, responde quien la firmó.",
+    options: VERDADERO,
+    explanation: "La IA arma el borrador; quien lo revisa y lo firma responde por el documento.",
   },
   {
     type: "content",

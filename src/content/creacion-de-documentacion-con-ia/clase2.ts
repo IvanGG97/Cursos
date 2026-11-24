@@ -11,6 +11,10 @@ const FALSO = [
   { text: "Verdadero", correct: false },
   { text: "Falso", correct: true },
 ];
+const VERDADERO = [
+  { text: "Verdadero", correct: true },
+  { text: "Falso", correct: false },
+];
 
 export const cdClase2Slides: Slide[] = [
   // ---------- PORTADA ----------
@@ -75,21 +79,21 @@ export const cdClase2Slides: Slide[] = [
   {
     type: "quiz",
     kind: "multi",
-    question: "¿Qué tiene que llevar un buen pedido?",
+    question: "¿Qué le falta a \"Nota a Compras pidiendo sillas\"?",
     options: [
-      { text: "Para quién es el documento.", correct: true },
-      { text: "Los datos del caso.", correct: true },
-      { text: "Que lo escriba rápido.", correct: false },
+      { text: "De quién es: tu área.", correct: true },
+      { text: "Para quién es.", correct: false },
+      { text: "Cuántas sillas y para qué.", correct: true },
       { text: "El tono y el largo.", correct: true },
     ],
-    explanation: "La receta: qué documento, de quién y para quién, para qué y con qué datos, y cómo.",
+    explanation: "Ya dice qué (una nota) y para quién (Compras). Faltan de quién es, los datos (cuántas y para qué) y cómo (tono y largo).",
   },
   {
     type: "quiz",
     kind: "vf",
-    question: "Para corregir una nota conviene abrir un chat nuevo.",
-    options: FALSO,
-    explanation: "En el mismo chat la IA ya tiene tus datos: solo le decís qué cambiar.",
+    question: "Si en el chat de ayer le pedís \"cambiá el destinatario\", mantiene el resto de la nota.",
+    options: VERDADERO,
+    explanation: "En el mismo chat ya tiene tus datos: cambia lo que le pedís (igual, revisá que no haya tocado otra cosa).",
   },
 
   // ===================== BLOQUE 1: UN ARCHIVO QUE YA TENÉS =====================
@@ -123,7 +127,7 @@ export const cdClase2Slides: Slide[] = [
     type: "practice",
     title: "Tarea 1 · Resumí un archivo tuyo",
     instructions:
-      "Subí el Word que trajiste (o un PDF de una norma o un instructivo, sin datos de vecinos) y pedile un resumen con la plantilla.\n\nAbrí el original al lado y comprobá: ¿está todo? ¿Agregó algo que el archivo no dice?",
+      "Subí el Word que trajiste (o un PDF de una norma o un instructivo, sin datos de vecinos) y pedile un resumen con la plantilla.\n\nAbrí el original al lado y comprobá: ¿está todo? ¿Agregó algo que el archivo no dice?\n\nDesafío: preguntale algo que el archivo no dice y fijate si te avisa que no está o lo inventa.",
   },
   {
     type: "content",
@@ -140,9 +144,9 @@ export const cdClase2Slides: Slide[] = [
     kind: "single",
     question: "El resumen trae un dato que no encontrás en el original. ¿Qué hacés?",
     options: [
-      { text: "Lo saco, o lo verifico antes de usar el resumen.", correct: true },
-      { text: "Lo dejo: si lo dice la IA, está en el archivo.", correct: false },
-      { text: "Subo el archivo de nuevo hasta que desaparezca.", correct: false },
+      { text: "Lo dejo si suena lógico para el informe.", correct: false },
+      { text: "Lo dejo: la IA leyó el archivo completo.", correct: false },
+      { text: "Lo saco, salvo que lo encuentre en el original.", correct: true },
     ],
     explanation: "La IA puede agregar cosas que el archivo no dice: lo que no está en el original, no va.",
   },
@@ -244,7 +248,7 @@ export const cdClase2Slides: Slide[] = [
     type: "practice",
     title: "Tarea 2 · Tu archivo terminado",
     instructions:
-      "Elegí uno de los documentos que hiciste ayer o hoy (nota, acta o informe) y pedile el archivo: \"Creá un archivo de Word con esta nota, para descargarlo\". Descargalo y abrilo.\n\nDespués subilo de nuevo al chat y pedí un cambio: \"pasalo a PDF\", \"acortalo\" o \"agregá una tabla\". Descargá la versión nueva y compará las dos.",
+      "Elegí uno de los documentos que hiciste ayer o hoy (nota, acta o informe) y pedile el archivo: \"Creá un archivo de Word con esta nota, para descargarlo\". Descargalo y abrilo.\n\nDespués subilo de nuevo al chat y pedí un cambio: \"pasalo a PDF\", \"acortalo\" o \"agregá una tabla\". Descargá la versión nueva y compará las dos.\n\nDesafío: pedí el nombre de tu área en el encabezado y fijate si lo respetó.",
   },
   {
     type: "content",
@@ -259,20 +263,20 @@ export const cdClase2Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "No tenés cuenta de Google. ¿Cómo conseguís la nota en PDF?",
+    question: "Sin cuenta de Google, ¿qué camino NO sirve para tener la nota en PDF?",
     options: [
-      { text: "Entro a Claude con mi mail y le pido el archivo en PDF.", correct: true },
-      { text: "Toco \"Exportar a Documentos\" en Gemini sin sesión.", correct: false },
-      { text: "No se puede sin cuenta de Google.", correct: false },
+      { text: "Claude con tu mail: pedirle el archivo en PDF.", correct: false },
+      { text: "Gemini sin sesión: tocar \"Exportar a Documentos\".", correct: true },
+      { text: "Gemini sin sesión: copiar a Word y Guardar como PDF.", correct: false },
     ],
-    explanation: "Claude se usa con cualquier mail y, en el plan gratis, crea archivos de Word y PDF para descargar.",
+    explanation: "Sin sesión, Gemini solo escribe texto: no exporta ni crea archivos. Los otros dos caminos sí funcionan.",
   },
   {
     type: "quiz",
     kind: "vf",
-    question: "Para modificar un Word con IA, hay que copiar el texto a mano.",
+    question: "Cuando le subís un Word a Claude, lo modifica directamente en tu compu.",
     options: FALSO,
-    explanation: "Se sube el archivo con el \"+\", se pide el cambio y se descarga la versión nueva.",
+    explanation: "Te devuelve una versión nueva para descargar: tu original queda igual, y conviene compararlos.",
   },
 
   // ===================== BLOQUE 3: CONECTAR CON GOOGLE DRIVE =====================
@@ -419,7 +423,7 @@ export const cdClase2Slides: Slide[] = [
     type: "practice",
     title: "Tarea 3 · Tu Drive en el chat",
     instructions:
-      "Conectá tu Drive con Gemini o con Claude (si ya está conectado, seguí).\n\nTraé un documento tuyo que no tenga datos de vecinos y pedile un resumen en 3 puntos, o una nota nueva usándolo de modelo. Después compará lo que armó con el original.",
+      "Conectá tu Drive con Gemini o con Claude (si ya está conectado, seguí).\n\nTraé un documento tuyo que no tenga datos de vecinos y pedile un resumen en 3 puntos, o una nota nueva usándolo de modelo. Después compará lo que armó con el original.\n\nDesafío: pedile que compare dos documentos tuyos de Drive y te diga en qué se diferencian.",
   },
   {
     type: "content",
@@ -450,20 +454,21 @@ export const cdClase2Slides: Slide[] = [
   {
     type: "quiz",
     kind: "single",
-    question: "En Gemini no te funcionan las apps conectadas. ¿Qué revisás primero?",
+    question: "Gemini no usa tu Drive: ¿qué revisás?",
     options: [
-      { text: "Que \"Conservar la actividad\" esté en \"Sí\".", correct: true },
-      { text: "Que el archivo esté en PDF.", correct: false },
+      { text: "Que tengas el plan pago de Gemini.", correct: false },
+      { text: "Que Drive esté instalado en la compu.", correct: false },
       { text: "Que no estés en una ventana de incógnito.", correct: false },
+      { text: "Que \"Conservar la actividad\" esté en \"Sí\".", correct: true },
     ],
-    explanation: "Con \"Conservar la actividad\" desactivado, Gemini no puede usar las apps conectadas en la web.",
+    explanation: "Sin \"Conservar la actividad\", Gemini no usa las apps conectadas.",
   },
   {
     type: "quiz",
     kind: "vf",
-    question: "Con el Drive conectado, ya se le puede pedir un documento con datos de vecinos.",
+    question: "En Claude, un Word de tu Drive aparece en la lista de \"Agregar desde Google Drive\".",
     options: FALSO,
-    explanation: "Conectar no cambia la regla: los datos personales de terceros no se le pasan a la IA.",
+    explanation: "Esa lista muestra solo Documentos, Hojas y Presentaciones de Google: un Word o un PDF se pide por chat (\"Buscá en mi Drive...\").",
   },
 
   // ===================== BLOQUE 4: TU DOCUMENTO, DE PRINCIPIO A FIN =====================
@@ -483,7 +488,7 @@ export const cdClase2Slides: Slide[] = [
     type: "practice",
     title: "Tarea 4 · De tus apuntes al archivo",
     instructions:
-      "Hacé el recorrido completo con lo que trajiste: los apuntes de una reunión, o el documento de la semana de ayer.\n\nAl final tenés que tener el archivo abierto en Word (o en Documentos de Google), revisado y con un nombre claro, por ejemplo \"Acta_Reunion_Turnos_25-11\".",
+      "Hacé el recorrido completo con lo que trajiste: los apuntes de una reunión, o el documento de la semana de ayer.\n\nAl final tenés que tener el archivo abierto en Word (o en Documentos de Google), revisado y con un nombre claro, por ejemplo \"Acta_Reunion_Turnos_25-11\".\n\nDesafío: hacelo una segunda vez con otro tipo de documento (si hiciste un acta, ahora un memorando), sin mirar las plantillas.",
   },
   {
     type: "content",
