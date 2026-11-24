@@ -1,11 +1,13 @@
 import type { Course } from "@/content/types";
 import { cdClase1Slides } from "./clase1";
+import { cdClase2Slides } from "./clase2";
 
 // Curso "Creación de documentación con IA" (capacitación interna para el personal de la
-// Municipalidad de Salta; miércoles 28/10/2026, 10 a 12 hs, Sala de Capacitación).
-// Una sola clase de 2 h: con cuenta de Google, Gemini gratis (crea el archivo en Word/PDF o lo exporta
-// a Documentos); sin cuenta de Google, Claude gratis con cualquier mail (crea y modifica archivos);
-// sin ninguna cuenta, Gemini sin sesión + copiar a Word (último recurso).
+// Municipalidad de Salta). Se dio una vez como clase única de 2 h (miércoles 28/10/2026, 10 a 12 hs);
+// desde el martes 24/11/2026 son **dos clases de 2 h** (martes 24 y miércoles 25/11, 14 a 16 hs):
+// la 1 escribe adentro del chat; la 2 lo convierte en archivos (Word, PDF y Google Drive).
+// Con cuenta de Google, Gemini gratis; sin cuenta de Google, Claude gratis con cualquier mail; sin
+// ninguna cuenta, Gemini sin sesión + copiar a Word (último recurso).
 // Sin evaluación ni encuesta por ahora: se pueden sumar después con `evaluation` y `survey`.
 
 export const creacionDeDocumentacionConIa: Course = {
@@ -17,20 +19,33 @@ export const creacionDeDocumentacionConIa: Course = {
   classes: [
     {
       num: 1,
-      title: "Creación de documentación con IA",
-      summary: "Del pedido al archivo terminado: nota, memorando, acta e informe",
+      title: "Escribir con IA",
+      summary: "Notas, memorandos, actas e informes: pedirlos bien y corregirlos conversando",
       accent: "#FFB020",
       blocks: [
         { name: "Apertura: entrar a Gemini (Google) o a Claude (mail)", min: 15 },
-        { name: "La receta de un buen pedido", min: 10 },
-        { name: "La nota formal", min: 20 },
-        { name: "Memorando y acta", min: 15 },
-        { name: "Informe o proyecto", min: 15 },
-        { name: "Del chat al archivo: crear y modificar Word y PDF", min: 20 },
-        { name: "Conectar con Google Drive", min: 15 },
-        { name: "Cuidados y cierre", min: 10 },
+        { name: "La receta de un buen pedido, y lo que no se pega", min: 20 },
+        { name: "La nota formal", min: 25 },
+        { name: "Memorando y acta", min: 25 },
+        { name: "Informe o proyecto", min: 20 },
+        { name: "Tu documento de la semana, y cierre", min: 15 },
       ],
       slides: cdClase1Slides,
+    },
+    {
+      num: 2,
+      title: "Del chat al archivo",
+      summary: "Resumir archivos, crear y modificar Word y PDF, y conectar tu Google Drive",
+      accent: "#38BDF8",
+      blocks: [
+        { name: "Apertura: volver a entrar y repaso", min: 15 },
+        { name: "Un archivo que ya tenés: resumirlo", min: 20 },
+        { name: "Del chat al archivo: crear y modificar Word y PDF", min: 30 },
+        { name: "Conectar con Google Drive", min: 25 },
+        { name: "Tu documento, de principio a fin", min: 20 },
+        { name: "Cuidados y cierre", min: 10 },
+      ],
+      slides: cdClase2Slides,
     },
   ],
 };
